@@ -1,0 +1,5 @@
+^README\.Rmd$
+^[.]?air[.]toml$
+^\.vscode$
+^LICENSE\.md$
+^ggscribe\.Rproj$

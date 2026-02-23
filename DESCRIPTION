@@ -1,0 +1,17 @@
+Package: ggscribe
+Title: Annotate 'ggplot2' Visualisation
+Version: 0.0.0.9000
+Authors@R: 
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
+Description: Annotate 'ggplot2' visualisation using the set theme. This includes functions to annotate components of the set theme, and functions to annotate that use set theme defaults. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    farver,
+    flexoki,
+    ggplot2,
+    purrr,
+    rlang,
+    scales
