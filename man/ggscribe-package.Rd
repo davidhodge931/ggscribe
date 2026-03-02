@@ -6,7 +6,16 @@
 \alias{ggscribe-package}
 \title{ggscribe: Annotate 'ggplot2' Visualisation}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Annotate 'ggplot2' visualisation using the set theme. This includes functions to annotate components of the set theme, and functions to annotate that use set theme defaults.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://davidhodge931.github.io/ggscribe/}
+}
+
 }
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com}
