@@ -8,7 +8,11 @@ annotate that use set theme defaults.
 
 Useful links:
 
+- <https://github.com/davidhodge931/ggscribe>
+
 - <https://davidhodge931.github.io/ggscribe/>
+
+- Report bugs at <https://github.com/davidhodge931/ggscribe/issues>
 
 ## Author
 
