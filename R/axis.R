@@ -40,84 +40,84 @@ scribe_axis_line <- function(
     theme = "keep"
 ) {
   # Validate arguments - can't have both x and y
-  if (!rlang::is_null(x) && !rlang::is_null(y)) {
-    rlang::abort("Cannot specify both x and y. Use either x for a vertical line or y for a horizontal line.")
+  if (!is.null(x) && !is.null(y)) {
+    stop("Cannot specify both x and y. Use either x for a vertical line or y for a horizontal line.")
   }
   
   # Can't mix x with xmin/xmax or y with ymin/ymax
-  if (!rlang::is_null(x) && (!rlang::is_null(xmin) || !rlang::is_null(xmax))) {
-    rlang::abort("Cannot specify both x and xmin/xmax. Use either x for a single position or xmin/xmax for endpoints.")
+  if (!is.null(x) && (!is.null(xmin) || !is.null(xmax))) {
+    stop("Cannot specify both x and xmin/xmax. Use either x for a single position or xmin/xmax for endpoints.")
   }
-  if (!rlang::is_null(y) && (!rlang::is_null(ymin) || !rlang::is_null(ymax))) {
-    rlang::abort("Cannot specify both y and ymin/ymax. Use either y for a single position or ymin/ymax for endpoints.")
+  if (!is.null(y) && (!is.null(ymin) || !is.null(ymax))) {
+    stop("Cannot specify both y and ymin/ymax. Use either y for a single position or ymin/ymax for endpoints.")
   }
   
   # If x or y is provided, it overrides position
-  use_xy_positioning <- !rlang::is_null(x) || !rlang::is_null(y)
+  use_xy_positioning <- !is.null(x) || !is.null(y)
   
   if (use_xy_positioning) {
     # Check if using normalized coordinates
-    x_is_normalized <- !rlang::is_null(x) && inherits(x, "AsIs")
-    y_is_normalized <- !rlang::is_null(y) && inherits(y, "AsIs")
-    xmin_is_normalized <- !rlang::is_null(xmin) && inherits(xmin, "AsIs")
-    xmax_is_normalized <- !rlang::is_null(xmax) && inherits(xmax, "AsIs")
-    ymin_is_normalized <- !rlang::is_null(ymin) && inherits(ymin, "AsIs")
-    ymax_is_normalized <- !rlang::is_null(ymax) && inherits(ymax, "AsIs")
+    x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
+    y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
+    xmin_is_normalized <- !is.null(xmin) && inherits(xmin, "AsIs")
+    xmax_is_normalized <- !is.null(xmax) && inherits(xmax, "AsIs")
+    ymin_is_normalized <- !is.null(ymin) && inherits(ymin, "AsIs")
+    ymax_is_normalized <- !is.null(ymax) && inherits(ymax, "AsIs")
     
     # Unwrap and validate I() values
     if (x_is_normalized) {
       x <- unclass(x)
       if (length(x) != 1 || x < 0 || x > 1) {
-        rlang::abort("Normalized x (specified with I()) must be a single value between 0 and 1")
+        stop("Normalized x (specified with I()) must be a single value between 0 and 1")
       }
-    } else if (!rlang::is_null(x) && length(x) != 1) {
-      rlang::abort("x must be a single value")
+    } else if (!is.null(x) && length(x) != 1) {
+      stop("x must be a single value")
     }
     
     if (y_is_normalized) {
       y <- unclass(y)
       if (length(y) != 1 || y < 0 || y > 1) {
-        rlang::abort("Normalized y (specified with I()) must be a single value between 0 and 1")
+        stop("Normalized y (specified with I()) must be a single value between 0 and 1")
       }
-    } else if (!rlang::is_null(y) && length(y) != 1) {
-      rlang::abort("y must be a single value")
+    } else if (!is.null(y) && length(y) != 1) {
+      stop("y must be a single value")
     }
     
     if (xmin_is_normalized) {
       xmin <- unclass(xmin)
       if (length(xmin) != 1 || xmin < 0 || xmin > 1) {
-        rlang::abort("Normalized xmin (specified with I()) must be a single value between 0 and 1")
+        stop("Normalized xmin (specified with I()) must be a single value between 0 and 1")
       }
     }
     if (xmax_is_normalized) {
       xmax <- unclass(xmax)
       if (length(xmax) != 1 || xmax < 0 || xmax > 1) {
-        rlang::abort("Normalized xmax (specified with I()) must be a single value between 0 and 1")
+        stop("Normalized xmax (specified with I()) must be a single value between 0 and 1")
       }
     }
     if (ymin_is_normalized) {
       ymin <- unclass(ymin)
       if (length(ymin) != 1 || ymin < 0 || ymin > 1) {
-        rlang::abort("Normalized ymin (specified with I()) must be a single value between 0 and 1")
+        stop("Normalized ymin (specified with I()) must be a single value between 0 and 1")
       }
     }
     if (ymax_is_normalized) {
       ymax <- unclass(ymax)
       if (length(ymax) != 1 || ymax < 0 || ymax > 1) {
-        rlang::abort("Normalized ymax (specified with I()) must be a single value between 0 and 1")
+        stop("Normalized ymax (specified with I()) must be a single value between 0 and 1")
       }
     }
     
     # Determine axis from x/y
-    axis <- if (!rlang::is_null(x)) "y" else "x"  # Note: vertical line is on y axis, horizontal on x axis
+    axis <- if (!is.null(x)) "y" else "x"  # Note: vertical line is on y axis, horizontal on x axis
     
     # Determine if we're using normalized coordinates based on ANY normalized input
     use_normalized <- x_is_normalized || y_is_normalized || xmin_is_normalized || xmax_is_normalized ||
       ymin_is_normalized || ymax_is_normalized
   } else {
     # Original position-based behavior
-    if (rlang::is_null(position)) {
-      rlang::abort("Must specify either position, x, or y")
+    if (is.null(position)) {
+      stop("Must specify either position, x, or y")
     }
     
     position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
@@ -148,22 +148,22 @@ scribe_axis_line <- function(
   # Find the first non-blank resolved element
   resolved_element <- element_hierarchy |>
     purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
-    purrr::detect(\(x) !rlang::is_null(x) && !inherits(x, "element_blank"))
+    purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
   
   # If still no element found, create a minimal fallback
-  if (rlang::is_null(resolved_element)) {
+  if (is.null(resolved_element)) {
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
   
   # Extract theme properties with proper resolution
-  line_colour <- if (rlang::is_null(colour)) {
+  line_colour <- if (is.null(colour)) {
     resolved_element$colour %||% "black"
   } else {
     colour
   }
   
   # Handle linewidth with proper rel() support
-  if (rlang::is_null(linewidth)) {
+  if (is.null(linewidth)) {
     line_linewidth <- resolved_element$linewidth %||% 0.5
   } else {
     if (inherits(linewidth, "rel")) {
@@ -175,7 +175,7 @@ scribe_axis_line <- function(
   }
   
   # Extract linetype with proper resolution
-  line_linetype <- if (rlang::is_null(linetype)) {
+  line_linetype <- if (is.null(linetype)) {
     resolved_element$linetype %||% 1
   } else {
     linetype
@@ -185,13 +185,13 @@ scribe_axis_line <- function(
   
   # Create axis segment based on positioning method
   if (use_xy_positioning) {
-    if (!rlang::is_null(x)) {
+    if (!is.null(x)) {
       # Vertical line
       # Set defaults for endpoints based on whether we're using normalized coordinates
-      if (rlang::is_null(ymin)) {
+      if (is.null(ymin)) {
         ymin <- if (use_normalized) 0 else -Inf
       }
-      if (rlang::is_null(ymax)) {
+      if (is.null(ymax)) {
         ymax <- if (use_normalized) 1 else Inf
       }
       
@@ -239,10 +239,10 @@ scribe_axis_line <- function(
     } else {
       # Horizontal line
       # Set defaults for endpoints based on whether we're using normalized coordinates
-      if (rlang::is_null(xmin)) {
+      if (is.null(xmin)) {
         xmin <- if (use_normalized) 0 else -Inf
       }
-      if (rlang::is_null(xmax)) {
+      if (is.null(xmax)) {
         xmax <- if (use_normalized) 1 else Inf
       }
       
@@ -292,8 +292,8 @@ scribe_axis_line <- function(
     # Original position-based behavior
     # Use provided min/max values or default to -Inf/Inf
     if (position == "bottom") {
-      x_start <- if (!rlang::is_null(xmin)) xmin else -Inf
-      x_end <- if (!rlang::is_null(xmax)) xmax else Inf
+      x_start <- if (!is.null(xmin)) xmin else -Inf
+      x_end <- if (!is.null(xmax)) xmax else Inf
       stamp <- c(
         stamp,
         list(
@@ -312,8 +312,8 @@ scribe_axis_line <- function(
         )
       )
     } else if (position == "top") {
-      x_start <- if (!rlang::is_null(xmin)) xmin else -Inf
-      x_end <- if (!rlang::is_null(xmax)) xmax else Inf
+      x_start <- if (!is.null(xmin)) xmin else -Inf
+      x_end <- if (!is.null(xmax)) xmax else Inf
       stamp <- c(
         stamp,
         list(
@@ -332,8 +332,8 @@ scribe_axis_line <- function(
         )
       )
     } else if (position == "left") {
-      y_start <- if (!rlang::is_null(ymin)) ymin else -Inf
-      y_end <- if (!rlang::is_null(ymax)) ymax else Inf
+      y_start <- if (!is.null(ymin)) ymin else -Inf
+      y_end <- if (!is.null(ymax)) ymax else Inf
       stamp <- c(
         stamp,
         list(
@@ -353,8 +353,8 @@ scribe_axis_line <- function(
       )
     } else {
       # right
-      y_start <- if (!rlang::is_null(ymin)) ymin else -Inf
-      y_end <- if (!rlang::is_null(ymax)) ymax else Inf
+      y_start <- if (!is.null(ymin)) ymin else -Inf
+      y_end <- if (!is.null(ymax)) ymax else Inf
       stamp <- c(
         stamp,
         list(
@@ -381,7 +381,7 @@ scribe_axis_line <- function(
     
     if (use_xy_positioning) {
       # For x/y positioning, determine which axis line element corresponds to the line
-      if (!rlang::is_null(x)) {
+      if (!is.null(x)) {
         # Vertical line - check if it's at left or right edge
         if (x_is_normalized) {
           if (x == 0) {
@@ -396,7 +396,7 @@ scribe_axis_line <- function(
             theme_name <- "axis.line.y.right"
           }
         }
-      } else if (!rlang::is_null(y)) {
+      } else if (!is.null(y)) {
         # Horizontal line - check if it's at top or bottom edge
         if (y_is_normalized) {
           if (y == 0) {
@@ -418,7 +418,7 @@ scribe_axis_line <- function(
     }
     
     # Apply theme modification if we have a theme element to modify
-    if (!rlang::is_null(theme_name)) {
+    if (!is.null(theme_name)) {
       theme_mod <- list()
       if (theme == "transparent") {
         theme_mod[[theme_name]] <- ggplot2::element_line(colour = "transparent")
@@ -465,16 +465,16 @@ scribe_axis_ticks <- function(
     theme = "keep"
 ) {
   # Determine position from x/y if not specified
-  if (rlang::is_null(position)) {
-    if (!rlang::is_null(x) && !rlang::is_null(y)) {
-      rlang::abort("Cannot specify both x and y. Use either x for top/bottom positions or y for left/right positions.")
+  if (is.null(position)) {
+    if (!is.null(x) && !is.null(y)) {
+      stop("Cannot specify both x and y. Use either x for top/bottom positions or y for left/right positions.")
     }
-    if (!rlang::is_null(x)) {
+    if (!is.null(x)) {
       position <- "bottom"
-    } else if (!rlang::is_null(y)) {
+    } else if (!is.null(y)) {
       position <- "left"
     } else {
-      rlang::abort("Must specify either position, x, or y")
+      stop("Must specify either position, x, or y")
     }
   }
   
@@ -482,42 +482,42 @@ scribe_axis_ticks <- function(
   position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
   
   # Check if values are wrapped in I() to determine coordinate type
-  x_is_normalized <- !rlang::is_null(x) && inherits(x, "AsIs")
-  y_is_normalized <- !rlang::is_null(y) && inherits(y, "AsIs")
+  x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
+  y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
   
   # Unwrap I() values
   if (x_is_normalized) {
     x <- unclass(x)
     if (any(x < 0 | x > 1)) {
-      rlang::abort("Normalized x coordinates (specified with I()) must be between 0 and 1")
+      stop("Normalized x coordinates (specified with I()) must be between 0 and 1")
     }
   }
   if (y_is_normalized) {
     y <- unclass(y)
     if (any(y < 0 | y > 1)) {
-      rlang::abort("Normalized y coordinates (specified with I()) must be between 0 and 1")
+      stop("Normalized y coordinates (specified with I()) must be between 0 and 1")
     }
   }
   
   # Determine axis from x/y and whether using normalized coordinates
-  axis <- if (!rlang::is_null(x)) "x" else "y"
+  axis <- if (!is.null(x)) "x" else "y"
   use_normalized <- if (axis == "x") x_is_normalized else y_is_normalized
   
   # Validate x/y based on position
   if (position %in% c("top", "bottom")) {
-    if (!rlang::is_null(y)) {
-      rlang::abort("For top or bottom positions, only x can be specified, not y")
+    if (!is.null(y)) {
+      stop("For top or bottom positions, only x can be specified, not y")
     }
-    if (rlang::is_null(x)) {
-      rlang::abort("For top or bottom positions, x must be specified")
+    if (is.null(x)) {
+      stop("For top or bottom positions, x must be specified")
     }
     use_normalized <- x_is_normalized
   } else {
-    if (!rlang::is_null(x)) {
-      rlang::abort("For left or right positions, only y can be specified, not x")
+    if (!is.null(x)) {
+      stop("For left or right positions, only y can be specified, not x")
     }
-    if (rlang::is_null(y)) {
-      rlang::abort("For left or right positions, y must be specified")
+    if (is.null(y)) {
+      stop("For left or right positions, y must be specified")
     }
     use_normalized <- y_is_normalized
   }
@@ -528,7 +528,7 @@ scribe_axis_ticks <- function(
   axis <- if (position %in% c("top", "bottom")) "x" else "y"
   
   # Get breaks
-  breaks <- if (!rlang::is_null(x)) x else y
+  breaks <- if (!is.null(x)) x else y
   
   # Check for empty breaks
   if (length(breaks) == 0) {
@@ -556,13 +556,13 @@ scribe_axis_ticks <- function(
   resolved_tick_element <- NULL
   for (element_name in tick_hierarchy) {
     element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+    if (!is.null(element) && !inherits(element, "element_blank")) {
       resolved_tick_element <- element
       break
     }
   }
   
-  if (rlang::is_null(resolved_tick_element)) {
+  if (is.null(resolved_tick_element)) {
     resolved_tick_element <- list(colour = "black", linewidth = 0.5)
   }
   
@@ -587,20 +587,20 @@ scribe_axis_ticks <- function(
   resolved_length_element <- NULL
   for (element_name in length_hierarchy) {
     element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+    if (!is.null(element) && !inherits(element, "element_blank")) {
       resolved_length_element <- element
       break
     }
   }
   
   # Extract theme properties
-  tick_colour <- if (rlang::is_null(colour)) {
+  tick_colour <- if (is.null(colour)) {
     resolved_tick_element$colour %||% "black"
   } else {
     colour
   }
   
-  if (rlang::is_null(linewidth)) {
+  if (is.null(linewidth)) {
     tick_linewidth <- resolved_tick_element$linewidth %||% 0.5
   } else {
     if (inherits(linewidth, "rel")) {
@@ -618,17 +618,17 @@ scribe_axis_ticks <- function(
       for (element_name in length_hierarchy) {
         if (grepl("minor", element_name)) {
           raw_element <- current_theme[[element_name]]
-          if (!rlang::is_null(raw_element) && inherits(raw_element, "rel")) {
+          if (!is.null(raw_element) && inherits(raw_element, "rel")) {
             raw_minor_length <- raw_element
             break
           }
         }
       }
       
-      if (!rlang::is_null(raw_minor_length)) {
+      if (!is.null(raw_minor_length)) {
         major_length <- ggplot2::calc_element("axis.ticks.length", current_theme, skip_blank = TRUE)
         
-        if (rlang::is_null(major_length)) {
+        if (is.null(major_length)) {
           spacing <- current_theme$spacing %||% grid::unit(5.5, "pt")
           if (inherits(spacing, "unit")) {
             major_tick_length_pts <- as.numeric(grid::convertUnit(spacing, "pt"))
@@ -647,7 +647,7 @@ scribe_axis_ticks <- function(
       } else {
         tick_length <- resolved_length_element
         
-        if (rlang::is_null(tick_length)) {
+        if (is.null(tick_length)) {
           text_size <- current_theme$text$size %||% 11
           return(grid::unit(0.375 * text_size, "pt"))
         } else if (!inherits(tick_length, "unit")) {
@@ -664,7 +664,7 @@ scribe_axis_ticks <- function(
     } else {
       tick_length <- resolved_length_element
       
-      if (rlang::is_null(tick_length)) {
+      if (is.null(tick_length)) {
         text_size <- current_theme$text$size %||% 11
         return(grid::unit(0.5 * text_size, "pt"))
       } else if (inherits(tick_length, "rel")) {
@@ -692,7 +692,7 @@ scribe_axis_ticks <- function(
   flip_direction <- FALSE
   
   # Handle length
-  if (rlang::is_null(length)) {
+  if (is.null(length)) {
     tick_length <- calculate_default_length()
   } else {
     if (inherits(length, "rel")) {
@@ -946,17 +946,17 @@ scribe_axis_text <- function(
     theme = "keep"
 ) {
   # Check if both x and y are provided (arbitrary positioning mode)
-  arbitrary_position <- !rlang::is_null(x) && !rlang::is_null(y)
+  arbitrary_position <- !is.null(x) && !is.null(y)
   
   # Determine position from x/y if not specified
   if (!arbitrary_position) {
-    if (rlang::is_null(position)) {
-      if (!rlang::is_null(x)) {
+    if (is.null(position)) {
+      if (!is.null(x)) {
         position <- "bottom"
-      } else if (!rlang::is_null(y)) {
+      } else if (!is.null(y)) {
         position <- "left"
       } else {
-        rlang::abort("Must specify either position, x, y, or both x and y")
+        stop("Must specify either position, x, y, or both x and y")
       }
     }
     # Validate position for axis mode
@@ -964,27 +964,27 @@ scribe_axis_text <- function(
   }
   
   # Check if values are wrapped in I() to determine coordinate type
-  x_is_normalized <- !rlang::is_null(x) && inherits(x, "AsIs")
-  y_is_normalized <- !rlang::is_null(y) && inherits(y, "AsIs")
+  x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
+  y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
   
   # Unwrap I() values
   if (x_is_normalized) {
     x <- unclass(x)
     if (any(x < 0 | x > 1)) {
-      rlang::abort("Normalized x coordinates (specified with I()) must be between 0 and 1")
+      stop("Normalized x coordinates (specified with I()) must be between 0 and 1")
     }
   }
   if (y_is_normalized) {
     y <- unclass(y)
     if (any(y < 0 | y > 1)) {
-      rlang::abort("Normalized y coordinates (specified with I()) must be between 0 and 1")
+      stop("Normalized y coordinates (specified with I()) must be between 0 and 1")
     }
   }
   
   if (arbitrary_position) {
     # Validate that x and y have same length
     if (length(x) != length(y)) {
-      rlang::abort("x and y must have the same length when both are specified")
+      stop("x and y must have the same length when both are specified")
     }
     use_normalized <- x_is_normalized || y_is_normalized
     axis <- "x" # Default to x-axis styling when arbitrary positioning
@@ -992,24 +992,24 @@ scribe_axis_text <- function(
   } else {
     # Original validation for axis mode
     if (position %in% c("top", "bottom")) {
-      if (!rlang::is_null(y)) {
-        rlang::abort("For top or bottom positions, only x can be specified, not y")
+      if (!is.null(y)) {
+        stop("For top or bottom positions, only x can be specified, not y")
       }
-      if (rlang::is_null(x)) {
-        rlang::abort("For top or bottom positions, x must be specified")
+      if (is.null(x)) {
+        stop("For top or bottom positions, x must be specified")
       }
       use_normalized <- x_is_normalized
     } else {  # left or right
-      if (!rlang::is_null(x)) {
-        rlang::abort("For left or right positions, only y can be specified, not x")
+      if (!is.null(x)) {
+        stop("For left or right positions, only y can be specified, not x")
       }
-      if (rlang::is_null(y)) {
-        rlang::abort("For left or right positions, y must be specified")
+      if (is.null(y)) {
+        stop("For left or right positions, y must be specified")
       }
       use_normalized <- y_is_normalized
     }
     axis <- if (position %in% c("top", "bottom")) "x" else "y"
-    breaks <- if (!rlang::is_null(x)) x else y
+    breaks <- if (!is.null(x)) x else y
   }
   
   theme <- rlang::arg_match(theme, c("keep", "transparent", "blank"))
@@ -1024,7 +1024,7 @@ scribe_axis_text <- function(
   }
   
   # Process labels
-  if (rlang::is_null(label)) {
+  if (is.null(label)) {
     if (use_normalized) {
       if (arbitrary_position) {
         labels <- paste0("(", breaks$x, ", ", breaks$y, ")")
@@ -1082,7 +1082,7 @@ scribe_axis_text <- function(
   
   # Ensure labels match breaks length
   if (length(labels) != n_breaks) {
-    rlang::abort("Length of labels must match length of breaks")
+    stop("Length of labels must match length of breaks")
   }
   
   # Build hierarchy for axis text from most specific to least specific
@@ -1100,14 +1100,14 @@ scribe_axis_text <- function(
   resolved_text_element <- NULL
   for (element_name in text_hierarchy) {
     element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+    if (!is.null(element) && !inherits(element, "element_blank")) {
       resolved_text_element <- element
       break
     }
   }
   
   # If still no element found, create a minimal fallback
-  if (rlang::is_null(resolved_text_element)) {
+  if (is.null(resolved_text_element)) {
     resolved_text_element <- ggplot2::element_text(
       colour = "black",
       size = 11,
@@ -1137,7 +1137,7 @@ scribe_axis_text <- function(
       resolved_length_element <- NULL
       for (element_name in length_hierarchy) {
         element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-        if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+        if (!is.null(element) && !inherits(element, "element_blank")) {
           resolved_length_element <- element
           break
         }
@@ -1145,7 +1145,7 @@ scribe_axis_text <- function(
       
       tick_length <- resolved_length_element
       
-      if (rlang::is_null(tick_length)) {
+      if (is.null(tick_length)) {
         text_size <- current_theme$text$size %||% 11
         return(grid::unit(0.5 * text_size, "pt"))
       } else if (inherits(tick_length, "rel")) {
@@ -1169,7 +1169,7 @@ scribe_axis_text <- function(
     }
     
     # Calculate tick length
-    if (rlang::is_null(length)) {
+    if (is.null(length)) {
       tick_length <- calculate_default_tick_length()
     } else {
       if (inherits(length, "rel")) {
@@ -1199,7 +1199,7 @@ scribe_axis_text <- function(
     text_margin <- resolved_text_element$margin
     margin_unit <- grid::unit(2, "pt")  # Default fallback
     
-    if (!rlang::is_null(text_margin)) {
+    if (!is.null(text_margin)) {
       margin_index <- if (position == "bottom") {
         1  # top margin
       } else if (position == "top") {
@@ -1227,10 +1227,10 @@ scribe_axis_text <- function(
   
   # Set hjust and vjust based on position or use defaults for arbitrary
   if (arbitrary_position) {
-    if (rlang::is_null(hjust)) hjust <- 0.5
-    if (rlang::is_null(vjust)) vjust <- 0.5
+    if (is.null(hjust)) hjust <- 0.5
+    if (is.null(vjust)) vjust <- 0.5
   } else {
-    if (rlang::is_null(hjust)) {
+    if (is.null(hjust)) {
       hjust <- if (position %in% c("top", "bottom")) {
         0.5
       } else if (position == "left") {
@@ -1240,7 +1240,7 @@ scribe_axis_text <- function(
       }
     }
     
-    if (rlang::is_null(vjust)) {
+    if (is.null(vjust)) {
       vjust <- if (position == "bottom") {
         if (flip_direction) 0 else 1  # Flip vjust when flipping direction
       } else if (position == "top") {

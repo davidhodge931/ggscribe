@@ -32,11 +32,11 @@ scribe_panel_grid <- function(
     theme = "keep"
 ) {
   # Validate arguments
-  if (rlang::is_null(x) && rlang::is_null(y)) {
+  if (is.null(x) && is.null(y)) {
     rlang::abort("Either x or y must be specified")
   }
   
-  if (!rlang::is_null(x) && !rlang::is_null(y)) {
+  if (!is.null(x) && !is.null(y)) {
     rlang::abort("Only one of x or y can be specified")
   }
   
@@ -47,12 +47,12 @@ scribe_panel_grid <- function(
   }
   
   # Check if values are wrapped in I() to determine coordinate type
-  x_is_normalized <- !rlang::is_null(x) && inherits(x, "AsIs")
-  y_is_normalized <- !rlang::is_null(y) && inherits(y, "AsIs")
-  xmin_is_normalized <- !rlang::is_null(xmin) && inherits(xmin, "AsIs")
-  xmax_is_normalized <- !rlang::is_null(xmax) && inherits(xmax, "AsIs")
-  ymin_is_normalized <- !rlang::is_null(ymin) && inherits(ymin, "AsIs")
-  ymax_is_normalized <- !rlang::is_null(ymax) && inherits(ymax, "AsIs")
+  x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
+  y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
+  xmin_is_normalized <- !is.null(xmin) && inherits(xmin, "AsIs")
+  xmax_is_normalized <- !is.null(xmax) && inherits(xmax, "AsIs")
+  ymin_is_normalized <- !is.null(ymin) && inherits(ymin, "AsIs")
+  ymax_is_normalized <- !is.null(ymax) && inherits(ymax, "AsIs")
   
   # Unwrap I() values
   if (x_is_normalized) {
@@ -93,7 +93,7 @@ scribe_panel_grid <- function(
   }
   
   # Determine axis from x/y
-  axis <- if (!rlang::is_null(x)) "x" else "y"
+  axis <- if (!is.null(x)) "x" else "y"
   
   # Determine coordinate systems for breaks and limits separately
   breaks_normalized <- if (axis == "x") x_is_normalized else y_is_normalized
@@ -104,7 +104,7 @@ scribe_panel_grid <- function(
   }
   
   # Get breaks
-  breaks <- if (!rlang::is_null(x)) x else y
+  breaks <- if (!is.null(x)) x else y
   
   # Check for empty breaks
   if (length(breaks) == 0) {
@@ -142,10 +142,10 @@ scribe_panel_grid <- function(
   # Find the first non-blank resolved grid element
   resolved_grid_element <- grid_hierarchy |>
     purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
-    purrr::detect(\(x) !rlang::is_null(x) && !inherits(x, "element_blank"))
+    purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
   
   # If still no element found, create a minimal fallback
-  if (rlang::is_null(resolved_grid_element)) {
+  if (is.null(resolved_grid_element)) {
     if (minor) {
       # Lighter defaults for minor grid
       resolved_grid_element <- list(
@@ -168,7 +168,7 @@ scribe_panel_grid <- function(
     (if (minor) "grey95" else "grey90")
   
   # Handle linewidth with proper rel() support
-  if (rlang::is_null(linewidth)) {
+  if (is.null(linewidth)) {
     grid_linewidth <- resolved_grid_element$linewidth %||%
       (if (minor) 0.25 else 0.5)
   } else {
@@ -223,8 +223,8 @@ scribe_panel_grid <- function(
       purrr::map(\(break_val) {
         if (axis == "x") {
           # Vertical grid line at normalized x position
-          y_start <- if (!rlang::is_null(ymin)) ymin else 0
-          y_end <- if (!rlang::is_null(ymax)) ymax else 1
+          y_start <- if (!is.null(ymin)) ymin else 0
+          y_end <- if (!is.null(ymax)) ymax else 1
           
           grid_grob <- grid::linesGrob(
             x = grid::unit(c(break_val, break_val), "npc"),
@@ -238,8 +238,8 @@ scribe_panel_grid <- function(
           )
         } else {  # y axis
           # Horizontal grid line at normalized y position
-          x_start <- if (!rlang::is_null(xmin)) xmin else 0
-          x_end <- if (!rlang::is_null(xmax)) xmax else 1
+          x_start <- if (!is.null(xmin)) xmin else 0
+          x_end <- if (!is.null(xmax)) xmax else 1
           
           grid_grob <- grid::linesGrob(
             x = grid::unit(c(x_start, x_end), "npc"),
@@ -267,8 +267,8 @@ scribe_panel_grid <- function(
       purrr::map(\(break_val) {
         if (axis == "x") {
           # Vertical grid line at data x position with normalized y limits
-          y_start <- if (!rlang::is_null(ymin)) ymin else 0
-          y_end <- if (!rlang::is_null(ymax)) ymax else 1
+          y_start <- if (!is.null(ymin)) ymin else 0
+          y_end <- if (!is.null(ymax)) ymax else 1
           
           grid_grob <- grid::linesGrob(
             x = grid::unit(c(0.5, 0.5), "npc"),
@@ -287,8 +287,8 @@ scribe_panel_grid <- function(
           )
         } else {  # y axis
           # Horizontal grid line at data y position with normalized x limits
-          x_start <- if (!rlang::is_null(xmin)) xmin else 0
-          x_end <- if (!rlang::is_null(xmax)) xmax else 1
+          x_start <- if (!is.null(xmin)) xmin else 0
+          x_end <- if (!is.null(xmax)) xmax else 1
           
           grid_grob <- grid::linesGrob(
             x = grid::unit(c(x_start, x_end), "npc"),
@@ -354,8 +354,8 @@ scribe_panel_grid <- function(
     if (axis == "x") {
       # Add vertical grid lines
       # Use provided ymin/ymax or default to -Inf/Inf
-      y_start <- if (!rlang::is_null(ymin)) ymin else -Inf
-      y_end <- if (!rlang::is_null(ymax)) ymax else Inf
+      y_start <- if (!is.null(ymin)) ymin else -Inf
+      y_end <- if (!is.null(ymax)) ymax else Inf
       
       stamp <- c(
         stamp,
@@ -376,8 +376,8 @@ scribe_panel_grid <- function(
     } else {  # y axis
       # Add horizontal grid lines
       # Use provided xmin/xmax or default to -Inf/Inf
-      x_start <- if (!rlang::is_null(xmin)) xmin else -Inf
-      x_end <- if (!rlang::is_null(xmax)) xmax else Inf
+      x_start <- if (!is.null(xmin)) xmin else -Inf
+      x_end <- if (!is.null(xmax)) xmax else Inf
       
       stamp <- c(
         stamp,

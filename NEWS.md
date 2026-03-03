@@ -1,3 +1,3 @@
-# ggscribe (0.0.1)
+# ggscribe 0.1.0
 
-* Initial release.
+* Initial CRAN release.

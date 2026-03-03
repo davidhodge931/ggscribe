@@ -27,7 +27,7 @@ scribe_text <- function(
     angle = 0
 ) {
   # Validate required arguments
-  if (rlang::is_null(x) || rlang::is_null(y) || rlang::is_null(label)) {
+  if (is.null(x) || is.null(y) || is.null(label)) {
     rlang::abort("x, y, and label must all be specified")
   }
 
@@ -38,13 +38,13 @@ scribe_text <- function(
   resolved_text_element <- NULL
   for (element_name in text_hierarchy) {
     element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+    if (!is.null(element) && !inherits(element, "element_blank")) {
       resolved_text_element <- element
       break
     }
   }
 
-  if (rlang::is_null(resolved_text_element)) {
+  if (is.null(resolved_text_element)) {
     resolved_text_element <- list(colour = "black", size = 11, family = "")
   }
 
@@ -94,7 +94,7 @@ scribe_segment <- function(
     linetype = NULL
 ) {
   # Validate required arguments
-  if (rlang::is_null(x) || rlang::is_null(y) || rlang::is_null(xend) || rlang::is_null(yend)) {
+  if (is.null(x) || is.null(y) || is.null(xend) || is.null(yend)) {
     rlang::abort("x, y, xend, and yend must all be specified")
   }
 
@@ -105,13 +105,13 @@ scribe_segment <- function(
   resolved_line_element <- NULL
   for (element_name in line_hierarchy) {
     element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+    if (!is.null(element) && !inherits(element, "element_blank")) {
       resolved_line_element <- element
       break
     }
   }
 
-  if (rlang::is_null(resolved_line_element)) {
+  if (is.null(resolved_line_element)) {
     resolved_line_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
@@ -165,7 +165,7 @@ scribe_curve <- function(
     linetype = NULL
 ) {
   # Validate required arguments
-  if (rlang::is_null(x) || rlang::is_null(y) || rlang::is_null(xend) || rlang::is_null(yend)) {
+  if (is.null(x) || is.null(y) || is.null(xend) || is.null(yend)) {
     rlang::abort("x, y, xend, and yend must all be specified")
   }
 
@@ -176,13 +176,13 @@ scribe_curve <- function(
   resolved_line_element <- NULL
   for (element_name in line_hierarchy) {
     element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!rlang::is_null(element) && !inherits(element, "element_blank")) {
+    if (!is.null(element) && !inherits(element, "element_blank")) {
       resolved_line_element <- element
       break
     }
   }
 
-  if (rlang::is_null(resolved_line_element)) {
+  if (is.null(resolved_line_element)) {
     resolved_line_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
