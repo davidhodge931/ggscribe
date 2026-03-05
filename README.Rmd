@@ -24,11 +24,11 @@ This includes functions to annotate components of the set theme, and functions t
 
 ## Installation
 
-You can install the development version of ggscribe from [GitHub](https://github.com/) with:
+Install from CRAN, or development version from [GitHub](https://github.com/).
 
-``` r
-# install.packages("pak")
-pak::pak("davidhodge931/ggscribe")
+```r
+install.packages("ggscribe") 
+pak::pak("davidhodge931/ggscsribe")
 ```
 
 ## Example
