@@ -8,12 +8,12 @@ functions to annotate that use set theme defaults.
 
 ## Installation
 
-You can install the development version of ggscribe from
-[GitHub](https://github.com/) with:
+Install from CRAN, or development version from
+[GitHub](https://github.com/).
 
 ``` r
-# install.packages("pak")
-pak::pak("davidhodge931/ggscribe")
+install.packages("ggscribe") 
+pak::pak("davidhodge931/ggscsribe")
 ```
 
 ## Example
