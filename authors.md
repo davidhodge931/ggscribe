@@ -9,11 +9,11 @@
 Source:
 [`DESCRIPTION`](https://github.com/davidhodge931/ggscribe/blob/main/DESCRIPTION)
 
-Last F (2026). *ggscribe: Annotate 'ggplot2' Visualisation*. R package
+Last F (2026). *ggscribe: Annotate 'ggplot2' Theme Elements*. R package
 version 0.0.0900, <https://github.com/davidhodge931/ggscribe>.
 
     @Manual{,
-      title = {ggscribe: Annotate 'ggplot2' Visualisation},
+      title = {ggscribe: Annotate 'ggplot2' Theme Elements},
       author = {First Last},
       year = {2026},
       note = {R package version 0.0.0900},

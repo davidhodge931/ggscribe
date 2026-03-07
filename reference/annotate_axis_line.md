@@ -140,11 +140,11 @@ p <- ggplot(mtcars, aes(wt, mpg)) +
   coord_cartesian(clip = "off")
 
 # Replace the bottom axis line
-p + annotate_axis_line(position = "bottom", element_to = "blank")
+p + annotate_axis_line(position = "bottom", element_to = "transparent")
 
 
 # Partial bottom axis between x = 2 and x = 4
-p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "blank")
+p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "transparent")
 
 
 # Vertical rule at x = 3.5
