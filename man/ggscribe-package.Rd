@@ -4,11 +4,11 @@
 \name{ggscribe-package}
 \alias{ggscribe}
 \alias{ggscribe-package}
-\title{ggscribe: Annotate 'ggplot2' Visualisation}
+\title{ggscribe: Annotate 'ggplot2' Theme Elements}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Annotate 'ggplot2' visualisation using the set theme. This includes functions to annotate components of the set theme, and functions to annotate that use set theme defaults.
+Provides annotation functions that replicate and extend 'ggplot2' theme elements, inheriting style defaults from the globally set theme. Covers axis lines, axis ticks, axis text, panel grid lines, and shaded regions, with support for both data and normalised coordinates.
 }
 \seealso{
 Useful links:

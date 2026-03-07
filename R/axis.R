@@ -58,10 +58,10 @@
 #'   coord_cartesian(clip = "off")
 #'
 #' # Replace the bottom axis line
-#' p + annotate_axis_line(position = "bottom", element_to = "blank")
+#' p + annotate_axis_line(position = "bottom", element_to = "transparent")
 #'
 #' # Partial bottom axis between x = 2 and x = 4
-#' p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "blank")
+#' p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "transparent")
 #'
 #' # Vertical rule at x = 3.5
 #' p + annotate_axis_line(x = 3.5)
@@ -100,14 +100,21 @@ annotate_axis_line <- function(
   if (segment_mode) {
     current_theme <- ggplot2::theme_get()
 
-    resolved_element <- c("axis.line.x", "axis.line") |>
-      purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)) |>
-      purrr::detect(\(el) !is.null(el) && !inherits(el, "element_blank"))
+    theme_element_blank <- c("axis.line.x", "axis.line") |>
+      purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)) |>
+      purrr::detect(\(el) !is.null(el))
+    axis_line_intentionally_blank <- is.null(theme_element_blank) || inherits(theme_element_blank, "element_blank")
 
-    if (is.null(resolved_element)) {
-      resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
+    resolved_element <- if (axis_line_intentionally_blank) NULL else {
+      c("axis.line.x", "axis.line") |>
+        purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)) |>
+        purrr::detect(\(el) !is.null(el) && !inherits(el, "element_blank"))
     }
 
+    if (is.null(colour)    && (axis_line_intentionally_blank || is.null(resolved_element$colour)))    rlang::warn("The set theme does not define an `axis.line` colour. Defaulting to \"black\".")
+    if (is.null(linewidth) && (axis_line_intentionally_blank || is.null(resolved_element$linewidth))) rlang::warn("The set theme does not define an `axis.line` linewidth. Defaulting to `0.5`.")
+
+    if (is.null(resolved_element)) resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
     line_colour <- colour %||% resolved_element$colour %||% "black"
 
     line_linewidth <- if (is.null(linewidth)) {
@@ -208,14 +215,21 @@ annotate_axis_line <- function(
     c(paste0("axis.line.", axis, ".", position), paste0("axis.line.", axis), "axis.line")
   }
 
-  resolved_element <- element_hierarchy |>
-    purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
-    purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
+  theme_element_blank <- element_hierarchy |>
+    purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = FALSE)) |>
+    purrr::detect(\(x) !is.null(x))
+  axis_line_intentionally_blank <- is.null(theme_element_blank) || inherits(theme_element_blank, "element_blank")
 
-  if (is.null(resolved_element)) {
-    resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
+  resolved_element <- if (axis_line_intentionally_blank) NULL else {
+    element_hierarchy |>
+      purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
+      purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
   }
 
+  if (is.null(colour)    && (axis_line_intentionally_blank || is.null(resolved_element$colour)))    rlang::warn("The set theme does not define an `axis.line` colour. Defaulting to \"black\".")
+  if (is.null(linewidth) && (axis_line_intentionally_blank || is.null(resolved_element$linewidth))) rlang::warn("The set theme does not define an `axis.line` linewidth. Defaulting to `0.5`.")
+
+  if (is.null(resolved_element)) resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   line_colour <- colour %||% resolved_element$colour %||% "black"
 
   line_linewidth <- if (is.null(linewidth)) {
@@ -352,7 +366,7 @@ annotate_axis_line <- function(
 #' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
 #'
 #' # Left ticks with native ticks suppressed
-#' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "blank")
+#' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
 #'
 #' # Inward ticks using a negative length
 #' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), length = grid::unit(-5, "pt"))
@@ -434,13 +448,21 @@ annotate_axis_ticks <- function(
   }
 
   resolved_tick_element <- NULL
+  tick_intentionally_blank <- FALSE
   for (nm in tick_hierarchy) {
-    el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
-    if (!is.null(el) && !inherits(el, "element_blank")) { resolved_tick_element <- el; break }
+    el_raw <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
+    if (!is.null(el_raw)) {
+      if (inherits(el_raw, "element_blank")) { tick_intentionally_blank <- TRUE; break }
+      el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_tick_element <- el; break }
+    }
   }
-  if (is.null(resolved_tick_element)) resolved_tick_element <- list(colour = "black", linewidth = 0.5)
 
-  # ---- Resolve length -------------------------------------------------------
+  if (is.null(colour)    && (tick_intentionally_blank || is.null(resolved_tick_element$colour)))    rlang::warn("The set theme does not define an `axis.ticks` colour. Defaulting to \"black\".")
+  if (is.null(linewidth) && (tick_intentionally_blank || is.null(resolved_tick_element$linewidth))) rlang::warn("The set theme does not define an `axis.ticks` linewidth. Defaulting to `0.5`.")
+
+  if (is.null(resolved_tick_element)) resolved_tick_element <- list(colour = "black", linewidth = 0.5)
+  tick_colour <- colour %||% resolved_tick_element$colour %||% "black"
 
   length_hierarchy <- if (minor) {
     c(

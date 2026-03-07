@@ -62,7 +62,7 @@ p <- ggplot(mtcars, aes(wt, mpg)) +
 p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
 
 # Left ticks with native ticks suppressed
-p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "blank")
+p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
 
 # Inward ticks using a negative length
 p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), length = grid::unit(-5, "pt"))

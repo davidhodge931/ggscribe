@@ -1,9 +1,12 @@
 Package: ggscribe
-Title: Annotate 'ggplot2' Visualisation
+Title: Annotate 'ggplot2' Theme Elements
 Version: 0.0.0900
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: Annotate 'ggplot2' visualisation using the set theme. This includes functions to annotate components of the set theme, and functions to annotate that use set theme defaults. 
+Description: Provides annotation functions that replicate and extend 'ggplot2' theme
+    elements, inheriting style defaults from the globally set theme. Covers
+    axis lines, axis ticks, axis text, panel grid lines, and shaded regions,
+    with support for both data and normalised coordinates.
 License: MIT + file LICENSE
 URL: https://github.com/davidhodge931/ggscribe, https://davidhodge931.github.io/ggscribe/
 BugReports: https://github.com/davidhodge931/ggscribe/issues
