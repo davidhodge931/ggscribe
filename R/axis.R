@@ -96,15 +96,19 @@ annotate_axis_line <- function(
   if (segment_mode) {
     current_theme <- ggplot2::theme_get()
 
-    theme_element_blank <- c("axis.line.x", "axis.line") |>
-      purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)) |>
-      purrr::detect(\(el) !is.null(el))
+    theme_element_blank <- NULL
+    for (nm in c("axis.line.x", "axis.line")) {
+      el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
+      if (!is.null(el)) { theme_element_blank <- el; break }
+    }
     axis_line_intentionally_blank <- is.null(theme_element_blank) || inherits(theme_element_blank, "element_blank")
 
-    resolved_element <- if (axis_line_intentionally_blank) NULL else {
-      c("axis.line.x", "axis.line") |>
-        purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)) |>
-        purrr::detect(\(el) !is.null(el) && !inherits(el, "element_blank"))
+    resolved_element <- NULL
+    if (!axis_line_intentionally_blank) {
+      for (nm in c("axis.line.x", "axis.line")) {
+        el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+        if (!is.null(el) && !inherits(el, "element_blank")) { resolved_element <- el; break }
+      }
     }
 
     if (is.null(colour)    && (axis_line_intentionally_blank || is.null(resolved_element$colour)))    rlang::warn("The set theme does not define an `axis.line` colour. Defaulting to \"black\".")
@@ -214,15 +218,19 @@ annotate_axis_line <- function(
     c(paste0("axis.line.", axis, ".", position), paste0("axis.line.", axis), "axis.line")
   }
 
-  theme_element_blank <- element_hierarchy |>
-    purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = FALSE)) |>
-    purrr::detect(\(x) !is.null(x))
+  theme_element_blank <- NULL
+  for (nm in element_hierarchy) {
+    el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
+    if (!is.null(el)) { theme_element_blank <- el; break }
+  }
   axis_line_intentionally_blank <- is.null(theme_element_blank) || inherits(theme_element_blank, "element_blank")
 
-  resolved_element <- if (axis_line_intentionally_blank) NULL else {
-    element_hierarchy |>
-      purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
-      purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
+  resolved_element <- NULL
+  if (!axis_line_intentionally_blank) {
+    for (nm in element_hierarchy) {
+      el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_element <- el; break }
+    }
   }
 
   if (is.null(colour)    && (axis_line_intentionally_blank || is.null(resolved_element$colour)))    rlang::warn("The set theme does not define an `axis.line` colour. Defaulting to \"black\".")
@@ -254,7 +262,7 @@ annotate_axis_line <- function(
         line_grob <- grid::linesGrob(
           x  = grid::unit(c(x, x),       "npc"),
           y  = grid::unit(c(ymin, ymax), "npc"),
-          gp = grid::gpar(col = line_colour, lwd = line_linewidth * 72 / 25.4, lty = line_linetype, lineend = "butt")
+          gp = ggplot2::gg_par(col = line_colour, stroke = line_linewidth, lty = line_linetype, lineend = "butt")
         )
         stamp <- c(stamp, list(ggplot2::annotation_custom(line_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)))
       } else {
@@ -269,7 +277,7 @@ annotate_axis_line <- function(
         line_grob <- grid::linesGrob(
           x  = grid::unit(c(xmin, xmax), "npc"),
           y  = grid::unit(c(y, y),       "npc"),
-          gp = grid::gpar(col = line_colour, lwd = line_linewidth * 72 / 25.4, lty = line_linetype, lineend = "butt")
+          gp = ggplot2::gg_par(col = line_colour, stroke = line_linewidth, lty = line_linetype, lineend = "butt")
         )
         stamp <- c(stamp, list(ggplot2::annotation_custom(line_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)))
       } else {
@@ -547,44 +555,43 @@ annotate_axis_ticks <- function(
 
   # ---- Build tick annotations -----------------------------------------------
 
-  tick_annotations <- breaks |>
-    purrr::map(\(break_val) {
-      gp <- grid::gpar(col = tick_colour, lwd = tick_linewidth * 72 / 25.4, lineend = "butt")
+  tick_annotations <- lapply(breaks, \(break_val) {
+    gp <- ggplot2::gg_par(col = tick_colour, stroke = tick_linewidth, lineend = "butt")
 
-      tick_grob <- if (use_normalized) {
-        if (position == "bottom") {
-          grid::segmentsGrob(x0 = grid::unit(break_val, "npc"), x1 = grid::unit(break_val, "npc"), y0 = grid::unit(0, "npc"), y1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, gp = gp)
-        } else if (position == "top") {
-          grid::segmentsGrob(x0 = grid::unit(break_val, "npc"), x1 = grid::unit(break_val, "npc"), y0 = grid::unit(1, "npc"), y1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, gp = gp)
-        } else if (position == "left") {
-          grid::segmentsGrob(x0 = grid::unit(0, "npc"), x1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, y0 = grid::unit(break_val, "npc"), y1 = grid::unit(break_val, "npc"), gp = gp)
-        } else {
-          grid::segmentsGrob(x0 = grid::unit(1, "npc"), x1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, y0 = grid::unit(break_val, "npc"), y1 = grid::unit(break_val, "npc"), gp = gp)
-        }
+    tick_grob <- if (use_normalized) {
+      if (position == "bottom") {
+        grid::segmentsGrob(x0 = grid::unit(break_val, "npc"), x1 = grid::unit(break_val, "npc"), y0 = grid::unit(0, "npc"), y1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, gp = gp)
+      } else if (position == "top") {
+        grid::segmentsGrob(x0 = grid::unit(break_val, "npc"), x1 = grid::unit(break_val, "npc"), y0 = grid::unit(1, "npc"), y1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, gp = gp)
+      } else if (position == "left") {
+        grid::segmentsGrob(x0 = grid::unit(0, "npc"), x1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, y0 = grid::unit(break_val, "npc"), y1 = grid::unit(break_val, "npc"), gp = gp)
       } else {
-        if (position == "bottom") {
-          grid::segmentsGrob(x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"), y0 = grid::unit(0, "npc"), y1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, gp = gp)
-        } else if (position == "top") {
-          grid::segmentsGrob(x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"), y0 = grid::unit(1, "npc"), y1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, gp = gp)
-        } else if (position == "left") {
-          grid::segmentsGrob(x0 = grid::unit(0, "npc"), x1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"), gp = gp)
-        } else {
-          grid::segmentsGrob(x0 = grid::unit(1, "npc"), x1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"), gp = gp)
-        }
+        grid::segmentsGrob(x0 = grid::unit(1, "npc"), x1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, y0 = grid::unit(break_val, "npc"), y1 = grid::unit(break_val, "npc"), gp = gp)
       }
-
-      annotation_position <- if (use_normalized) {
-        list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
-      } else if (axis == "x") {
-        if (position == "bottom") list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
-        else                      list(xmin = break_val, xmax = break_val, ymin =  Inf, ymax =  Inf)
+    } else {
+      if (position == "bottom") {
+        grid::segmentsGrob(x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"), y0 = grid::unit(0, "npc"), y1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, gp = gp)
+      } else if (position == "top") {
+        grid::segmentsGrob(x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"), y0 = grid::unit(1, "npc"), y1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, gp = gp)
+      } else if (position == "left") {
+        grid::segmentsGrob(x0 = grid::unit(0, "npc"), x1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"), gp = gp)
       } else {
-        if (position == "left")   list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
-        else                      list(xmin =  Inf, xmax =  Inf, ymin = break_val, ymax = break_val)
+        grid::segmentsGrob(x0 = grid::unit(1, "npc"), x1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"), gp = gp)
       }
+    }
 
-      rlang::exec(ggplot2::annotation_custom, grob = tick_grob, !!!annotation_position)
-    })
+    annotation_position <- if (use_normalized) {
+      list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+    } else if (axis == "x") {
+      if (position == "bottom") list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
+      else                      list(xmin = break_val, xmax = break_val, ymin =  Inf, ymax =  Inf)
+    } else {
+      if (position == "left")   list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
+      else                      list(xmin =  Inf, xmax =  Inf, ymin = break_val, ymax = break_val)
+    }
+
+    rlang::exec(ggplot2::annotation_custom, grob = tick_grob, !!!annotation_position)
+  })
 
   c(stamp, tick_annotations)
 }
@@ -861,54 +868,53 @@ annotate_axis_text <- function(
   }
 
   text_annotations <- if (arbitrary_position) {
-    seq_len(n_breaks) |>
-      purrr::map(\(i) {
-        if (use_normalized) {
-          text_grob <- grid::textGrob(labels[i], x = grid::unit(breaks$x[i], "npc"), y = grid::unit(breaks$y[i], "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
-        } else {
-          ggplot2::annotate("text", x = breaks$x[i], y = breaks$y[i], label = labels[i], colour = text_colour, size = text_size / ggplot2::.pt, family = text_family, hjust = hjust, vjust = vjust, angle = angle)
-        }
-      })
+    lapply(seq_len(n_breaks), \(i) {
+      if (use_normalized) {
+        text_grob <- grid::textGrob(labels[i], x = grid::unit(breaks$x[i], "npc"), y = grid::unit(breaks$y[i], "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      } else {
+        ggplot2::annotate("text", x = breaks$x[i], y = breaks$y[i], label = labels[i], colour = text_colour, size = text_size / ggplot2::.pt, family = text_family, hjust = hjust, vjust = vjust, angle = angle)
+      }
+    })
   } else {
-    breaks |>
-      purrr::imap(\(break_val, i) {
-        y_offset <- function(base, sign) if (sign > 0) grid::unit(base, "npc") + total_length else grid::unit(base, "npc") - total_length
-        x_offset <- function(base, sign) if (sign > 0) grid::unit(base, "npc") + total_length else grid::unit(base, "npc") - total_length
+    lapply(seq_along(breaks), \(i) {
+      break_val <- breaks[[i]]
+      y_offset <- function(base, sign) if (sign > 0) grid::unit(base, "npc") + total_length else grid::unit(base, "npc") - total_length
+      x_offset <- function(base, sign) if (sign > 0) grid::unit(base, "npc") + total_length else grid::unit(base, "npc") - total_length
 
-        if (use_normalized) {
-          text_grob <- if (position == "bottom") {
-            grid::textGrob(labels[i], x = grid::unit(break_val, "npc"), y = y_offset(0, if (flip_direction) 1 else -1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          } else if (position == "top") {
-            grid::textGrob(labels[i], x = grid::unit(break_val, "npc"), y = y_offset(1, if (flip_direction) -1 else 1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          } else if (position == "left") {
-            grid::textGrob(labels[i], x = x_offset(0, if (flip_direction) 1 else -1), y = grid::unit(break_val, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          } else {
-            grid::textGrob(labels[i], x = x_offset(1, if (flip_direction) -1 else 1), y = grid::unit(break_val, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          }
-          ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      if (use_normalized) {
+        text_grob <- if (position == "bottom") {
+          grid::textGrob(labels[i], x = grid::unit(break_val, "npc"), y = y_offset(0, if (flip_direction) 1 else -1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        } else if (position == "top") {
+          grid::textGrob(labels[i], x = grid::unit(break_val, "npc"), y = y_offset(1, if (flip_direction) -1 else 1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        } else if (position == "left") {
+          grid::textGrob(labels[i], x = x_offset(0, if (flip_direction) 1 else -1), y = grid::unit(break_val, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
         } else {
-          text_grob <- if (position == "bottom") {
-            grid::textGrob(labels[i], x = grid::unit(0.5, "npc"), y = y_offset(0, if (flip_direction) 1 else -1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          } else if (position == "top") {
-            grid::textGrob(labels[i], x = grid::unit(0.5, "npc"), y = y_offset(1, if (flip_direction) -1 else 1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          } else if (position == "left") {
-            grid::textGrob(labels[i], x = x_offset(0, if (flip_direction) 1 else -1), y = grid::unit(0.5, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          } else {
-            grid::textGrob(labels[i], x = x_offset(1, if (flip_direction) -1 else 1), y = grid::unit(0.5, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
-          }
-
-          annotation_position <- if (axis == "x") {
-            if (position == "bottom") list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
-            else                      list(xmin = break_val, xmax = break_val, ymin =  Inf, ymax =  Inf)
-          } else {
-            if (position == "left")   list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
-            else                      list(xmin =  Inf, xmax =  Inf, ymin = break_val, ymax = break_val)
-          }
-
-          rlang::exec(ggplot2::annotation_custom, grob = text_grob, !!!annotation_position)
+          grid::textGrob(labels[i], x = x_offset(1, if (flip_direction) -1 else 1), y = grid::unit(break_val, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
         }
-      })
+        ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      } else {
+        text_grob <- if (position == "bottom") {
+          grid::textGrob(labels[i], x = grid::unit(0.5, "npc"), y = y_offset(0, if (flip_direction) 1 else -1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        } else if (position == "top") {
+          grid::textGrob(labels[i], x = grid::unit(0.5, "npc"), y = y_offset(1, if (flip_direction) -1 else 1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        } else if (position == "left") {
+          grid::textGrob(labels[i], x = x_offset(0, if (flip_direction) 1 else -1), y = grid::unit(0.5, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        } else {
+          grid::textGrob(labels[i], x = x_offset(1, if (flip_direction) -1 else 1), y = grid::unit(0.5, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+        }
+
+        annotation_position <- if (axis == "x") {
+          if (position == "bottom") list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
+          else                      list(xmin = break_val, xmax = break_val, ymin =  Inf, ymax =  Inf)
+        } else {
+          if (position == "left")   list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
+          else                      list(xmin =  Inf, xmax =  Inf, ymin = break_val, ymax = break_val)
+        }
+
+        rlang::exec(ggplot2::annotation_custom, grob = text_grob, !!!annotation_position)
+      }
+    })
   }
 
   c(stamp, text_annotations)

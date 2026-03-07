@@ -1,8 +1,9 @@
 Package: ggscribe
 Title: Annotate 'ggplot2' Theme Elements
-Version: 0.0.0900
+Version: 0.0.0.900
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
+    person("David", "Hodge", , "davidhodge931@gmail.com", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-3868-7501"))
 Description: Provides annotation functions that replicate and extend 'ggplot2' theme
     elements, inheriting style defaults from the globally set theme. Covers
     axis lines, axis ticks, axis text, panel grid lines, and shaded regions,
@@ -13,10 +14,8 @@ BugReports: https://github.com/davidhodge931/ggscribe/issues
 Depends: 
     R (>= 4.1.0)
 Imports: 
-    farver,
-    flexoki,
     ggplot2 (>= 4.0.0),
-    purrr,
+    grid,
     rlang,
     scales
 Encoding: UTF-8

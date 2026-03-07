@@ -111,15 +111,19 @@ annotate_panel_grid <- function(
     c(paste0("panel.grid.major.", axis), "panel.grid.major", "panel.grid")
   }
 
-  grid_element_blank <- grid_hierarchy |>
-    purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)) |>
-    purrr::detect(\(el) !is.null(el))
+  grid_element_blank <- NULL
+  for (nm in grid_hierarchy) {
+    el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
+    if (!is.null(el)) { grid_element_blank <- el; break }
+  }
   grid_intentionally_blank <- is.null(grid_element_blank) || inherits(grid_element_blank, "element_blank")
 
-  resolved_grid_element <- if (grid_intentionally_blank) NULL else {
-    grid_hierarchy |>
-      purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)) |>
-      purrr::detect(\(el) !is.null(el) && !inherits(el, "element_blank"))
+  resolved_grid_element <- NULL
+  if (!grid_intentionally_blank) {
+    for (nm in grid_hierarchy) {
+      el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_grid_element <- el; break }
+    }
   }
 
   if (is.null(colour)    && (grid_intentionally_blank || is.null(resolved_grid_element$colour)))    rlang::warn("The set theme does not define a `panel.grid` colour. Defaulting to grey.")
@@ -161,44 +165,41 @@ annotate_panel_grid <- function(
   # ---- Build grid annotations -----------------------------------------------
 
   make_gpar <- function() {
-    grid::gpar(col = grid_colour, lwd = grid_linewidth * 72 / 25.4, lty = grid_linetype, lineend = "butt")
+    ggplot2::gg_par(col = grid_colour, stroke = grid_linewidth, lty = grid_linetype, lineend = "butt")
   }
 
   if (breaks_normalized && limits_normalized) {
-    grid_annotations <- breaks |>
-      purrr::map(\(break_val) {
-        grid_grob <- if (axis == "x") {
-          grid::linesGrob(x = grid::unit(c(break_val, break_val), "npc"), y = grid::unit(c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1), "npc"), gp = make_gpar())
-        } else {
-          grid::linesGrob(x = grid::unit(c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1), "npc"), y = grid::unit(c(break_val, break_val), "npc"), gp = make_gpar())
-        }
-        ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
-      })
+    grid_annotations <- lapply(breaks, \(break_val) {
+      grid_grob <- if (axis == "x") {
+        grid::linesGrob(x = grid::unit(c(break_val, break_val), "npc"), y = grid::unit(c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1), "npc"), gp = make_gpar())
+      } else {
+        grid::linesGrob(x = grid::unit(c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1), "npc"), y = grid::unit(c(break_val, break_val), "npc"), gp = make_gpar())
+      }
+      ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+    })
     stamp <- c(stamp, grid_annotations)
 
   } else if (!breaks_normalized && limits_normalized) {
-    grid_annotations <- breaks |>
-      purrr::map(\(break_val) {
-        if (axis == "x") {
-          grid_grob <- grid::linesGrob(x = grid::unit(c(0.5, 0.5), "npc"), y = grid::unit(c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1), "npc"), gp = make_gpar())
-          ggplot2::annotation_custom(grid_grob, xmin = break_val, xmax = break_val, ymin = -Inf, ymax = Inf)
-        } else {
-          grid_grob <- grid::linesGrob(x = grid::unit(c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1), "npc"), y = grid::unit(c(0.5, 0.5), "npc"), gp = make_gpar())
-          ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = break_val, ymax = break_val)
-        }
-      })
+    grid_annotations <- lapply(breaks, \(break_val) {
+      if (axis == "x") {
+        grid_grob <- grid::linesGrob(x = grid::unit(c(0.5, 0.5), "npc"), y = grid::unit(c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1), "npc"), gp = make_gpar())
+        ggplot2::annotation_custom(grid_grob, xmin = break_val, xmax = break_val, ymin = -Inf, ymax = Inf)
+      } else {
+        grid_grob <- grid::linesGrob(x = grid::unit(c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1), "npc"), y = grid::unit(c(0.5, 0.5), "npc"), gp = make_gpar())
+        ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = break_val, ymax = break_val)
+      }
+    })
     stamp <- c(stamp, grid_annotations)
 
   } else if (breaks_normalized && !limits_normalized) {
-    grid_annotations <- breaks |>
-      purrr::map(\(break_val) {
-        grid_grob <- if (axis == "x") {
-          grid::linesGrob(x = grid::unit(c(break_val, break_val), "npc"), y = grid::unit(c(0, 1), "npc"), gp = make_gpar())
-        } else {
-          grid::linesGrob(x = grid::unit(c(0, 1), "npc"), y = grid::unit(c(break_val, break_val), "npc"), gp = make_gpar())
-        }
-        ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
-      })
+    grid_annotations <- lapply(breaks, \(break_val) {
+      grid_grob <- if (axis == "x") {
+        grid::linesGrob(x = grid::unit(c(break_val, break_val), "npc"), y = grid::unit(c(0, 1), "npc"), gp = make_gpar())
+      } else {
+        grid::linesGrob(x = grid::unit(c(0, 1), "npc"), y = grid::unit(c(break_val, break_val), "npc"), gp = make_gpar())
+      }
+      ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+    })
     stamp <- c(stamp, grid_annotations)
 
   } else {
@@ -226,8 +227,7 @@ annotate_panel_grid <- function(
 #'   and `Inf`. Use `I()` for normalized coordinates (0-1).
 #' @param ymin,ymax Bottom and top edges of the rectangle. Defaults to `-Inf`
 #'   and `Inf`. Use `I()` for normalized coordinates (0-1).
-#' @param fill Fill colour. Defaults to a neutral grey that adapts to the panel
-#'   background luminance.
+#' @param fill Fill colour. Defaults to a neutral grey.
 #' @param alpha Opacity of the rectangle. Defaults to `0.25`.
 #' @param colour Border colour. Defaults to `"transparent"`.
 #' @param linewidth Inherits from `panel.border` in the set theme. Supports
@@ -262,21 +262,13 @@ annotate_panel_shade <- function(
     xmax      = Inf,
     ymin      = -Inf,
     ymax      = Inf,
-    fill      = NULL,
+    fill      = "#878580",
     alpha     = 0.25,
     colour    = "transparent",
     linewidth = NULL,
     linetype  = NULL
 ) {
   rlang::check_dots_empty()
-
-  if (is.null(fill)) {
-    fill <- if (is_panel_dark()) {
-      flexoki::flexoki$base["base600"]
-    } else {
-      flexoki::flexoki$base["base400"]
-    }
-  }
 
   xmin_is_normalized <- inherits(xmin, "AsIs")
   xmax_is_normalized <- inherits(xmax, "AsIs")
@@ -324,7 +316,7 @@ annotate_panel_shade <- function(
       width  = x_right - x_left,
       height = y_top - y_bottom,
       just   = c("left", "bottom"),
-      gp     = grid::gpar(fill = scales::alpha(fill, alpha), col = colour, lwd = linewidth * 72 / 25.4, lty = linetype)
+      gp     = ggplot2::gg_par(fill = scales::alpha(fill, alpha), col = colour, stroke = linewidth, lty = linetype)
     )
 
     list(ggplot2::annotation_custom(rect_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf))

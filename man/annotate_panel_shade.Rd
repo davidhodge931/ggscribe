@@ -10,7 +10,7 @@ annotate_panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = NULL,
+  fill = "#878580",
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -26,8 +26,7 @@ and \code{Inf}. Use \code{I()} for normalized coordinates (0-1).}
 \item{ymin, ymax}{Bottom and top edges of the rectangle. Defaults to \code{-Inf}
 and \code{Inf}. Use \code{I()} for normalized coordinates (0-1).}
 
-\item{fill}{Fill colour. Defaults to a neutral grey that adapts to the panel
-background luminance.}
+\item{fill}{Fill colour. Defaults to a neutral grey.}
 
 \item{alpha}{Opacity of the rectangle. Defaults to \code{0.25}.}
 

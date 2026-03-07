@@ -17,43 +17,6 @@ expect_builds <- function(layers) {
 
 
 # ==============================================================================
-# is_col_dark / is_panel_dark
-# ==============================================================================
-
-test_that("is_col_dark returns FALSE for NULL", {
-  expect_false(is_col_dark(NULL))
-})
-
-test_that("is_col_dark returns FALSE for empty", {
-  expect_false(is_col_dark(character(0)))
-})
-
-test_that("is_col_dark returns TRUE for dark colours", {
-  expect_true(is_col_dark("black"))
-  expect_true(is_col_dark("#000000"))
-  expect_true(is_col_dark("#1a1a2e"))
-})
-
-test_that("is_col_dark returns FALSE for light colours", {
-  expect_false(is_col_dark("white"))
-  expect_false(is_col_dark("#FFFFFF"))
-  expect_false(is_col_dark("grey95"))
-})
-
-test_that("is_panel_dark returns FALSE for theme_classic", {
-  set_theme(theme_classic())
-  expect_false(is_panel_dark())
-})
-
-test_that("is_panel_dark accepts explicit theme argument", {
-  expect_false(is_panel_dark(theme = theme_classic()))
-})
-
-test_that("is_panel_dark rejects unnamed extra arguments", {
-  expect_error(is_panel_dark(theme_classic()))
-})
-
-
 # ==============================================================================
 # annotate_axis_line — axis line mode
 # ==============================================================================
@@ -109,21 +72,21 @@ test_that("annotate_axis_line errors with no position, x, or y", {
 test_that("annotate_axis_line element_to = 'transparent' adds theme layer", {
   set_theme(theme_classic())
   result <- annotate_axis_line(position = "bottom", element_to = "transparent")
-  has_theme <- any(purrr::map_lgl(result, \(x) inherits(x, "theme")))
+  has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
 
 test_that("annotate_axis_line element_to = 'blank' adds theme layer", {
   set_theme(theme_classic())
   result <- annotate_axis_line(position = "bottom", element_to = "blank")
-  has_theme <- any(purrr::map_lgl(result, \(x) inherits(x, "theme")))
+  has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
 
 test_that("annotate_axis_line element_to = 'keep' does not add theme layer", {
   set_theme(theme_classic())
   result <- annotate_axis_line(position = "bottom", element_to = "keep")
-  has_theme <- any(purrr::map_lgl(result, \(x) inherits(x, "theme")))
+  has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_false(has_theme)
 })
 
@@ -242,7 +205,7 @@ test_that("annotate_axis_ticks returns one grob per break", {
   set_theme(theme_classic())
   breaks <- c(2, 3, 4, 5)
   result <- annotate_axis_ticks(position = "bottom", x = breaks)
-  n_grobs <- sum(purrr::map_lgl(result, \(x) inherits(x, "Layer")))
+  n_grobs <- sum(vapply(result, \(x) inherits(x, "Layer"), logical(1)))
   expect_equal(n_grobs, length(breaks))
 })
 
@@ -267,7 +230,7 @@ test_that("annotate_axis_ticks element_to adds theme layer", {
   set_theme(theme_classic())
   result <- annotate_axis_ticks(position = "bottom", x = c(2, 3, 4),
                                 element_to = "transparent")
-  has_theme <- any(purrr::map_lgl(result, \(x) inherits(x, "theme")))
+  has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
 
@@ -377,7 +340,7 @@ test_that("annotate_axis_text element_to adds theme layer in axis mode", {
   set_theme(theme_classic())
   result <- annotate_axis_text(position = "bottom", x = c(2, 3, 4),
                                element_to = "transparent")
-  has_theme <- any(purrr::map_lgl(result, \(x) inherits(x, "theme")))
+  has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
 
@@ -473,7 +436,7 @@ test_that("annotate_panel_grid minor = TRUE builds", {
 test_that("annotate_panel_grid element_to adds theme layer", {
   set_theme(theme_minimal())
   result <- annotate_panel_grid(y = c(15, 20, 25), element_to = "transparent")
-  has_theme <- any(purrr::map_lgl(result, \(x) inherits(x, "theme")))
+  has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
 
