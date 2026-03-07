@@ -6,10 +6,11 @@
 #' defaults taken from the `axis.line` element of the set theme. Requires
 #' `coord_cartesian(clip = "off")`.
 #'
-#' Operates in two modes:
-#' - **Axis line mode**: triggered by `position`, `x`, or `y` alone.
-#' - **Segment/curve mode**: triggered when `x`, `y`, `xend`, and `yend` are
-#'   all provided. Pass `curvature` to draw a curve instead of a straight line.
+#' Operates in two modes. The primary **Axis line mode** of a horizontal/vertical
+#' line is triggered by `position`, `x`, or `y` alone. The secondary
+#' **Segment/curve mode** is triggered when `x`, `y`, `xend`, and `yend` are
+#' all provided. Pass `curvature` etc to draw a curve instead of a straight line
+#'  (with axis line defaults).
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Axis
@@ -20,12 +21,12 @@
 #' @param y In axis line mode, a single y value for a horizontal line. In
 #'   segment/curve mode, the y start position. Use `I()` for normalized
 #'   coordinates (0-1).
-#' @param xend,yend End position of the segment or curve. Providing all of
-#'   `x`, `y`, `xend`, `yend` triggers segment/curve mode.
 #' @param xmin,xmax Start and end x positions for a horizontal axis line. Use
 #'   `I()` for normalized coordinates (0-1). Axis line mode only.
 #' @param ymin,ymax Start and end y positions for a vertical axis line. Use
 #'   `I()` for normalized coordinates (0-1). Axis line mode only.
+#' @param xend,yend End position of the segment or curve. Providing all of
+#'   `x`, `y`, `xend`, `yend` triggers segment/curve mode.
 #' @param curvature Amount of curvature. Negative curves left, positive curves
 #'   right, zero is straight. `NULL` (default) draws a straight segment.
 #' @param angle Skew angle of curve control points (0-180). Used only when
@@ -71,12 +72,12 @@ annotate_axis_line <- function(
     position  = NULL,
     x         = NULL,
     y         = NULL,
-    xend      = NULL,
-    yend      = NULL,
     xmin      = NULL,
     xmax      = NULL,
     ymin      = NULL,
     ymax      = NULL,
+    xend      = NULL,
+    yend      = NULL,
     curvature = NULL,
     angle     = 90,
     ncp       = 5,

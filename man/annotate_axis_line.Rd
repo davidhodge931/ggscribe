@@ -9,12 +9,12 @@ annotate_axis_line(
   position = NULL,
   x = NULL,
   y = NULL,
-  xend = NULL,
-  yend = NULL,
   xmin = NULL,
   xmax = NULL,
   ymin = NULL,
   ymax = NULL,
+  xend = NULL,
+  yend = NULL,
   curvature = NULL,
   angle = 90,
   ncp = 5,
@@ -38,14 +38,14 @@ coordinates (0-1).}
 segment/curve mode, the y start position. Use \code{I()} for normalized
 coordinates (0-1).}
 
-\item{xend, yend}{End position of the segment or curve. Providing all of
-\code{x}, \code{y}, \code{xend}, \code{yend} triggers segment/curve mode.}
-
 \item{xmin, xmax}{Start and end x positions for a horizontal axis line. Use
 \code{I()} for normalized coordinates (0-1). Axis line mode only.}
 
 \item{ymin, ymax}{Start and end y positions for a vertical axis line. Use
 \code{I()} for normalized coordinates (0-1). Axis line mode only.}
+
+\item{xend, yend}{End position of the segment or curve. Providing all of
+\code{x}, \code{y}, \code{xend}, \code{yend} triggers segment/curve mode.}
 
 \item{curvature}{Amount of curvature. Negative curves left, positive curves
 right, zero is straight. \code{NULL} (default) draws a straight segment.}
@@ -76,12 +76,11 @@ defaults taken from the \code{axis.line} element of the set theme. Requires
 \code{coord_cartesian(clip = "off")}.
 }
 \details{
-Operates in two modes:
-\itemize{
-\item \strong{Axis line mode}: triggered by \code{position}, \code{x}, or \code{y} alone.
-\item \strong{Segment/curve mode}: triggered when \code{x}, \code{y}, \code{xend}, and \code{yend} are
-all provided. Pass \code{curvature} to draw a curve instead of a straight line.
-}
+Operates in two modes. The primary \strong{Axis line mode} of a horizontal/vertical
+line is triggered by \code{position}, \code{x}, or \code{y} alone. The secondary
+\strong{Segment/curve mode} is triggered when \code{x}, \code{y}, \code{xend}, and \code{yend} are
+all provided. Pass \code{curvature} etc to draw a curve instead of a straight line
+(with axis line defaults).
 }
 \examples{
 library(ggplot2)
