@@ -13,7 +13,7 @@ annotate_panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = NULL,
+  fill = "#878580",
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -41,8 +41,7 @@ annotate_panel_shade(
 
 - fill:
 
-  Fill colour. Defaults to a neutral grey that adapts to the panel
-  background luminance.
+  Fill colour. Defaults to a neutral grey.
 
 - alpha:
 
