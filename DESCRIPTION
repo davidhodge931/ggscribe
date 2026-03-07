@@ -1,6 +1,6 @@
 Package: ggscribe
 Title: Annotate 'ggplot2' Visualisation
-Version: 0.1.0
+Version: 0.0.0900
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
 Description: Annotate 'ggplot2' visualisation using the set theme. This includes functions to annotate components of the set theme, and functions to annotate that use set theme defaults. 
@@ -12,7 +12,7 @@ Depends:
 Imports: 
     farver,
     flexoki,
-    ggplot2,
+    ggplot2 (>= 4.0.0),
     purrr,
     rlang,
     scales

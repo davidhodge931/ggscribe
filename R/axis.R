@@ -1,1510 +1,891 @@
-#' Annotate axis line segment
+# annotate_axis_line ----------------------------------------------------------
+
+#' Annotate an axis line
 #'
-#' @description Create an annotated segment of the axis line.
+#' Draws a line along an axis edge or between two arbitrary points, with style
+#' defaults taken from the `axis.line` element of the set theme. Requires
+#' `coord_cartesian(clip = "off")`.
 #'
-#' This function is designed to work with a theme that is globally set.
+#' Operates in two modes:
+#' - **Axis line mode**: triggered by `position`, `x`, or `y` alone.
+#' - **Segment/curve mode**: triggered when `x`, `y`, `xend`, and `yend` are
+#'   all provided. Pass `curvature` to draw a curve instead of a straight line.
 #'
-#' It should be used with a `coord` of `ggplot2::coord_cartesian(clip = "off")`.
+#' Does not support date or datetime positional scales in axis line mode. Use
+#' [ggplot2::geom_segment], [ggplot2::geom_hline], or [ggplot2::geom_vline]
+#' instead.
 #'
-#' Note that this function does not support plots where either positional scale is of date or datetime class. Use [ggplot2::geom_segment], [ggplot2::geom_hline] or [ggplot2::geom_vline] instead.
+#' @param ... Named arguments passed to `ggplot2::annotate()`. Support trailing
+#'   commas.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Axis
+#'   line mode only.
+#' @param x In axis line mode, a single x value for a vertical line. In
+#'   segment/curve mode, the x start position. Use `I()` for normalized
+#'   coordinates (0-1).
+#' @param y In axis line mode, a single y value for a horizontal line. In
+#'   segment/curve mode, the y start position. Use `I()` for normalized
+#'   coordinates (0-1).
+#' @param xend,yend End position of the segment or curve. Providing all of
+#'   `x`, `y`, `xend`, `yend` triggers segment/curve mode.
+#' @param xmin,xmax Start and end x positions for a horizontal axis line. Use
+#'   `I()` for normalized coordinates (0-1). Axis line mode only.
+#' @param ymin,ymax Start and end y positions for a vertical axis line. Use
+#'   `I()` for normalized coordinates (0-1). Axis line mode only.
+#' @param curvature Amount of curvature. Negative curves left, positive curves
+#'   right, zero is straight. `NULL` (default) draws a straight segment.
+#' @param angle Skew angle of curve control points (0-180). Used only when
+#'   `curvature` is non-`NULL`. Defaults to `90`.
+#' @param ncp Number of curve control points. Higher values give smoother
+#'   curves. Used only when `curvature` is non-`NULL`. Defaults to `5`.
+#' @param colour Inherits from `axis.line` in the set theme.
+#' @param linewidth Inherits from `axis.line` in the set theme. Supports
+#'   `rel()`.
+#' @param linetype Inherits from `axis.line` in the set theme.
+#' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#'   whether the native theme axis line is suppressed. Defaults to `"keep"`.
+#'   Axis line mode only.
 #'
-#' @param ... Arguments passed to `ggplot2::annotate("segment", ....)` (if normalised coordinates not used). Require named arguments (and support trailing commas).
-#' @param position The position of the axis line. One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Ignored if `x` or `y` is provided.
-#' @param x A single x-axis value for a vertical line. Cannot be used together with `y` or `xmin`/`xmax`. Use `I()` for normalized coordinates (0-1).
-#' @param y A single y-axis value for a horizontal line. Cannot be used together with `x` or `ymin`/`ymax`. Use `I()` for normalized coordinates (0-1).
-#' @param xmin The starting x position for a horizontal line segment. Use `I()` for normalized coordinates (0-1).
-#' @param xmax The ending x position for a horizontal line segment. Use `I()` for normalized coordinates (0-1).
-#' @param ymin The starting y position for a vertical line segment. Use `I()` for normalized coordinates (0-1).
-#' @param ymax The ending y position for a vertical line segment. Use `I()` for normalized coordinates (0-1).
-#' @param colour The colour of the annotated segment. Inherits from the current theme axis.line etc.
-#' @param linewidth A number. Inherits from the current theme axis.line etc.
-#' @param linetype An integer. Inherits from the current theme axis.line etc.
-#' @param theme How to modify the corresponding theme element. One of `"keep"`, `"transparent"`, or `"blank"`.
-#'   Defaults to `"keep"`.
-#'
-#' @return A list of annotation annotates and theme elements.
+#' @return A list of ggplot2 annotation layers and theme elements.
 #' @export
 #'
-scribe_axis_line <- function(
+#' @examples
+#' library(ggplot2)
+#'
+#' set_theme(theme_classic())
+#'
+#' p <- ggplot(mtcars, aes(wt, mpg)) +
+#'   geom_point() +
+#'   coord_cartesian(clip = "off")
+#'
+#' # Replace the bottom axis line
+#' p + annotate_axis_line(position = "bottom", element_to = "blank")
+#'
+#' # Partial bottom axis between x = 2 and x = 4
+#' p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "blank")
+#'
+#' # Vertical rule at x = 3.5
+#' p + annotate_axis_line(x = 3.5)
+#'
+#' # Straight line between two data points
+#' p + annotate_axis_line(x = 2, y = 15, xend = 5, yend = 30)
+#'
+#' # Curved line between two data points
+#' p + annotate_axis_line(x = 2, y = 15, xend = 5, yend = 30, curvature = 0.3)
+annotate_axis_line <- function(
     ...,
-    position = NULL,
-    x = NULL,
-    y = NULL,
-    xmin = NULL,
-    xmax = NULL,
-    ymin = NULL,
-    ymax = NULL,
-    colour = NULL,
+    position  = NULL,
+    x         = NULL,
+    y         = NULL,
+    xend      = NULL,
+    yend      = NULL,
+    xmin      = NULL,
+    xmax      = NULL,
+    ymin      = NULL,
+    ymax      = NULL,
+    curvature = NULL,
+    angle     = 90,
+    ncp       = 5,
+    colour    = NULL,
     linewidth = NULL,
-    linetype = NULL,
-    theme = "keep"
+    linetype  = NULL,
+    element_to = "keep"
 ) {
-  # Validate arguments - can't have both x and y
-  if (!is.null(x) && !is.null(y)) {
-    stop("Cannot specify both x and y. Use either x for a vertical line or y for a horizontal line.")
+
+  # ---- Mode detection -------------------------------------------------------
+
+  segment_mode <- !is.null(x) && !is.null(y) && !is.null(xend) && !is.null(yend)
+
+  # ---- Segment / curve mode -------------------------------------------------
+
+  if (segment_mode) {
+    current_theme <- ggplot2::theme_get()
+
+    resolved_element <- c("axis.line.x", "axis.line") |>
+      purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)) |>
+      purrr::detect(\(el) !is.null(el) && !inherits(el, "element_blank"))
+
+    if (is.null(resolved_element)) {
+      resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
+    }
+
+    line_colour <- colour %||% resolved_element$colour %||% "black"
+
+    line_linewidth <- if (is.null(linewidth)) {
+      resolved_element$linewidth %||% 0.5
+    } else if (inherits(linewidth, "rel")) {
+      as.numeric(linewidth) * (resolved_element$linewidth %||% 0.5)
+    } else {
+      linewidth
+    }
+
+    line_linetype <- linetype %||% resolved_element$linetype %||% 1
+
+    geom_type  <- if (!is.null(curvature)) "curve" else "segment"
+    extra_args <- if (!is.null(curvature)) list(curvature = curvature, angle = angle, ncp = ncp) else list()
+
+    return(list(
+      rlang::exec(
+        ggplot2::annotate,
+        geom_type,
+        x         = x,
+        y         = y,
+        xend      = xend,
+        yend      = yend,
+        colour    = line_colour,
+        linewidth = line_linewidth,
+        linetype  = line_linetype,
+        !!!extra_args,
+        ...
+      )
+    ))
   }
-  
-  # Can't mix x with xmin/xmax or y with ymin/ymax
+
+  # ---- Axis line mode -------------------------------------------------------
+
+  if (!is.null(x) && !is.null(y)) {
+    stop("Cannot specify both x and y. To draw a segment, also provide xend and yend.")
+  }
   if (!is.null(x) && (!is.null(xmin) || !is.null(xmax))) {
-    stop("Cannot specify both x and xmin/xmax. Use either x for a single position or xmin/xmax for endpoints.")
+    stop("Cannot specify both x and xmin/xmax.")
   }
   if (!is.null(y) && (!is.null(ymin) || !is.null(ymax))) {
-    stop("Cannot specify both y and ymin/ymax. Use either y for a single position or ymin/ymax for endpoints.")
+    stop("Cannot specify both y and ymin/ymax.")
   }
-  
-  # If x or y is provided, it overrides position
+
   use_xy_positioning <- !is.null(x) || !is.null(y)
-  
+
   if (use_xy_positioning) {
-    # Check if using normalized coordinates
-    x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
-    y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
+    x_is_normalized    <- !is.null(x)    && inherits(x,    "AsIs")
+    y_is_normalized    <- !is.null(y)    && inherits(y,    "AsIs")
     xmin_is_normalized <- !is.null(xmin) && inherits(xmin, "AsIs")
     xmax_is_normalized <- !is.null(xmax) && inherits(xmax, "AsIs")
     ymin_is_normalized <- !is.null(ymin) && inherits(ymin, "AsIs")
     ymax_is_normalized <- !is.null(ymax) && inherits(ymax, "AsIs")
-    
-    # Unwrap and validate I() values
+
     if (x_is_normalized) {
       x <- unclass(x)
-      if (length(x) != 1 || x < 0 || x > 1) {
-        stop("Normalized x (specified with I()) must be a single value between 0 and 1")
-      }
+      if (length(x) != 1 || x < 0 || x > 1) stop("Normalized x must be a single value between 0 and 1.")
     } else if (!is.null(x) && length(x) != 1) {
-      stop("x must be a single value")
+      stop("x must be a single value.")
     }
-    
+
     if (y_is_normalized) {
       y <- unclass(y)
-      if (length(y) != 1 || y < 0 || y > 1) {
-        stop("Normalized y (specified with I()) must be a single value between 0 and 1")
-      }
+      if (length(y) != 1 || y < 0 || y > 1) stop("Normalized y must be a single value between 0 and 1.")
     } else if (!is.null(y) && length(y) != 1) {
-      stop("y must be a single value")
+      stop("y must be a single value.")
     }
-    
-    if (xmin_is_normalized) {
-      xmin <- unclass(xmin)
-      if (length(xmin) != 1 || xmin < 0 || xmin > 1) {
-        stop("Normalized xmin (specified with I()) must be a single value between 0 and 1")
-      }
-    }
-    if (xmax_is_normalized) {
-      xmax <- unclass(xmax)
-      if (length(xmax) != 1 || xmax < 0 || xmax > 1) {
-        stop("Normalized xmax (specified with I()) must be a single value between 0 and 1")
-      }
-    }
-    if (ymin_is_normalized) {
-      ymin <- unclass(ymin)
-      if (length(ymin) != 1 || ymin < 0 || ymin > 1) {
-        stop("Normalized ymin (specified with I()) must be a single value between 0 and 1")
-      }
-    }
-    if (ymax_is_normalized) {
-      ymax <- unclass(ymax)
-      if (length(ymax) != 1 || ymax < 0 || ymax > 1) {
-        stop("Normalized ymax (specified with I()) must be a single value between 0 and 1")
-      }
-    }
-    
-    # Determine axis from x/y
-    axis <- if (!is.null(x)) "y" else "x"  # Note: vertical line is on y axis, horizontal on x axis
-    
-    # Determine if we're using normalized coordinates based on ANY normalized input
-    use_normalized <- x_is_normalized || y_is_normalized || xmin_is_normalized || xmax_is_normalized ||
+
+    if (xmin_is_normalized) { xmin <- unclass(xmin); if (length(xmin) != 1 || xmin < 0 || xmin > 1) stop("Normalized xmin must be between 0 and 1.") }
+    if (xmax_is_normalized) { xmax <- unclass(xmax); if (length(xmax) != 1 || xmax < 0 || xmax > 1) stop("Normalized xmax must be between 0 and 1.") }
+    if (ymin_is_normalized) { ymin <- unclass(ymin); if (length(ymin) != 1 || ymin < 0 || ymin > 1) stop("Normalized ymin must be between 0 and 1.") }
+    if (ymax_is_normalized) { ymax <- unclass(ymax); if (length(ymax) != 1 || ymax < 0 || ymax > 1) stop("Normalized ymax must be between 0 and 1.") }
+
+    # axis refers to the axis.line theme element, not line direction:
+    # a vertical line (x provided) maps to axis.line.y; horizontal to axis.line.x
+    axis <- if (!is.null(x)) "y" else "x"
+
+    use_normalized <- x_is_normalized || y_is_normalized ||
+      xmin_is_normalized || xmax_is_normalized ||
       ymin_is_normalized || ymax_is_normalized
+
   } else {
-    # Original position-based behavior
-    if (is.null(position)) {
-      stop("Must specify either position, x, or y")
-    }
-    
-    position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
-    
-    # Determine axis from position
-    axis <- if (position %in% c("top", "bottom")) "x" else "y"
+    if (is.null(position)) stop("Must specify either position, x, or y.")
+    position       <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
+    axis           <- if (position %in% c("top", "bottom")) "x" else "y"
     use_normalized <- FALSE
   }
-  
-  theme <- rlang::arg_match(theme, c("keep", "transparent", "blank"))
-  
-  # Get current theme and calculate resolved element properties
+
+  element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+
+  # ---- Resolve theme properties ---------------------------------------------
+
   current_theme <- ggplot2::theme_get()
-  
-  # Build hierarchy of element names from most specific to least specific
-  if (use_xy_positioning) {
-    element_hierarchy <- c(
-      paste0("axis.line.", axis),
-      "axis.line"
-    )
+
+  element_hierarchy <- if (use_xy_positioning) {
+    c(paste0("axis.line.", axis), "axis.line")
   } else {
-    specific_element <- paste0("axis.line.", axis, ".", position)
-    axis_element <- paste0("axis.line.", axis)
-    general_element <- "axis.line"
-    element_hierarchy <- c(specific_element, axis_element, general_element)
+    c(paste0("axis.line.", axis, ".", position), paste0("axis.line.", axis), "axis.line")
   }
-  
-  # Find the first non-blank resolved element
+
   resolved_element <- element_hierarchy |>
     purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
     purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
-  
-  # If still no element found, create a minimal fallback
+
   if (is.null(resolved_element)) {
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
-  
-  # Extract theme properties with proper resolution
-  line_colour <- if (is.null(colour)) {
-    resolved_element$colour %||% "black"
+
+  line_colour <- colour %||% resolved_element$colour %||% "black"
+
+  line_linewidth <- if (is.null(linewidth)) {
+    resolved_element$linewidth %||% 0.5
+  } else if (inherits(linewidth, "rel")) {
+    as.numeric(linewidth) * (resolved_element$linewidth %||% 0.5)
   } else {
-    colour
+    linewidth
   }
-  
-  # Handle linewidth with proper rel() support
-  if (is.null(linewidth)) {
-    line_linewidth <- resolved_element$linewidth %||% 0.5
-  } else {
-    if (inherits(linewidth, "rel")) {
-      base_linewidth <- resolved_element$linewidth %||% 0.5
-      line_linewidth <- as.numeric(linewidth) * base_linewidth
-    } else {
-      line_linewidth <- linewidth
-    }
-  }
-  
-  # Extract linetype with proper resolution
-  line_linetype <- if (is.null(linetype)) {
-    resolved_element$linetype %||% 1
-  } else {
-    linetype
-  }
-  
+
+  line_linetype <- linetype %||% resolved_element$linetype %||% 1
+
   stamp <- list()
-  
-  # Create axis segment based on positioning method
+
+  # ---- Build annotation -----------------------------------------------------
+
   if (use_xy_positioning) {
     if (!is.null(x)) {
-      # Vertical line
-      # Set defaults for endpoints based on whether we're using normalized coordinates
-      if (is.null(ymin)) {
-        ymin <- if (use_normalized) 0 else -Inf
-      }
-      if (is.null(ymax)) {
-        ymax <- if (use_normalized) 1 else Inf
-      }
-      
+      if (is.null(ymin)) ymin <- if (use_normalized) 0 else -Inf
+      if (is.null(ymax)) ymax <- if (use_normalized) 1 else Inf
+
       if (use_normalized) {
-        # Create normalized grob
         line_grob <- grid::linesGrob(
-          x = grid::unit(c(x, x), "npc"),
-          y = grid::unit(c(ymin, ymax), "npc"),
-          gp = grid::gpar(
-            col = line_colour,
-            lwd = line_linewidth * 72 / 25.4,
-            lty = line_linetype,
-            lineend = "butt"
-          )
+          x  = grid::unit(c(x, x),       "npc"),
+          y  = grid::unit(c(ymin, ymax), "npc"),
+          gp = grid::gpar(col = line_colour, lwd = line_linewidth * 72 / 25.4, lty = line_linetype, lineend = "butt")
         )
-        stamp <- c(
-          stamp,
-          list(
-            ggplot2::annotation_custom(
-              grob = line_grob,
-              xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-            )
-          )
-        )
+        stamp <- c(stamp, list(ggplot2::annotation_custom(line_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)))
       } else {
-        # Data coordinates
-        stamp <- c(
-          stamp,
-          list(
-            rlang::exec(
-              ggplot2::annotate,
-              "segment",
-              x = x,
-              xend = x,
-              y = ymin,
-              yend = ymax,
-              colour = line_colour,
-              linewidth = line_linewidth,
-              linetype = line_linetype,
-              ...
-            )
-          )
-        )
+        stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = x, xend = x, y = ymin, yend = ymax, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
       }
+
     } else {
-      # Horizontal line
-      # Set defaults for endpoints based on whether we're using normalized coordinates
-      if (is.null(xmin)) {
-        xmin <- if (use_normalized) 0 else -Inf
-      }
-      if (is.null(xmax)) {
-        xmax <- if (use_normalized) 1 else Inf
-      }
-      
+      if (is.null(xmin)) xmin <- if (use_normalized) 0 else -Inf
+      if (is.null(xmax)) xmax <- if (use_normalized) 1 else Inf
+
       if (use_normalized) {
-        # Create normalized grob
         line_grob <- grid::linesGrob(
-          x = grid::unit(c(xmin, xmax), "npc"),
-          y = grid::unit(c(y, y), "npc"),
-          gp = grid::gpar(
-            col = line_colour,
-            lwd = line_linewidth * 72 / 25.4,
-            lty = line_linetype,
-            lineend = "butt"
-          )
+          x  = grid::unit(c(xmin, xmax), "npc"),
+          y  = grid::unit(c(y, y),       "npc"),
+          gp = grid::gpar(col = line_colour, lwd = line_linewidth * 72 / 25.4, lty = line_linetype, lineend = "butt")
         )
-        stamp <- c(
-          stamp,
-          list(
-            ggplot2::annotation_custom(
-              grob = line_grob,
-              xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-            )
-          )
-        )
+        stamp <- c(stamp, list(ggplot2::annotation_custom(line_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)))
       } else {
-        # Data coordinates
-        stamp <- c(
-          stamp,
-          list(
-            rlang::exec(
-              ggplot2::annotate,
-              "segment",
-              x = xmin,
-              xend = xmax,
-              y = y,
-              yend = y,
-              colour = line_colour,
-              linewidth = line_linewidth,
-              linetype = line_linetype,
-              ...
-            )
-          )
-        )
+        stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = xmin, xend = xmax, y = y, yend = y, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
       }
     }
+
   } else {
-    # Original position-based behavior
-    # Use provided min/max values or default to -Inf/Inf
     if (position == "bottom") {
-      x_start <- if (!is.null(xmin)) xmin else -Inf
-      x_end <- if (!is.null(xmax)) xmax else Inf
-      stamp <- c(
-        stamp,
-        list(
-          rlang::exec(
-            ggplot2::annotate,
-            "segment",
-            x = x_start,
-            xend = x_end,
-            y = -Inf,
-            yend = -Inf,
-            colour = line_colour,
-            linewidth = line_linewidth,
-            linetype = line_linetype,
-            ...
-          )
-        )
-      )
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = -Inf, yend = -Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
     } else if (position == "top") {
-      x_start <- if (!is.null(xmin)) xmin else -Inf
-      x_end <- if (!is.null(xmax)) xmax else Inf
-      stamp <- c(
-        stamp,
-        list(
-          rlang::exec(
-            ggplot2::annotate,
-            "segment",
-            x = x_start,
-            xend = x_end,
-            y = Inf,
-            yend = Inf,
-            colour = line_colour,
-            linewidth = line_linewidth,
-            linetype = line_linetype,
-            ...
-          )
-        )
-      )
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = Inf, yend = Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
     } else if (position == "left") {
-      y_start <- if (!is.null(ymin)) ymin else -Inf
-      y_end <- if (!is.null(ymax)) ymax else Inf
-      stamp <- c(
-        stamp,
-        list(
-          rlang::exec(
-            ggplot2::annotate,
-            "segment",
-            x = -Inf,
-            xend = -Inf,
-            y = y_start,
-            yend = y_end,
-            colour = line_colour,
-            linewidth = line_linewidth,
-            linetype = line_linetype,
-            ...
-          )
-        )
-      )
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = -Inf, xend = -Inf, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
     } else {
-      # right
-      y_start <- if (!is.null(ymin)) ymin else -Inf
-      y_end <- if (!is.null(ymax)) ymax else Inf
-      stamp <- c(
-        stamp,
-        list(
-          rlang::exec(
-            ggplot2::annotate,
-            "segment",
-            x = Inf,
-            xend = Inf,
-            y = y_start,
-            yend = y_end,
-            colour = line_colour,
-            linewidth = line_linewidth,
-            linetype = line_linetype,
-            ...
-          )
-        )
-      )
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = Inf, xend = Inf, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
     }
   }
-  
-  # Add theme modification if requested
-  if (theme != "keep") {
+
+  # ---- Theme modification ---------------------------------------------------
+
+  if (element_to != "keep") {
     theme_name <- NULL
-    
+
     if (use_xy_positioning) {
-      # For x/y positioning, determine which axis line element corresponds to the line
       if (!is.null(x)) {
-        # Vertical line - check if it's at left or right edge
         if (x_is_normalized) {
-          if (x == 0) {
-            theme_name <- "axis.line.y.left"
-          } else if (x == 1) {
-            theme_name <- "axis.line.y.right"
-          }
+          if (x == 0) theme_name <- "axis.line.y.left"
+          else if (x == 1) theme_name <- "axis.line.y.right"
         } else if (is.infinite(x)) {
-          if (x < 0) {
-            theme_name <- "axis.line.y.left"
-          } else {
-            theme_name <- "axis.line.y.right"
-          }
+          theme_name <- if (x < 0) "axis.line.y.left" else "axis.line.y.right"
         }
       } else if (!is.null(y)) {
-        # Horizontal line - check if it's at top or bottom edge
         if (y_is_normalized) {
-          if (y == 0) {
-            theme_name <- "axis.line.x.bottom"
-          } else if (y == 1) {
-            theme_name <- "axis.line.x.top"
-          }
+          if (y == 0) theme_name <- "axis.line.x.bottom"
+          else if (y == 1) theme_name <- "axis.line.x.top"
         } else if (is.infinite(y)) {
-          if (y < 0) {
-            theme_name <- "axis.line.x.bottom"
-          } else {
-            theme_name <- "axis.line.x.top"
-          }
+          theme_name <- if (y < 0) "axis.line.x.bottom" else "axis.line.x.top"
         }
       }
     } else {
-      # Position-based - construct theme name from position
       theme_name <- paste0("axis.line.", axis, ".", position)
     }
-    
-    # Apply theme modification if we have a theme element to modify
+
     if (!is.null(theme_name)) {
       theme_mod <- list()
-      if (theme == "transparent") {
-        theme_mod[[theme_name]] <- ggplot2::element_line(colour = "transparent")
-      } else if (theme == "blank") {
-        theme_mod[[theme_name]] <- ggplot2::element_blank()
-      }
+      theme_mod[[theme_name]] <- if (element_to == "transparent") ggplot2::element_line(colour = "transparent") else ggplot2::element_blank()
       stamp <- c(stamp, list(rlang::exec(ggplot2::theme, !!!theme_mod)))
     }
   }
-  
+
   return(stamp)
 }
 
-#' Annotate axis ticks segments
+
+# annotate_axis_ticks ---------------------------------------------------------
+
+#' Annotate axis ticks
 #'
-#' @description Create annotated segments of the axis ticks.
+#' Draws axis ticks at specified break positions, with style defaults taken
+#' from the `axis.ticks` element of the set theme. Requires
+#' `coord_cartesian(clip = "off")`.
 #'
-#' This function is designed to work with a theme that is globally set.
+#' @param ... Named arguments. Support trailing commas.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+#' @param x A vector of x-axis break positions for top/bottom ticks. Use `I()`
+#'   for normalized coordinates (0-1).
+#' @param y A vector of y-axis break positions for left/right ticks. Use `I()`
+#'   for normalized coordinates (0-1).
+#' @param minor Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
+#'   `FALSE`.
+#' @param colour Inherits from `axis.ticks` in the set theme.
+#' @param linewidth Inherits from `axis.ticks` in the set theme. Supports
+#'   `rel()`.
+#' @param length Total tick length as a grid unit. Supports `rel()` to scale
+#'   relative to the theme default. Negative values flip the tick direction.
+#' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#'   whether native theme ticks are suppressed. Defaults to `"keep"`.
 #'
-#' It should be used with a `coord` of `ggplot2::coord_cartesian(clip = "off")`.
-#'
-#' @param ... Require named arguments (and support trailing commas).
-#' @param position The position of the axis ticks. One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
-#' @param x A vector of x-axis breaks for ticks positioning. Use `I()` to specify normalized coordinates (0-1).
-#' @param y A vector of y-axis breaks for ticks positioning. Use `I()` to specify normalized coordinates (0-1).
-#' @param minor `TRUE` or `FALSE` whether to relate to minor ticks. Defaults `FALSE`.
-#' @param colour The colour of the ticks. Inherits from the current theme `axis.ticks` etc.
-#' @param linewidth The linewidth of the ticks. Inherits from the current theme `axis.ticks` etc.
-#' @param length The total distance from the axis line to the ticks as a grid unit. Use `rel()` to scale relative to default length. Negative values or `rel()` with negative multiplier flip direction.
-#' @param theme What to do with the equivalent theme elements. Either `"keep"`, `"transparent"`, or `"blank"`. Defaults `"keep"`.
-#'
-#' @return A list of annotation annotates and theme elements.
+#' @return A list of ggplot2 annotation layers and theme elements.
 #' @export
 #'
-scribe_axis_ticks <- function(
+#' @examples
+#' library(ggplot2)
+#'
+#' set_theme(theme_classic())
+#'
+#' p <- ggplot(mtcars, aes(wt, mpg)) +
+#'   geom_point() +
+#'   coord_cartesian(clip = "off")
+#'
+#' # Bottom ticks at specific breaks
+#' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
+#'
+#' # Left ticks with native ticks suppressed
+#' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "blank")
+#'
+#' # Inward ticks using a negative length
+#' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), length = grid::unit(-5, "pt"))
+#'
+#' # Minor ticks
+#' p + annotate_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
+annotate_axis_ticks <- function(
     ...,
-    position = NULL,
-    x = NULL,
-    y = NULL,
-    minor = FALSE,
-    colour = NULL,
+    position  = NULL,
+    x         = NULL,
+    y         = NULL,
+    minor     = FALSE,
+    colour    = NULL,
     linewidth = NULL,
-    length = NULL,
-    theme = "keep"
+    length    = NULL,
+    element_to = "keep"
 ) {
-  # Determine position from x/y if not specified
   if (is.null(position)) {
     if (!is.null(x) && !is.null(y)) {
-      stop("Cannot specify both x and y. Use either x for top/bottom positions or y for left/right positions.")
+      stop("Cannot specify both x and y.")
     }
     if (!is.null(x)) {
       position <- "bottom"
     } else if (!is.null(y)) {
       position <- "left"
     } else {
-      stop("Must specify either position, x, or y")
+      stop("Must specify either position, x, or y.")
     }
   }
-  
-  # Validate position
+
   position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
-  
-  # Check if values are wrapped in I() to determine coordinate type
+
   x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
   y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
-  
-  # Unwrap I() values
+
   if (x_is_normalized) {
     x <- unclass(x)
-    if (any(x < 0 | x > 1)) {
-      stop("Normalized x coordinates (specified with I()) must be between 0 and 1")
-    }
+    if (any(x < 0 | x > 1)) stop("Normalized x coordinates must be between 0 and 1.")
   }
   if (y_is_normalized) {
     y <- unclass(y)
-    if (any(y < 0 | y > 1)) {
-      stop("Normalized y coordinates (specified with I()) must be between 0 and 1")
-    }
+    if (any(y < 0 | y > 1)) stop("Normalized y coordinates must be between 0 and 1.")
   }
-  
-  # Determine axis from x/y and whether using normalized coordinates
-  axis <- if (!is.null(x)) "x" else "y"
-  use_normalized <- if (axis == "x") x_is_normalized else y_is_normalized
-  
-  # Validate x/y based on position
+
   if (position %in% c("top", "bottom")) {
-    if (!is.null(y)) {
-      stop("For top or bottom positions, only x can be specified, not y")
-    }
-    if (is.null(x)) {
-      stop("For top or bottom positions, x must be specified")
-    }
+    if (!is.null(y)) stop("For top or bottom positions, only x can be specified.")
+    if (is.null(x))  stop("For top or bottom positions, x must be specified.")
     use_normalized <- x_is_normalized
   } else {
-    if (!is.null(x)) {
-      stop("For left or right positions, only y can be specified, not x")
-    }
-    if (is.null(y)) {
-      stop("For left or right positions, y must be specified")
-    }
+    if (!is.null(x)) stop("For left or right positions, only y can be specified.")
+    if (is.null(y))  stop("For left or right positions, y must be specified.")
     use_normalized <- y_is_normalized
   }
-  
-  theme <- rlang::arg_match(theme, c("keep", "transparent", "blank"))
-  
-  # Determine axis from position
-  axis <- if (position %in% c("top", "bottom")) "x" else "y"
-  
-  # Get breaks
+
+  element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+
+  axis   <- if (position %in% c("top", "bottom")) "x" else "y"
   breaks <- if (!is.null(x)) x else y
-  
-  # Check for empty breaks
-  if (length(breaks) == 0) {
-    return(list())
-  }
-  
-  # Get current theme
+
+  if (length(breaks) == 0) return(list())
+
   current_theme <- ggplot2::theme_get()
-  
-  # Build hierarchy for axis ticks
-  if (minor) {
-    tick_minor_specific <- paste0("axis.minor.ticks.", axis, ".", position)
-    tick_specific <- paste0("axis.ticks.", axis, ".", position)
-    tick_axis <- paste0("axis.ticks.", axis)
-    tick_general <- "axis.ticks"
-    tick_hierarchy <- c(tick_minor_specific, tick_specific, tick_axis, tick_general)
+
+  # ---- Resolve tick element -------------------------------------------------
+
+  tick_hierarchy <- if (minor) {
+    c(
+      paste0("axis.minor.ticks.", axis, ".", position),
+      paste0("axis.ticks.", axis, ".", position),
+      paste0("axis.ticks.", axis),
+      "axis.ticks"
+    )
   } else {
-    tick_specific <- paste0("axis.ticks.", axis, ".", position)
-    tick_axis <- paste0("axis.ticks.", axis)
-    tick_general <- "axis.ticks"
-    tick_hierarchy <- c(tick_specific, tick_axis, tick_general)
+    c(
+      paste0("axis.ticks.", axis, ".", position),
+      paste0("axis.ticks.", axis),
+      "axis.ticks"
+    )
   }
-  
-  # Resolve tick properties
+
   resolved_tick_element <- NULL
-  for (element_name in tick_hierarchy) {
-    element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!is.null(element) && !inherits(element, "element_blank")) {
-      resolved_tick_element <- element
-      break
-    }
+  for (nm in tick_hierarchy) {
+    el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+    if (!is.null(el) && !inherits(el, "element_blank")) { resolved_tick_element <- el; break }
   }
-  
-  if (is.null(resolved_tick_element)) {
-    resolved_tick_element <- list(colour = "black", linewidth = 0.5)
-  }
-  
-  # Build hierarchy for length
-  if (minor) {
-    length_minor_specific <- paste0("axis.minor.ticks.length.", axis, ".", position)
-    length_minor_axis <- paste0("axis.minor.ticks.length.", axis)
-    length_minor_general <- "axis.minor.ticks.length"
-    length_specific <- paste0("axis.ticks.length.", axis, ".", position)
-    length_axis <- paste0("axis.ticks.length.", axis)
-    length_general <- "axis.ticks.length"
-    length_hierarchy <- c(length_minor_specific, length_minor_axis, length_minor_general,
-                          length_specific, length_axis, length_general)
+  if (is.null(resolved_tick_element)) resolved_tick_element <- list(colour = "black", linewidth = 0.5)
+
+  # ---- Resolve length -------------------------------------------------------
+
+  length_hierarchy <- if (minor) {
+    c(
+      paste0("axis.minor.ticks.length.", axis, ".", position),
+      paste0("axis.minor.ticks.length.", axis),
+      "axis.minor.ticks.length",
+      paste0("axis.ticks.length.", axis, ".", position),
+      paste0("axis.ticks.length.", axis),
+      "axis.ticks.length"
+    )
   } else {
-    length_specific <- paste0("axis.ticks.length.", axis, ".", position)
-    length_axis <- paste0("axis.ticks.length.", axis)
-    length_general <- "axis.ticks.length"
-    length_hierarchy <- c(length_specific, length_axis, length_general)
+    c(
+      paste0("axis.ticks.length.", axis, ".", position),
+      paste0("axis.ticks.length.", axis),
+      "axis.ticks.length"
+    )
   }
-  
-  # Resolve length
+
   resolved_length_element <- NULL
-  for (element_name in length_hierarchy) {
-    element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!is.null(element) && !inherits(element, "element_blank")) {
-      resolved_length_element <- element
-      break
-    }
+  for (nm in length_hierarchy) {
+    el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+    if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length_element <- el; break }
   }
-  
-  # Extract theme properties
-  tick_colour <- if (is.null(colour)) {
-    resolved_tick_element$colour %||% "black"
+
+  # ---- Extract properties ---------------------------------------------------
+
+  tick_colour <- colour %||% resolved_tick_element$colour %||% "black"
+
+  tick_linewidth <- if (is.null(linewidth)) {
+    resolved_tick_element$linewidth %||% 0.5
+  } else if (inherits(linewidth, "rel")) {
+    as.numeric(linewidth) * (resolved_tick_element$linewidth %||% 0.5)
   } else {
-    colour
+    linewidth
   }
-  
-  if (is.null(linewidth)) {
-    tick_linewidth <- resolved_tick_element$linewidth %||% 0.5
-  } else {
-    if (inherits(linewidth, "rel")) {
-      base_linewidth <- resolved_tick_element$linewidth %||% 0.5
-      tick_linewidth <- as.numeric(linewidth) * base_linewidth
-    } else {
-      tick_linewidth <- linewidth
-    }
-  }
-  
-  # Function to calculate default tick length
+
   calculate_default_length <- function() {
-    if (minor) {
-      raw_minor_length <- NULL
-      for (element_name in length_hierarchy) {
-        if (grepl("minor", element_name)) {
-          raw_element <- current_theme[[element_name]]
-          if (!is.null(raw_element) && inherits(raw_element, "rel")) {
-            raw_minor_length <- raw_element
-            break
-          }
-        }
-      }
-      
-      if (!is.null(raw_minor_length)) {
-        major_length <- ggplot2::calc_element("axis.ticks.length", current_theme, skip_blank = TRUE)
-        
-        if (is.null(major_length)) {
-          spacing <- current_theme$spacing %||% grid::unit(5.5, "pt")
-          if (inherits(spacing, "unit")) {
-            major_tick_length_pts <- as.numeric(grid::convertUnit(spacing, "pt"))
-          } else {
-            major_tick_length_pts <- 5.5
-          }
-        } else if (inherits(major_length, "unit")) {
-          major_tick_length_pts <- as.numeric(grid::convertUnit(major_length, "pt"))
-        } else if (is.numeric(major_length)) {
-          major_tick_length_pts <- major_length
-        } else {
-          major_tick_length_pts <- 5.5
-        }
-        
-        return(grid::unit(as.numeric(raw_minor_length) * major_tick_length_pts, "pt"))
-      } else {
-        tick_length <- resolved_length_element
-        
-        if (is.null(tick_length)) {
-          text_size <- current_theme$text$size %||% 11
-          return(grid::unit(0.375 * text_size, "pt"))
-        } else if (!inherits(tick_length, "unit")) {
-          if (is.numeric(tick_length)) {
-            return(grid::unit(tick_length, "pt"))
-          } else {
-            text_size <- current_theme$text$size %||% 11
-            return(grid::unit(0.375 * text_size, "pt"))
-          }
-        } else {
-          return(tick_length)
-        }
-      }
+    tl <- resolved_length_element
+    if (is.null(tl)) {
+      return(grid::unit((if (minor) 0.375 else 0.5) * (current_theme$text$size %||% 11), "pt"))
+    } else if (inherits(tl, "rel")) {
+      spacing <- current_theme$spacing %||% grid::unit(5.5, "pt")
+      spacing_pts <- as.numeric(grid::convertUnit(if (inherits(spacing, "unit")) spacing else grid::unit(5.5, "pt"), "pt"))
+      return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
+    } else if (!inherits(tl, "unit")) {
+      return(grid::unit(if (is.numeric(tl)) tl else (if (minor) 0.375 else 0.5) * (current_theme$text$size %||% 11), "pt"))
     } else {
-      tick_length <- resolved_length_element
-      
-      if (is.null(tick_length)) {
-        text_size <- current_theme$text$size %||% 11
-        return(grid::unit(0.5 * text_size, "pt"))
-      } else if (inherits(tick_length, "rel")) {
-        spacing <- current_theme$spacing %||% grid::unit(5.5, "pt")
-        if (inherits(spacing, "unit")) {
-          spacing_pts <- as.numeric(grid::convertUnit(spacing, "pt"))
-        } else {
-          spacing_pts <- 5.5
-        }
-        return(grid::unit(as.numeric(tick_length) * spacing_pts, "pt"))
-      } else if (!inherits(tick_length, "unit")) {
-        if (is.numeric(tick_length)) {
-          return(grid::unit(tick_length, "pt"))
-        } else {
-          text_size <- current_theme$text$size %||% 11
-          return(grid::unit(0.5 * text_size, "pt"))
-        }
-      } else {
-        return(tick_length)
-      }
+      return(tl)
     }
   }
-  
-  # Initialize flip_direction
+
   flip_direction <- FALSE
-  
-  # Handle length
+
   if (is.null(length)) {
     tick_length <- calculate_default_length()
+  } else if (inherits(length, "rel")) {
+    rel_value   <- as.numeric(length)
+    default_pts <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
+    tick_length <- grid::unit(abs(rel_value) * default_pts, "pt")
+    flip_direction <- rel_value < 0
+  } else if (inherits(length, "unit")) {
+    tick_pts    <- as.numeric(grid::convertUnit(length, "pt"))
+    tick_length <- grid::unit(abs(tick_pts), "pt")
+    flip_direction <- tick_pts < 0
+  } else if (is.numeric(length)) {
+    tick_length    <- grid::unit(abs(length), "pt")
+    flip_direction <- length < 0
   } else {
-    if (inherits(length, "rel")) {
-      default_tick_length <- calculate_default_length()
-      rel_value <- as.numeric(length)
-      default_pts <- as.numeric(grid::convertUnit(default_tick_length, "pt"))
-      tick_length <- grid::unit(abs(rel_value) * default_pts, "pt")
-      flip_direction <- rel_value < 0
-    } else if (inherits(length, "unit")) {
-      tick_length <- length
-      flip_direction <- FALSE
-    } else if (is.numeric(length)) {
-      tick_length <- grid::unit(abs(length), "pt")
-      flip_direction <- length < 0
-    } else {
-      text_size <- current_theme$text$size %||% 11
-      if (minor) {
-        tick_length <- grid::unit(0.375 * text_size, "pt")
-      } else {
-        tick_length <- grid::unit(0.5 * text_size, "pt")
-      }
-      flip_direction <- FALSE
-    }
+    tick_length <- calculate_default_length()
   }
-  
+
   stamp <- list()
-  
-  # Add theme modification if requested
-  if (theme != "keep") {
-    if (minor) {
-      theme_name <- paste0("axis.minor.ticks.", axis, ".", position)
-    } else {
-      theme_name <- paste0("axis.ticks.", axis, ".", position)
-    }
-    
-    theme_mod <- list()
-    if (theme == "transparent") {
-      theme_mod[[theme_name]] <- ggplot2::element_line(colour = "transparent")
-    } else if (theme == "blank") {
-      theme_mod[[theme_name]] <- ggplot2::element_blank()
-    }
+
+  # ---- Theme modification ---------------------------------------------------
+
+  if (element_to != "keep") {
+    theme_name <- if (minor) paste0("axis.minor.ticks.", axis, ".", position) else paste0("axis.ticks.", axis, ".", position)
+    theme_mod  <- list()
+    theme_mod[[theme_name]] <- if (element_to == "transparent") ggplot2::element_line(colour = "transparent") else ggplot2::element_blank()
     stamp <- c(stamp, list(rlang::exec(ggplot2::theme, !!!theme_mod)))
   }
-  
-  # Create tick annotations
+
+  # ---- Build tick annotations -----------------------------------------------
+
   tick_annotations <- breaks |>
-    purrr::imap(\(break_val, i) {
-      if (use_normalized) {
-        tick_grob <- if (position == "bottom") {
-          grid::segmentsGrob(
-            x0 = grid::unit(break_val, "npc"),
-            x1 = grid::unit(break_val, "npc"),
-            y0 = grid::unit(0, "npc"),
-            y1 = if (flip_direction) {
-              grid::unit(0, "npc") + tick_length
-            } else {
-              grid::unit(0, "npc") - tick_length
-            },
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+    purrr::map(\(break_val) {
+      gp <- grid::gpar(col = tick_colour, lwd = tick_linewidth * 72 / 25.4, lineend = "butt")
+
+      tick_grob <- if (use_normalized) {
+        if (position == "bottom") {
+          grid::segmentsGrob(x0 = grid::unit(break_val, "npc"), x1 = grid::unit(break_val, "npc"), y0 = grid::unit(0, "npc"), y1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, gp = gp)
         } else if (position == "top") {
-          grid::segmentsGrob(
-            x0 = grid::unit(break_val, "npc"),
-            x1 = grid::unit(break_val, "npc"),
-            y0 = grid::unit(1, "npc"),
-            y1 = if (flip_direction) {
-              grid::unit(1, "npc") - tick_length
-            } else {
-              grid::unit(1, "npc") + tick_length
-            },
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+          grid::segmentsGrob(x0 = grid::unit(break_val, "npc"), x1 = grid::unit(break_val, "npc"), y0 = grid::unit(1, "npc"), y1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, gp = gp)
         } else if (position == "left") {
-          grid::segmentsGrob(
-            x0 = grid::unit(0, "npc"),
-            x1 = if (flip_direction) {
-              grid::unit(0, "npc") + tick_length
-            } else {
-              grid::unit(0, "npc") - tick_length
-            },
-            y0 = grid::unit(break_val, "npc"),
-            y1 = grid::unit(break_val, "npc"),
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+          grid::segmentsGrob(x0 = grid::unit(0, "npc"), x1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, y0 = grid::unit(break_val, "npc"), y1 = grid::unit(break_val, "npc"), gp = gp)
         } else {
-          grid::segmentsGrob(
-            x0 = grid::unit(1, "npc"),
-            x1 = if (flip_direction) {
-              grid::unit(1, "npc") - tick_length
-            } else {
-              grid::unit(1, "npc") + tick_length
-            },
-            y0 = grid::unit(break_val, "npc"),
-            y1 = grid::unit(break_val, "npc"),
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+          grid::segmentsGrob(x0 = grid::unit(1, "npc"), x1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, y0 = grid::unit(break_val, "npc"), y1 = grid::unit(break_val, "npc"), gp = gp)
         }
-        
-        rlang::exec(
-          ggplot2::annotation_custom,
-          grob = tick_grob,
-          xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-        )
       } else {
-        tick_grob <- if (position == "bottom") {
-          grid::segmentsGrob(
-            x0 = grid::unit(0.5, "npc"),
-            x1 = grid::unit(0.5, "npc"),
-            y0 = grid::unit(0, "npc"),
-            y1 = if (flip_direction) {
-              grid::unit(0, "npc") + tick_length
-            } else {
-              grid::unit(0, "npc") - tick_length
-            },
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+        if (position == "bottom") {
+          grid::segmentsGrob(x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"), y0 = grid::unit(0, "npc"), y1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, gp = gp)
         } else if (position == "top") {
-          grid::segmentsGrob(
-            x0 = grid::unit(0.5, "npc"),
-            x1 = grid::unit(0.5, "npc"),
-            y0 = grid::unit(1, "npc"),
-            y1 = if (flip_direction) {
-              grid::unit(1, "npc") - tick_length
-            } else {
-              grid::unit(1, "npc") + tick_length
-            },
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+          grid::segmentsGrob(x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"), y0 = grid::unit(1, "npc"), y1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, gp = gp)
         } else if (position == "left") {
-          grid::segmentsGrob(
-            x0 = grid::unit(0, "npc"),
-            x1 = if (flip_direction) {
-              grid::unit(0, "npc") + tick_length
-            } else {
-              grid::unit(0, "npc") - tick_length
-            },
-            y0 = grid::unit(0.5, "npc"),
-            y1 = grid::unit(0.5, "npc"),
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+          grid::segmentsGrob(x0 = grid::unit(0, "npc"), x1 = if (flip_direction) grid::unit(0, "npc") + tick_length else grid::unit(0, "npc") - tick_length, y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"), gp = gp)
         } else {
-          grid::segmentsGrob(
-            x0 = grid::unit(1, "npc"),
-            x1 = if (flip_direction) {
-              grid::unit(1, "npc") - tick_length
-            } else {
-              grid::unit(1, "npc") + tick_length
-            },
-            y0 = grid::unit(0.5, "npc"),
-            y1 = grid::unit(0.5, "npc"),
-            gp = grid::gpar(
-              col = tick_colour,
-              lwd = tick_linewidth * 72 / 25.4,
-              lineend = "butt"
-            )
-          )
+          grid::segmentsGrob(x0 = grid::unit(1, "npc"), x1 = if (flip_direction) grid::unit(1, "npc") - tick_length else grid::unit(1, "npc") + tick_length, y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"), gp = gp)
         }
-        
-        if (axis == "x") {
-          annotation_position <- if (position == "bottom") {
-            list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
-          } else {
-            list(xmin = break_val, xmax = break_val, ymin = Inf, ymax = Inf)
-          }
-        } else {
-          annotation_position <- if (position == "left") {
-            list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
-          } else {
-            list(xmin = Inf, xmax = Inf, ymin = break_val, ymax = break_val)
-          }
-        }
-        
-        rlang::exec(
-          ggplot2::annotation_custom,
-          grob = tick_grob,
-          !!!annotation_position
-        )
       }
+
+      annotation_position <- if (use_normalized) {
+        list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      } else if (axis == "x") {
+        if (position == "bottom") list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
+        else                      list(xmin = break_val, xmax = break_val, ymin =  Inf, ymax =  Inf)
+      } else {
+        if (position == "left")   list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
+        else                      list(xmin =  Inf, xmax =  Inf, ymin = break_val, ymax = break_val)
+      }
+
+      rlang::exec(ggplot2::annotation_custom, grob = tick_grob, !!!annotation_position)
     })
-  
-  stamp <- c(stamp, tick_annotations)
-  
-  return(stamp)
+
+  c(stamp, tick_annotations)
 }
+
+
+# annotate_axis_text ----------------------------------------------------------
 
 #' Annotate axis text
 #'
-#' @description Create annotated text labels for axis breaks.
+#' Draws text labels at specified break positions along an axis, or at
+#' arbitrary (x, y) coordinates. Style defaults are taken from the `axis.text`
+#' element of the set theme. Requires `coord_cartesian(clip = "off")`.
 #'
-#' This function is designed to work with a theme that is globally set.
+#' When only `x` or only `y` is provided, the function operates in axis mode
+#' and labels are placed relative to the relevant axis edge. When both `x` and
+#' `y` are provided, labels are placed at those exact coordinates.
 #'
-#' It should be used with a `coord` of `ggplot2::coord_cartesian(clip = "off")`.
-#'
-#' @param ... Require named arguments (and support trailing commas).
-#' @param position The position of the axis text. One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Ignored if both `x` and `y` are provided.
-#' @param x A vector of x-axis breaks for text positioning. Use `I()` to specify normalized coordinates (0-1).
-#' @param y A vector of y-axis breaks for text positioning. Use `I()` to specify normalized coordinates (0-1).
-#' @param label A vector of text labels or a function that takes breaks and returns labels. If `NULL`, uses appropriate formatting based on data type.
-#' @param colour The colour of the text. Inherits from the current theme `axis.text` etc.
-#' @param size The size of the text. Inherits from the current theme `axis.text` etc.
-#' @param family The font family of the text. Inherits from the current theme `axis.text` etc.
-#' @param length The tick length as a grid unit. Use `rel()` to scale relative to default length. Negative values or `rel()` with negative multiplier place text on the opposite side of the axis (inside the panel). Inherits from the current theme `axis.ticks.length` etc.
-#' @param hjust,vjust Horizontal and vertical justification. Auto-calculated based on position if `NULL`. When `length` is negative, justification automatically adjusts for the flipped position.
+#' @param ... Named arguments. Support trailing commas.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
+#'   from `x`/`y` if not provided.
+#' @param x A vector of x positions. Use `I()` for normalized coordinates (0-1).
+#'   When combined with `y`, triggers arbitrary positioning mode.
+#' @param y A vector of y positions. Use `I()` for normalized coordinates (0-1).
+#'   When combined with `x`, triggers arbitrary positioning mode.
+#' @param label A vector of labels or a function that takes breaks and returns
+#'   labels. Defaults to formatted break values.
+#' @param colour Inherits from `axis.text` in the set theme.
+#' @param size Inherits from `axis.text` in the set theme.
+#' @param family Inherits from `axis.text` in the set theme.
+#' @param length Offset from the axis edge as a grid unit, including tick length
+#'   and margin. Supports `rel()`. Negative values place labels on the inside of
+#'   the panel. Axis mode only.
+#' @param hjust,vjust Justification. Auto-calculated from position if `NULL`.
 #' @param angle Text rotation angle. Defaults to `0`.
-#' @param theme What to do with the equivalent theme elements. Either `"keep"`, `"transparent"`, or `"blank"`. Defaults to `"keep"`.
+#' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#'   whether native theme axis text is suppressed. Defaults to `"keep"`. Axis
+#'   mode only.
 #'
-#' @return A list of annotation annotates and theme elements.
+#' @return A list of ggplot2 annotation layers and theme elements.
 #' @export
 #'
-scribe_axis_text <- function(
+#' @examples
+#' library(ggplot2)
+#'
+#' set_theme(theme_classic())
+#'
+#' p <- ggplot(mtcars, aes(wt, mpg)) +
+#'   geom_point() +
+#'   coord_cartesian(clip = "off")
+#'
+#' # Bottom axis labels at specific breaks
+#' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5))
+#'
+#' # Custom labels
+#' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
+#'                        label = c("two", "three", "four", "five"))
+#'
+#' # Inward labels using negative length
+#' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
+#'                        length = grid::unit(-15, "pt"))
+#'
+#' # Arbitrary positioning — label a specific point on the plot
+#' p + annotate_axis_text(x = 3.215, y = 21.4, label = "this one")
+annotate_axis_text <- function(
     ...,
     position = NULL,
-    x = NULL,
-    y = NULL,
-    label = NULL,
-    colour = NULL,
-    size = NULL,
-    family = NULL,
-    length = NULL,
-    hjust = NULL,
-    vjust = NULL,
-    angle = 0,
-    theme = "keep"
+    x        = NULL,
+    y        = NULL,
+    label    = NULL,
+    colour   = NULL,
+    size     = NULL,
+    family   = NULL,
+    length   = NULL,
+    hjust    = NULL,
+    vjust    = NULL,
+    angle    = 0,
+    element_to = "keep"
 ) {
-  # Check if both x and y are provided (arbitrary positioning mode)
   arbitrary_position <- !is.null(x) && !is.null(y)
-  
-  # Determine position from x/y if not specified
+
   if (!arbitrary_position) {
     if (is.null(position)) {
-      if (!is.null(x)) {
-        position <- "bottom"
-      } else if (!is.null(y)) {
-        position <- "left"
-      } else {
-        stop("Must specify either position, x, y, or both x and y")
-      }
+      if (!is.null(x))      position <- "bottom"
+      else if (!is.null(y)) position <- "left"
+      else                  stop("Must specify either position, x, y, or both x and y.")
     }
-    # Validate position for axis mode
     position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
   }
-  
-  # Check if values are wrapped in I() to determine coordinate type
+
   x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
   y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
-  
-  # Unwrap I() values
+
   if (x_is_normalized) {
     x <- unclass(x)
-    if (any(x < 0 | x > 1)) {
-      stop("Normalized x coordinates (specified with I()) must be between 0 and 1")
-    }
+    if (any(x < 0 | x > 1)) stop("Normalized x coordinates must be between 0 and 1.")
   }
   if (y_is_normalized) {
     y <- unclass(y)
-    if (any(y < 0 | y > 1)) {
-      stop("Normalized y coordinates (specified with I()) must be between 0 and 1")
-    }
+    if (any(y < 0 | y > 1)) stop("Normalized y coordinates must be between 0 and 1.")
   }
-  
+
   if (arbitrary_position) {
-    # Validate that x and y have same length
-    if (length(x) != length(y)) {
-      stop("x and y must have the same length when both are specified")
-    }
+    if (length(x) != length(y)) stop("x and y must have the same length when both are specified.")
     use_normalized <- x_is_normalized || y_is_normalized
-    axis <- "x" # Default to x-axis styling when arbitrary positioning
-    breaks <- list(x = x, y = y) # Store as list for easier access
+    axis           <- "x"
+    breaks         <- list(x = x, y = y)
   } else {
-    # Original validation for axis mode
     if (position %in% c("top", "bottom")) {
-      if (!is.null(y)) {
-        stop("For top or bottom positions, only x can be specified, not y")
-      }
-      if (is.null(x)) {
-        stop("For top or bottom positions, x must be specified")
-      }
+      if (!is.null(y)) stop("For top or bottom positions, only x can be specified.")
+      if (is.null(x))  stop("For top or bottom positions, x must be specified.")
       use_normalized <- x_is_normalized
-    } else {  # left or right
-      if (!is.null(x)) {
-        stop("For left or right positions, only y can be specified, not x")
-      }
-      if (is.null(y)) {
-        stop("For left or right positions, y must be specified")
-      }
+    } else {
+      if (!is.null(x)) stop("For left or right positions, only y can be specified.")
+      if (is.null(y))  stop("For left or right positions, y must be specified.")
       use_normalized <- y_is_normalized
     }
-    axis <- if (position %in% c("top", "bottom")) "x" else "y"
+    axis   <- if (position %in% c("top", "bottom")) "x" else "y"
     breaks <- if (!is.null(x)) x else y
   }
-  
-  theme <- rlang::arg_match(theme, c("keep", "transparent", "blank"))
-  
-  # Get current theme
+
+  element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+
   current_theme <- ggplot2::theme_get()
-  
-  # Check for empty breaks
+
   n_breaks <- if (arbitrary_position) length(breaks$x) else length(breaks)
-  if (n_breaks == 0) {
-    return(list())
+  if (n_breaks == 0) return(list())
+
+  # ---- Resolve text element -------------------------------------------------
+
+  text_hierarchy <- if (arbitrary_position) {
+    c("axis.text.x", "axis.text")
+  } else {
+    c(paste0("axis.text.", axis, ".", position), paste0("axis.text.", axis), "axis.text")
   }
-  
-  # Process labels
+
+  resolved_text_element <- NULL
+  for (nm in text_hierarchy) {
+    el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+    if (!is.null(el) && !inherits(el, "element_blank")) { resolved_text_element <- el; break }
+  }
+  if (is.null(resolved_text_element)) {
+    resolved_text_element <- ggplot2::element_text(colour = "black", size = 11, family = "")
+  }
+
+  text_colour <- colour %||% resolved_text_element$colour %||% "black"
+  text_size   <- size   %||% resolved_text_element$size   %||% 11
+  text_family <- family %||% resolved_text_element$family %||% ""
+
+  # ---- Resolve labels -------------------------------------------------------
+
   if (is.null(label)) {
-    if (use_normalized) {
-      if (arbitrary_position) {
-        labels <- paste0("(", breaks$x, ", ", breaks$y, ")")
-      } else {
-        labels <- as.character(breaks)
-      }
+    labels <- if (arbitrary_position) {
+      if (use_normalized) paste0("(", breaks$x, ", ", breaks$y, ")") else paste0("(", breaks$x, ", ", breaks$y, ")")
+    } else if (use_normalized) {
+      as.character(breaks)
+    } else if (inherits(breaks, "Date")) {
+      format(breaks, "%d-%m-%Y")
+    } else if (inherits(breaks, c("POSIXct", "POSIXlt"))) {
+      format(breaks, "%d-%m-%Y %H:%M:%S")
+    } else if (inherits(breaks, c("hms", "difftime"))) {
+      as.character(breaks)
+    } else if (is.numeric(breaks)) {
+      scales::comma(breaks)
     } else {
-      if (arbitrary_position) {
-        # Format each coordinate appropriately
-        x_labels <- if (inherits(breaks$x, "Date")) {
-          format(breaks$x, "%d-%m-%Y")
-        } else if (inherits(breaks$x, "POSIXct") || inherits(breaks$x, "POSIXlt")) {
-          format(breaks$x, "%d-%m-%Y %H:%M:%S")
-        } else if (inherits(breaks$x, "hms") || inherits(breaks$x, "difftime")) {
-          as.character(breaks$x)
-        } else if (is.numeric(breaks$x)) {
-          scales::comma(breaks$x)
-        } else {
-          as.character(breaks$x)
-        }
-        
-        y_labels <- if (inherits(breaks$y, "Date")) {
-          format(breaks$y, "%d-%m-%Y")
-        } else if (inherits(breaks$y, "POSIXct") || inherits(breaks$y, "POSIXlt")) {
-          format(breaks$y, "%d-%m-%Y %H:%M:%S")
-        } else if (inherits(breaks$y, "hms") || inherits(breaks$y, "difftime")) {
-          as.character(breaks$y)
-        } else if (is.numeric(breaks$y)) {
-          scales::comma(breaks$y)
-        } else {
-          as.character(breaks$y)
-        }
-        
-        labels <- paste0("(", x_labels, ", ", y_labels, ")")
-      } else {
-        # Check data type and format appropriately
-        if (inherits(breaks, "Date")) {
-          labels <- format(breaks, "%d-%m-%Y")
-        } else if (inherits(breaks, "POSIXct") || inherits(breaks, "POSIXlt")) {
-          labels <- format(breaks, "%d-%m-%Y %H:%M:%S")
-        } else if (inherits(breaks, "hms") || inherits(breaks, "difftime")) {
-          labels <- as.character(breaks)
-        } else if (is.numeric(breaks)) {
-          labels <- scales::comma(breaks)
-        } else {
-          labels <- as.character(breaks)
-        }
-      }
+      as.character(breaks)
     }
   } else if (is.function(label)) {
     labels <- label(breaks)
   } else {
     labels <- label
   }
-  
-  # Ensure labels match breaks length
-  if (length(labels) != n_breaks) {
-    stop("Length of labels must match length of breaks")
-  }
-  
-  # Build hierarchy for axis text from most specific to least specific
-  if (arbitrary_position) {
-    # For arbitrary positioning, just use general axis.text
-    text_hierarchy <- c("axis.text.x", "axis.text")
-  } else {
-    text_specific <- paste0("axis.text.", axis, ".", position)
-    text_axis <- paste0("axis.text.", axis)
-    text_general <- "axis.text"
-    text_hierarchy <- c(text_specific, text_axis, text_general)
-  }
-  
-  # Use calc_element to properly resolve text properties with inheritance
-  resolved_text_element <- NULL
-  for (element_name in text_hierarchy) {
-    element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-    if (!is.null(element) && !inherits(element, "element_blank")) {
-      resolved_text_element <- element
-      break
-    }
-  }
-  
-  # If still no element found, create a minimal fallback
-  if (is.null(resolved_text_element)) {
-    resolved_text_element <- ggplot2::element_text(
-      colour = "black",
-      size = 11,
-      family = ""
-    )
-  }
-  
-  # Extract theme properties with proper resolution
-  text_colour <- colour %||% resolved_text_element$colour %||% "black"
-  text_size <- size %||% resolved_text_element$size %||% 11
-  text_family <- family %||% resolved_text_element$family %||% ""
-  
-  # Initialize flip_direction flag (needed for hjust/vjust calculation)
+
+  if (length(labels) != n_breaks) stop("Length of labels must match length of breaks.")
+
+  # ---- Resolve tick length offset (axis mode only) --------------------------
+
   flip_direction <- FALSE
-  
-  # For arbitrary positioning, skip length calculation
+
   if (!arbitrary_position) {
-    # Function to calculate default tick length
+    length_hierarchy <- c(
+      paste0("axis.ticks.length.", axis, ".", position),
+      paste0("axis.ticks.length.", axis),
+      "axis.ticks.length"
+    )
+
+    resolved_length <- NULL
+    for (nm in length_hierarchy) {
+      el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length <- el; break }
+    }
+
     calculate_default_tick_length <- function() {
-      # Build hierarchy for tick length
-      length_specific <- paste0("axis.ticks.length.", axis, ".", position)
-      length_axis <- paste0("axis.ticks.length.", axis)
-      length_general <- "axis.ticks.length"
-      length_hierarchy <- c(length_specific, length_axis, length_general)
-      
-      # Resolve tick length
-      resolved_length_element <- NULL
-      for (element_name in length_hierarchy) {
-        element <- ggplot2::calc_element(element_name, current_theme, skip_blank = TRUE)
-        if (!is.null(element) && !inherits(element, "element_blank")) {
-          resolved_length_element <- element
-          break
-        }
-      }
-      
-      tick_length <- resolved_length_element
-      
-      if (is.null(tick_length)) {
-        text_size <- current_theme$text$size %||% 11
-        return(grid::unit(0.5 * text_size, "pt"))
-      } else if (inherits(tick_length, "rel")) {
-        spacing <- current_theme$spacing %||% grid::unit(5.5, "pt")
-        if (inherits(spacing, "unit")) {
-          spacing_pts <- as.numeric(grid::convertUnit(spacing, "pt"))
-        } else {
-          spacing_pts <- 5.5
-        }
-        return(grid::unit(as.numeric(tick_length) * spacing_pts, "pt"))
-      } else if (!inherits(tick_length, "unit")) {
-        if (is.numeric(tick_length)) {
-          return(grid::unit(tick_length, "pt"))
-        } else {
-          text_size <- current_theme$text$size %||% 11
-          return(grid::unit(0.5 * text_size, "pt"))
-        }
+      tl <- resolved_length
+      if (is.null(tl)) {
+        return(grid::unit(0.5 * (current_theme$text$size %||% 11), "pt"))
+      } else if (inherits(tl, "rel")) {
+        spacing     <- current_theme$spacing %||% grid::unit(5.5, "pt")
+        spacing_pts <- as.numeric(grid::convertUnit(if (inherits(spacing, "unit")) spacing else grid::unit(5.5, "pt"), "pt"))
+        return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
+      } else if (!inherits(tl, "unit")) {
+        return(grid::unit(if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11), "pt"))
       } else {
-        return(tick_length)
+        return(tl)
       }
     }
-    
-    # Calculate tick length
+
     if (is.null(length)) {
       tick_length <- calculate_default_tick_length()
+    } else if (inherits(length, "rel")) {
+      rel_value   <- as.numeric(length)
+      default_pts <- as.numeric(grid::convertUnit(calculate_default_tick_length(), "pt"))
+      tick_length    <- grid::unit(abs(rel_value) * default_pts, "pt")
+      flip_direction <- rel_value < 0
+    } else if (inherits(length, "unit")) {
+      tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
+      tick_length    <- grid::unit(abs(tick_pts), "pt")
+      flip_direction <- tick_pts < 0
+    } else if (is.numeric(length)) {
+      tick_length    <- grid::unit(abs(length), "pt")
+      flip_direction <- length < 0
     } else {
-      if (inherits(length, "rel")) {
-        # Handle rel() objects
-        default_tick_length <- calculate_default_tick_length()
-        rel_value <- as.numeric(length)
-        default_pts <- as.numeric(grid::convertUnit(default_tick_length, "pt"))
-        tick_length <- grid::unit(abs(rel_value) * default_pts, "pt")
-        flip_direction <- rel_value < 0
-      } else if (inherits(length, "unit")) {
-        tick_length <- length
-        # Check if it's negative
-        tick_pts <- as.numeric(grid::convertUnit(length, "pt"))
-        if (tick_pts < 0) {
-          tick_length <- grid::unit(abs(tick_pts), "pt")
-          flip_direction <- TRUE
-        }
-      } else if (is.numeric(length)) {
-        tick_length <- grid::unit(abs(length), "pt")
-        flip_direction <- length < 0
-      } else {
-        tick_length <- calculate_default_tick_length()
-      }
+      tick_length <- calculate_default_tick_length()
     }
-    
-    # Get the text margin from theme (gap between tick and text)
+
     text_margin <- resolved_text_element$margin
-    margin_unit <- grid::unit(2, "pt")  # Default fallback
-    
+    margin_unit <- grid::unit(2, "pt")
+
     if (!is.null(text_margin)) {
-      margin_index <- if (position == "bottom") {
-        1  # top margin
-      } else if (position == "top") {
-        3  # bottom margin
-      } else if (position == "left") {
-        2  # right margin
-      } else {
-        4  # left margin
-      }
-      
-      if (inherits(text_margin, "margin")) {
-        # margin objects are like units with 4 values
-        margin_unit <- text_margin[margin_index]
-      } else if (inherits(text_margin, "unit") && length(text_margin) >= margin_index) {
-        margin_unit <- text_margin[margin_index]
-      } else if (inherits(text_margin, "unit") && length(text_margin) == 1) {
-        # Single unit value applies to all sides
-        margin_unit <- text_margin
+      margin_index <- switch(position, bottom = 1L, top = 3L, left = 2L, right = 4L)
+      if (inherits(text_margin, c("margin", "unit"))) {
+        if (length(text_margin) >= margin_index) margin_unit <- text_margin[margin_index]
+        else if (length(text_margin) == 1)        margin_unit <- text_margin
       }
     }
-    
-    # Calculate total distance from axis line to text
+
     total_length <- tick_length + margin_unit
   }
-  
-  # Set hjust and vjust based on position or use defaults for arbitrary
+
+  # ---- Justification --------------------------------------------------------
+
   if (arbitrary_position) {
     if (is.null(hjust)) hjust <- 0.5
     if (is.null(vjust)) vjust <- 0.5
   } else {
     if (is.null(hjust)) {
-      hjust <- if (position %in% c("top", "bottom")) {
-        0.5
-      } else if (position == "left") {
-        if (flip_direction) 0 else 1  # Flip hjust when flipping direction
-      } else {
-        if (flip_direction) 1 else 0  # Flip hjust when flipping direction
-      }
+      hjust <- if (position %in% c("top", "bottom")) 0.5
+      else if (position == "left")          if (flip_direction) 0 else 1
+      else                                  if (flip_direction) 1 else 0
     }
-    
     if (is.null(vjust)) {
-      vjust <- if (position == "bottom") {
-        if (flip_direction) 0 else 1  # Flip vjust when flipping direction
-      } else if (position == "top") {
-        if (flip_direction) 1 else 0  # Flip vjust when flipping direction
-      } else {
-        0.5
-      }
+      vjust <- if (position == "bottom")      if (flip_direction) 0 else 1
+      else if (position == "top")    if (flip_direction) 1 else 0
+      else                           0.5
     }
   }
-  
+
   stamp <- list()
-  
-  # Add theme modification if requested (only for axis positioning)
-  if (!arbitrary_position && theme != "keep") {
+
+  # ---- Theme modification ---------------------------------------------------
+
+  if (!arbitrary_position && element_to != "keep") {
     theme_name <- paste0("axis.text.", axis, ".", position)
-    theme_mod <- list()
-    if (theme == "transparent") {
-      theme_mod[[theme_name]] <- ggplot2::element_text(colour = "transparent")
-    } else if (theme == "blank") {
-      theme_mod[[theme_name]] <- ggplot2::element_blank()
-    }
+    theme_mod  <- list()
+    theme_mod[[theme_name]] <- if (element_to == "transparent") ggplot2::element_text(colour = "transparent") else ggplot2::element_blank()
     stamp <- c(stamp, list(rlang::exec(ggplot2::theme, !!!theme_mod)))
   }
-  
-  # Create annotations
-  if (arbitrary_position) {
-    # For arbitrary positioning, create text at specified x,y coordinates
-    text_annotations <- seq_len(n_breaks) |>
-      purrr::map(\(i) {
-        label_val <- labels[i]
-        
-        if (use_normalized) {
-          # Create normalized grob
-          text_grob <- grid::textGrob(
-            label_val,
-            x = grid::unit(breaks$x[i], "npc"),
-            y = grid::unit(breaks$y[i], "npc"),
-            just = c(hjust, vjust),
-            rot = angle,
-            gp = grid::gpar(
-              col = text_colour,
-              fontsize = text_size,
-              fontfamily = text_family
-            )
-          )
-          
-          ggplot2::annotation_custom(
-            grob = text_grob,
-            xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-          )
-        } else {
-          # Use annotate for data coordinates
-          ggplot2::annotate(
-            "text",
-            x = breaks$x[i],
-            y = breaks$y[i],
-            label = label_val,
-            colour = text_colour,
-            size = text_size / 2.845276,
-            family = text_family,
-            hjust = hjust,
-            vjust = vjust,
-            angle = angle
-          )
-        }
-      })
-    
-    stamp <- c(stamp, text_annotations)
-  } else {
-    # Original axis-based annotation code
-    text_annotations <- breaks |>
-      purrr::imap(\(break_val, i) {
-        label_val <- labels[i]
-        
-        # For normalized coordinates, use them directly as npc units
-        if (use_normalized) {
-          text_grob <- if (position == "bottom") {
-            # Apply flip_direction to change which side of axis
-            y_pos <- if (flip_direction) {
-              grid::unit(0, "npc") + total_length
-            } else {
-              grid::unit(0, "npc") - total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = grid::unit(break_val, "npc"),
-              y = y_pos,
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          } else if (position == "top") {
-            # Apply flip_direction to change which side of axis
-            y_pos <- if (flip_direction) {
-              grid::unit(1, "npc") - total_length
-            } else {
-              grid::unit(1, "npc") + total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = grid::unit(break_val, "npc"),
-              y = y_pos,
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          } else if (position == "left") {
-            # Apply flip_direction to change which side of axis
-            x_pos <- if (flip_direction) {
-              grid::unit(0, "npc") + total_length
-            } else {
-              grid::unit(0, "npc") - total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = x_pos,
-              y = grid::unit(break_val, "npc"),
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          } else {  # right
-            # Apply flip_direction to change which side of axis
-            x_pos <- if (flip_direction) {
-              grid::unit(1, "npc") - total_length
-            } else {
-              grid::unit(1, "npc") + total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = x_pos,
-              y = grid::unit(break_val, "npc"),
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          }
-          
-          rlang::exec(
-            ggplot2::annotation_custom,
-            grob = text_grob,
-            xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-          )
-        } else {
-          # Original behavior for data coordinates
-          text_grob <- if (position == "bottom") {
-            # Apply flip_direction to change which side of axis
-            y_pos <- if (flip_direction) {
-              grid::unit(0, "npc") + total_length
-            } else {
-              grid::unit(0, "npc") - total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = grid::unit(0.5, "npc"),
-              y = y_pos,
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          } else if (position == "top") {
-            # Apply flip_direction to change which side of axis
-            y_pos <- if (flip_direction) {
-              grid::unit(1, "npc") - total_length
-            } else {
-              grid::unit(1, "npc") + total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = grid::unit(0.5, "npc"),
-              y = y_pos,
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          } else if (position == "left") {
-            # Apply flip_direction to change which side of axis
-            x_pos <- if (flip_direction) {
-              grid::unit(0, "npc") + total_length
-            } else {
-              grid::unit(0, "npc") - total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = x_pos,
-              y = grid::unit(0.5, "npc"),
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          } else {  # right
-            # Apply flip_direction to change which side of axis
-            x_pos <- if (flip_direction) {
-              grid::unit(1, "npc") - total_length
-            } else {
-              grid::unit(1, "npc") + total_length
-            }
-            grid::textGrob(
-              label_val,
-              x = x_pos,
-              y = grid::unit(0.5, "npc"),
-              just = c(hjust, vjust),
-              rot = angle,
-              gp = grid::gpar(
-                col = text_colour,
-                fontsize = text_size,
-                fontfamily = text_family
-              )
-            )
-          }
-          
-          # Set annotation position based on axis and position
-          if (axis == "x") {
-            annotation_position <- if (position == "bottom") {
-              list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
-            } else {  # top
-              list(xmin = break_val, xmax = break_val, ymin = Inf, ymax = Inf)
-            }
-          } else {  # y axis
-            annotation_position <- if (position == "left") {
-              list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
-            } else {  # right
-              list(xmin = Inf, xmax = Inf, ymin = break_val, ymax = break_val)
-            }
-          }
-          
-          rlang::exec(
-            ggplot2::annotation_custom,
-            grob = text_grob,
-            !!!annotation_position
-          )
-        }
-      })
-    
-    stamp <- c(stamp, text_annotations)
+
+  # ---- Build text annotations -----------------------------------------------
+
+  make_gpar <- function() {
+    grid::gpar(col = text_colour, fontsize = text_size, fontfamily = text_family)
   }
-  
-  return(stamp)
+
+  text_annotations <- if (arbitrary_position) {
+    seq_len(n_breaks) |>
+      purrr::map(\(i) {
+        if (use_normalized) {
+          text_grob <- grid::textGrob(labels[i], x = grid::unit(breaks$x[i], "npc"), y = grid::unit(breaks$y[i], "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+        } else {
+          ggplot2::annotate("text", x = breaks$x[i], y = breaks$y[i], label = labels[i], colour = text_colour, size = text_size / 2.845276, family = text_family, hjust = hjust, vjust = vjust, angle = angle)
+        }
+      })
+  } else {
+    breaks |>
+      purrr::imap(\(break_val, i) {
+        y_offset <- function(base, sign) if (sign > 0) grid::unit(base, "npc") + total_length else grid::unit(base, "npc") - total_length
+        x_offset <- function(base, sign) if (sign > 0) grid::unit(base, "npc") + total_length else grid::unit(base, "npc") - total_length
+
+        if (use_normalized) {
+          text_grob <- if (position == "bottom") {
+            grid::textGrob(labels[i], x = grid::unit(break_val, "npc"), y = y_offset(0, if (flip_direction) 1 else -1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          } else if (position == "top") {
+            grid::textGrob(labels[i], x = grid::unit(break_val, "npc"), y = y_offset(1, if (flip_direction) -1 else 1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          } else if (position == "left") {
+            grid::textGrob(labels[i], x = x_offset(0, if (flip_direction) 1 else -1), y = grid::unit(break_val, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          } else {
+            grid::textGrob(labels[i], x = x_offset(1, if (flip_direction) -1 else 1), y = grid::unit(break_val, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          }
+          ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+        } else {
+          text_grob <- if (position == "bottom") {
+            grid::textGrob(labels[i], x = grid::unit(0.5, "npc"), y = y_offset(0, if (flip_direction) 1 else -1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          } else if (position == "top") {
+            grid::textGrob(labels[i], x = grid::unit(0.5, "npc"), y = y_offset(1, if (flip_direction) -1 else 1), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          } else if (position == "left") {
+            grid::textGrob(labels[i], x = x_offset(0, if (flip_direction) 1 else -1), y = grid::unit(0.5, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          } else {
+            grid::textGrob(labels[i], x = x_offset(1, if (flip_direction) -1 else 1), y = grid::unit(0.5, "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
+          }
+
+          annotation_position <- if (axis == "x") {
+            if (position == "bottom") list(xmin = break_val, xmax = break_val, ymin = -Inf, ymax = -Inf)
+            else                      list(xmin = break_val, xmax = break_val, ymin =  Inf, ymax =  Inf)
+          } else {
+            if (position == "left")   list(xmin = -Inf, xmax = -Inf, ymin = break_val, ymax = break_val)
+            else                      list(xmin =  Inf, xmax =  Inf, ymin = break_val, ymax = break_val)
+          }
+
+          rlang::exec(ggplot2::annotation_custom, grob = text_grob, !!!annotation_position)
+        }
+      })
+  }
+
+  c(stamp, text_annotations)
 }
