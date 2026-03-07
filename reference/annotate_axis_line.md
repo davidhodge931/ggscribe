@@ -12,12 +12,12 @@ annotate_axis_line(
   position = NULL,
   x = NULL,
   y = NULL,
-  xend = NULL,
-  yend = NULL,
   xmin = NULL,
   xmax = NULL,
   ymin = NULL,
   ymax = NULL,
+  xend = NULL,
+  yend = NULL,
   curvature = NULL,
   angle = 90,
   ncp = 5,
@@ -53,11 +53,6 @@ annotate_axis_line(
   [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
   (0-1).
 
-- xend, yend:
-
-  End position of the segment or curve. Providing all of `x`, `y`,
-  `xend`, `yend` triggers segment/curve mode.
-
 - xmin, xmax:
 
   Start and end x positions for a horizontal axis line. Use
@@ -69,6 +64,11 @@ annotate_axis_line(
   Start and end y positions for a vertical axis line. Use
   [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
   (0-1). Axis line mode only.
+
+- xend, yend:
+
+  End position of the segment or curve. Providing all of `x`, `y`,
+  `xend`, `yend` triggers segment/curve mode.
 
 - curvature:
 
@@ -110,13 +110,11 @@ A list of ggplot2 annotation layers and theme elements.
 
 ## Details
 
-Operates in two modes:
-
-- **Axis line mode**: triggered by `position`, `x`, or `y` alone.
-
-- **Segment/curve mode**: triggered when `x`, `y`, `xend`, and `yend`
-  are all provided. Pass `curvature` to draw a curve instead of a
-  straight line.
+Operates in two modes. The primary **Axis line mode** of a
+horizontal/vertical line is triggered by `position`, `x`, or `y` alone.
+The secondary **Segment/curve mode** is triggered when `x`, `y`, `xend`,
+and `yend` are all provided. Pass `curvature` etc to draw a curve
+instead of a straight line (with axis line defaults).
 
 ## Examples
 

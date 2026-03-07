@@ -55,12 +55,12 @@ defaults taken from the <code>axis.line</code> element of the set theme. Require
 <span>  position <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xend <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  yend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xmin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xmax <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ymin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ymax <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xend <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  yend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  curvature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  angle <span class="op">=</span> <span class="fl">90</span>,</span>
 <span>  ncp <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -96,11 +96,6 @@ segment/curve mode, the y start position. Use <code><a href="https://rdrr.io/r/b
 coordinates (0-1).</p></dd>
 
 
-<dt id="arg-xend-yend">xend, yend<a class="anchor" aria-label="anchor" href="#arg-xend-yend"></a></dt>
-<dd><p>End position of the segment or curve. Providing all of
-<code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code> triggers segment/curve mode.</p></dd>
-
-
 <dt id="arg-xmin-xmax">xmin, xmax<a class="anchor" aria-label="anchor" href="#arg-xmin-xmax"></a></dt>
 <dd><p>Start and end x positions for a horizontal axis line. Use
 <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for normalized coordinates (0-1). Axis line mode only.</p></dd>
@@ -109,6 +104,11 @@ coordinates (0-1).</p></dd>
 <dt id="arg-ymin-ymax">ymin, ymax<a class="anchor" aria-label="anchor" href="#arg-ymin-ymax"></a></dt>
 <dd><p>Start and end y positions for a vertical axis line. Use
 <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for normalized coordinates (0-1). Axis line mode only.</p></dd>
+
+
+<dt id="arg-xend-yend">xend, yend<a class="anchor" aria-label="anchor" href="#arg-xend-yend"></a></dt>
+<dd><p>End position of the segment or curve. Providing all of
+<code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code> triggers segment/curve mode.</p></dd>
 
 
 <dt id="arg-curvature">curvature<a class="anchor" aria-label="anchor" href="#arg-curvature"></a></dt>
@@ -151,10 +151,12 @@ Axis line mode only.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Operates in two modes:</p><ul><li><p><strong>Axis line mode</strong>: triggered by <code>position</code>, <code>x</code>, or <code>y</code> alone.</p></li>
-<li><p><strong>Segment/curve mode</strong>: triggered when <code>x</code>, <code>y</code>, <code>xend</code>, and <code>yend</code> are
-all provided. Pass <code>curvature</code> to draw a curve instead of a straight line.</p></li>
-</ul></div>
+    <p>Operates in two modes. The primary <strong>Axis line mode</strong> of a horizontal/vertical
+line is triggered by <code>position</code>, <code>x</code>, or <code>y</code> alone. The secondary
+<strong>Segment/curve mode</strong> is triggered when <code>x</code>, <code>y</code>, <code>xend</code>, and <code>yend</code> are
+all provided. Pass <code>curvature</code> etc to draw a curve instead of a straight line
+(with axis line defaults).</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
