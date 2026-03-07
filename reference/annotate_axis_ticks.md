@@ -15,7 +15,7 @@ annotate_axis_ticks(
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
-  length = NULL,
+  tick_length = NULL,
   element_to = "keep"
 )
 ```
@@ -24,7 +24,7 @@ annotate_axis_ticks(
 
 - ...:
 
-  Named arguments. Support trailing commas.
+  Not used. Allows trailing commas and named-argument style calls.
 
 - position:
 
@@ -56,7 +56,7 @@ annotate_axis_ticks(
   Inherits from `axis.ticks` in the set theme. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
 
-- length:
+- tick_length:
 
   Total tick length as a grid unit. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html) to
@@ -92,7 +92,7 @@ p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "tran
 
 
 # Inward ticks using a negative length
-p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), length = grid::unit(-5, "pt"))
+p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
 
 
 # Minor ticks

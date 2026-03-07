@@ -32,9 +32,7 @@ annotate_axis_line(
 
 - ...:
 
-  Named arguments passed to
-  [`ggplot2::annotate()`](https://ggplot2.tidyverse.org/reference/annotate.html).
-  Support trailing commas.
+  Not used. Allows trailing commas and named-argument style calls.
 
 - position:
 
@@ -119,14 +117,6 @@ Operates in two modes:
 - **Segment/curve mode**: triggered when `x`, `y`, `xend`, and `yend`
   are all provided. Pass `curvature` to draw a curve instead of a
   straight line.
-
-Does not support date or datetime positional scales in axis line mode.
-Use
-[ggplot2::geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html),
-[ggplot2::geom_hline](https://ggplot2.tidyverse.org/reference/geom_abline.html),
-or
-[ggplot2::geom_vline](https://ggplot2.tidyverse.org/reference/geom_abline.html)
-instead.
 
 ## Examples
 

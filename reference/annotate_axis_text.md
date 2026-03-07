@@ -17,7 +17,7 @@ annotate_axis_text(
   colour = NULL,
   size = NULL,
   family = NULL,
-  length = NULL,
+  tick_length = NULL,
   hjust = NULL,
   vjust = NULL,
   angle = 0,
@@ -29,7 +29,7 @@ annotate_axis_text(
 
 - ...:
 
-  Named arguments. Support trailing commas.
+  Not used. Allows trailing commas and named-argument style calls.
 
 - position:
 
@@ -65,7 +65,7 @@ annotate_axis_text(
 
   Inherits from `axis.text` in the set theme.
 
-- length:
+- tick_length:
 
   Offset from the axis edge as a grid unit, including tick length and
   margin. Supports
@@ -119,7 +119,7 @@ p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
 
 # Inward labels using negative length
 p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-                       length = grid::unit(-15, "pt"))
+                       tick_length = grid::unit(-15, "pt"))
 
 
 # Arbitrary positioning — label a specific point on the plot

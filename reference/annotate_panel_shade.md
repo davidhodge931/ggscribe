@@ -25,9 +25,7 @@ annotate_panel_shade(
 
 - ...:
 
-  Named arguments passed to
-  [`ggplot2::annotate()`](https://ggplot2.tidyverse.org/reference/annotate.html).
-  Support trailing commas.
+  Not used. Allows trailing commas and named-argument style calls.
 
 - xmin, xmax:
 

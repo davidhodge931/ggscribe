@@ -51,6 +51,10 @@ ggplot(mpg, aes(displ, hwy)) +
     x = "Engine displacement (L)",
     y = "Highway fuel economy (mpg)"
   )
+#> Warning: The set theme does not define a `panel.grid` colour. Defaulting to
+#> grey.
+#> Warning: The set theme does not define a `panel.grid` linewidth. Defaulting to
+#> `0.5`.
 ```
 
 ![](reference/figures/README-unnamed-chunk-2-1.png)
