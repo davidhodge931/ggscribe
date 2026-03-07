@@ -1,7 +1,7 @@
 # ggscribe
 
-The goal of ggscribe is to annotate ‘ggplot2’ visualisation using the
-set theme.
+The objective of ggscribe is to annotate ‘ggplot2’ visualisation using
+the set theme.
 
 This includes functions to annotate components of the set theme, and
 functions to annotate that use set theme defaults.
