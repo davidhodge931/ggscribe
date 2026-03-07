@@ -129,7 +129,10 @@ test_that("annotate_axis_line element_to = 'keep' does not add theme layer", {
 
 test_that("annotate_axis_line warns when theme has no axis.line (theme_grey)", {
   set_theme(theme_grey())
-  expect_warning(annotate_axis_line(position = "bottom"), "axis\\.line")
+  expect_warning(
+    expect_warning(annotate_axis_line(position = "bottom"), "colour"),
+    "linewidth"
+  )
 })
 
 test_that("annotate_axis_line does not warn when colour supplied explicitly", {
@@ -166,8 +169,11 @@ test_that("annotate_axis_line segment mode returns single-element list", {
 test_that("annotate_axis_line segment mode warns when theme has no axis.line", {
   set_theme(theme_grey())
   expect_warning(
-    annotate_axis_line(x = 2, y = 15, xend = 5, yend = 30),
-    "axis\\.line"
+    expect_warning(
+      annotate_axis_line(x = 2, y = 15, xend = 5, yend = 30),
+      "colour"
+    ),
+    "linewidth"
   )
 })
 
@@ -236,7 +242,7 @@ test_that("annotate_axis_ticks returns one grob per break", {
   set_theme(theme_classic())
   breaks <- c(2, 3, 4, 5)
   result <- annotate_axis_ticks(position = "bottom", x = breaks)
-  n_grobs <- sum(purrr::map_lgl(result, \(x) inherits(x, "annotation_custom")))
+  n_grobs <- sum(purrr::map_lgl(result, \(x) inherits(x, "Layer")))
   expect_equal(n_grobs, length(breaks))
 })
 
@@ -248,13 +254,13 @@ test_that("annotate_axis_ticks minor = TRUE builds", {
 test_that("annotate_axis_ticks negative length flips direction", {
   set_theme(theme_classic())
   expect_builds(annotate_axis_ticks(position = "bottom", x = c(2, 3, 4),
-                                    length = grid::unit(-5, "pt")))
+                                    tick_length = grid::unit(-5, "pt")))
 })
 
 test_that("annotate_axis_ticks rel() length builds", {
   set_theme(theme_classic())
   expect_builds(annotate_axis_ticks(position = "bottom", x = c(2, 3, 4),
-                                    length = rel(1.5)))
+                                    tick_length = rel(1.5)))
 })
 
 test_that("annotate_axis_ticks element_to adds theme layer", {
@@ -268,8 +274,11 @@ test_that("annotate_axis_ticks element_to adds theme layer", {
 test_that("annotate_axis_ticks warns when theme has no axis.ticks", {
   set_theme(theme_void())
   expect_warning(
-    annotate_axis_ticks(position = "bottom", x = c(2, 3, 4)),
-    "axis\\.ticks"
+    expect_warning(
+      annotate_axis_ticks(position = "bottom", x = c(2, 3, 4)),
+      "colour"
+    ),
+    "linewidth"
   )
 })
 
@@ -361,7 +370,7 @@ test_that("annotate_axis_text errors if label length mismatches breaks", {
 test_that("annotate_axis_text negative length flips inward", {
   set_theme(theme_classic())
   expect_builds(annotate_axis_text(position = "bottom", x = c(2, 3, 4),
-                                   length = grid::unit(-15, "pt")))
+                                   tick_length = grid::unit(-15, "pt")))
 })
 
 test_that("annotate_axis_text element_to adds theme layer in axis mode", {
@@ -389,6 +398,40 @@ test_that("annotate_axis_text Date breaks format without error", {
   dates <- as.Date(c("2023-01-01", "2023-06-01", "2024-01-01"))
   result <- annotate_axis_text(position = "bottom", x = dates)
   expect_type(result, "list")
+})
+
+test_that("annotate_axis_text combined: inward y labels + normalized top label builds", {
+  set_theme(
+    theme_classic() +
+      theme(
+        panel.heights = rep(grid::unit(50, "mm"), 100),
+        panel.widths  = rep(grid::unit(75, "mm"), 100),
+      )
+  )
+  p <- ggplot2::ggplot(
+    ggplot2::mpg,
+    ggplot2::aes(x = displ, y = hwy, colour = drv)
+  ) +
+    ggplot2::geom_point() +
+    ggplot2::coord_cartesian(clip = "off") +
+    annotate_axis_text(
+      y           = c(20, 30, 40),
+      element_to  = "blank",
+      tick_length = rel(-1),
+      hjust       = 0,
+      vjust       = -0.5,
+    ) +
+    annotate_axis_text(
+      position    = "top",
+      x           = I(0),
+      label       = "Highway mpg",
+      tick_length = rel(0),
+      hjust       = 0,
+    ) +
+    ggplot2::labs(title = "Fuel economy", subtitle = "Engine displacement vs highway mpg\n\n", y = NULL) +
+    ggplot2::theme(plot.title.position = "panel")
+
+  expect_no_error(ggplot_build(p))
 })
 
 

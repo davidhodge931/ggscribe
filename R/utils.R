@@ -13,14 +13,16 @@
 #' @noRd
 #'
 is_panel_dark <- function(..., theme = NULL) {
+  rlang::check_dots_empty()
+
   # Get theme if not provided
   if (rlang::is_null(theme)) {
     theme <- ggplot2::theme_get()
   }
-  
+
   # Get panel background colour from theme
   col <- ggplot2::calc_element(theme = theme, element = "panel.background")@fill
-  
+
   # Use .is_col_dark to check if the panel colour is dark
   is_col_dark(col)
 }
@@ -42,14 +44,14 @@ is_col_dark <- function(col) {
   if (rlang::is_null(col) || length(col) == 0) {
     return(FALSE)
   }
-  
+
   # Calculate luminance of the colour
   col_luminance <- farver::get_channel(
     colour = col,
     channel = "l",
     space = "hcl"
   )
-  
+
   # Return TRUE if low luminance
   col_luminance <= 50
 }

@@ -11,12 +11,7 @@
 #' - **Segment/curve mode**: triggered when `x`, `y`, `xend`, and `yend` are
 #'   all provided. Pass `curvature` to draw a curve instead of a straight line.
 #'
-#' Does not support date or datetime positional scales in axis line mode. Use
-#' [ggplot2::geom_segment], [ggplot2::geom_hline], or [ggplot2::geom_vline]
-#' instead.
-#'
-#' @param ... Named arguments passed to `ggplot2::annotate()`. Support trailing
-#'   commas.
+#' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Axis
 #'   line mode only.
 #' @param x In axis line mode, a single x value for a vertical line. In
@@ -90,6 +85,7 @@ annotate_axis_line <- function(
     linetype  = NULL,
     element_to = "keep"
 ) {
+  rlang::check_dots_empty()
 
   # ---- Mode detection -------------------------------------------------------
 
@@ -141,8 +137,7 @@ annotate_axis_line <- function(
         colour    = line_colour,
         linewidth = line_linewidth,
         linetype  = line_linetype,
-        !!!extra_args,
-        ...
+        !!!extra_args
       )
     ))
   }
@@ -150,16 +145,20 @@ annotate_axis_line <- function(
   # ---- Axis line mode -------------------------------------------------------
 
   if (!is.null(x) && !is.null(y)) {
-    stop("Cannot specify both x and y. To draw a segment, also provide xend and yend.")
+    rlang::abort("Cannot specify both x and y. To draw a segment, also provide xend and yend.")
   }
   if (!is.null(x) && (!is.null(xmin) || !is.null(xmax))) {
-    stop("Cannot specify both x and xmin/xmax.")
+    rlang::abort("Cannot specify both x and xmin/xmax.")
   }
   if (!is.null(y) && (!is.null(ymin) || !is.null(ymax))) {
-    stop("Cannot specify both y and ymin/ymax.")
+    rlang::abort("Cannot specify both y and ymin/ymax.")
   }
 
   use_xy_positioning <- !is.null(x) || !is.null(y)
+
+  if (use_xy_positioning && !is.null(position)) {
+    rlang::warn("`position` is ignored when `x` or `y` is provided.")
+  }
 
   if (use_xy_positioning) {
     x_is_normalized    <- !is.null(x)    && inherits(x,    "AsIs")
@@ -171,22 +170,22 @@ annotate_axis_line <- function(
 
     if (x_is_normalized) {
       x <- unclass(x)
-      if (length(x) != 1 || x < 0 || x > 1) stop("Normalized x must be a single value between 0 and 1.")
+      if (length(x) != 1 || x < 0 || x > 1) rlang::abort("Normalized x must be a single value between 0 and 1.")
     } else if (!is.null(x) && length(x) != 1) {
-      stop("x must be a single value.")
+      rlang::abort("x must be a single value.")
     }
 
     if (y_is_normalized) {
       y <- unclass(y)
-      if (length(y) != 1 || y < 0 || y > 1) stop("Normalized y must be a single value between 0 and 1.")
+      if (length(y) != 1 || y < 0 || y > 1) rlang::abort("Normalized y must be a single value between 0 and 1.")
     } else if (!is.null(y) && length(y) != 1) {
-      stop("y must be a single value.")
+      rlang::abort("y must be a single value.")
     }
 
-    if (xmin_is_normalized) { xmin <- unclass(xmin); if (length(xmin) != 1 || xmin < 0 || xmin > 1) stop("Normalized xmin must be between 0 and 1.") }
-    if (xmax_is_normalized) { xmax <- unclass(xmax); if (length(xmax) != 1 || xmax < 0 || xmax > 1) stop("Normalized xmax must be between 0 and 1.") }
-    if (ymin_is_normalized) { ymin <- unclass(ymin); if (length(ymin) != 1 || ymin < 0 || ymin > 1) stop("Normalized ymin must be between 0 and 1.") }
-    if (ymax_is_normalized) { ymax <- unclass(ymax); if (length(ymax) != 1 || ymax < 0 || ymax > 1) stop("Normalized ymax must be between 0 and 1.") }
+    if (xmin_is_normalized) { xmin <- unclass(xmin); if (length(xmin) != 1 || xmin < 0 || xmin > 1) rlang::abort("Normalized xmin must be between 0 and 1.") }
+    if (xmax_is_normalized) { xmax <- unclass(xmax); if (length(xmax) != 1 || xmax < 0 || xmax > 1) rlang::abort("Normalized xmax must be between 0 and 1.") }
+    if (ymin_is_normalized) { ymin <- unclass(ymin); if (length(ymin) != 1 || ymin < 0 || ymin > 1) rlang::abort("Normalized ymin must be between 0 and 1.") }
+    if (ymax_is_normalized) { ymax <- unclass(ymax); if (length(ymax) != 1 || ymax < 0 || ymax > 1) rlang::abort("Normalized ymax must be between 0 and 1.") }
 
     # axis refers to the axis.line theme element, not line direction:
     # a vertical line (x provided) maps to axis.line.y; horizontal to axis.line.x
@@ -197,7 +196,7 @@ annotate_axis_line <- function(
       ymin_is_normalized || ymax_is_normalized
 
   } else {
-    if (is.null(position)) stop("Must specify either position, x, or y.")
+    if (is.null(position)) rlang::abort("Must specify either position, x, or y.")
     position       <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
     axis           <- if (position %in% c("top", "bottom")) "x" else "y"
     use_normalized <- FALSE
@@ -259,7 +258,7 @@ annotate_axis_line <- function(
         )
         stamp <- c(stamp, list(ggplot2::annotation_custom(line_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)))
       } else {
-        stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = x, xend = x, y = ymin, yend = ymax, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
+        stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = x, xend = x, y = ymin, yend = ymax, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype)))
       }
 
     } else {
@@ -274,19 +273,19 @@ annotate_axis_line <- function(
         )
         stamp <- c(stamp, list(ggplot2::annotation_custom(line_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)))
       } else {
-        stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = xmin, xend = xmax, y = y, yend = y, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
+        stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = xmin, xend = xmax, y = y, yend = y, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype)))
       }
     }
 
   } else {
     if (position == "bottom") {
-      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = -Inf, yend = -Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = -Inf, yend = -Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype)))
     } else if (position == "top") {
-      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = Inf, yend = Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = Inf, yend = Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype)))
     } else if (position == "left") {
-      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = -Inf, xend = -Inf, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = -Inf, xend = -Inf, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype)))
     } else {
-      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = Inf, xend = Inf, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype, ...)))
+      stamp <- c(stamp, list(rlang::exec(ggplot2::annotate, "segment", x = Inf, xend = Inf, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = line_colour, linewidth = line_linewidth, linetype = line_linetype)))
     }
   }
 
@@ -334,7 +333,7 @@ annotate_axis_line <- function(
 #' from the `axis.ticks` element of the set theme. Requires
 #' `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Named arguments. Support trailing commas.
+#' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
 #' @param x A vector of x-axis break positions for top/bottom ticks. Use `I()`
 #'   for normalized coordinates (0-1).
@@ -345,7 +344,7 @@ annotate_axis_line <- function(
 #' @param colour Inherits from `axis.ticks` in the set theme.
 #' @param linewidth Inherits from `axis.ticks` in the set theme. Supports
 #'   `rel()`.
-#' @param length Total tick length as a grid unit. Supports `rel()` to scale
+#' @param tick_length Total tick length as a grid unit. Supports `rel()` to scale
 #'   relative to the theme default. Negative values flip the tick direction.
 #' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether native theme ticks are suppressed. Defaults to `"keep"`.
@@ -369,7 +368,7 @@ annotate_axis_line <- function(
 #' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
 #'
 #' # Inward ticks using a negative length
-#' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), length = grid::unit(-5, "pt"))
+#' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
 #'
 #' # Minor ticks
 #' p + annotate_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
@@ -381,19 +380,21 @@ annotate_axis_ticks <- function(
     minor     = FALSE,
     colour    = NULL,
     linewidth = NULL,
-    length    = NULL,
+    tick_length = NULL,
     element_to = "keep"
 ) {
+  rlang::check_dots_empty()
+
   if (is.null(position)) {
     if (!is.null(x) && !is.null(y)) {
-      stop("Cannot specify both x and y.")
+      rlang::abort("Cannot specify both x and y.")
     }
     if (!is.null(x)) {
       position <- "bottom"
     } else if (!is.null(y)) {
       position <- "left"
     } else {
-      stop("Must specify either position, x, or y.")
+      rlang::abort("Must specify either position, x, or y.")
     }
   }
 
@@ -404,20 +405,20 @@ annotate_axis_ticks <- function(
 
   if (x_is_normalized) {
     x <- unclass(x)
-    if (any(x < 0 | x > 1)) stop("Normalized x coordinates must be between 0 and 1.")
+    if (any(x < 0 | x > 1)) rlang::abort("Normalized x coordinates must be between 0 and 1.")
   }
   if (y_is_normalized) {
     y <- unclass(y)
-    if (any(y < 0 | y > 1)) stop("Normalized y coordinates must be between 0 and 1.")
+    if (any(y < 0 | y > 1)) rlang::abort("Normalized y coordinates must be between 0 and 1.")
   }
 
   if (position %in% c("top", "bottom")) {
-    if (!is.null(y)) stop("For top or bottom positions, only x can be specified.")
-    if (is.null(x))  stop("For top or bottom positions, x must be specified.")
+    if (!is.null(y)) rlang::abort("position = 'top' or 'bottom' expects `x`, not `y`.")
+    if (is.null(x))  rlang::abort("position = 'top' or 'bottom' requires `x` to be specified.")
     use_normalized <- x_is_normalized
   } else {
-    if (!is.null(x)) stop("For left or right positions, only y can be specified.")
-    if (is.null(y))  stop("For left or right positions, y must be specified.")
+    if (!is.null(x)) rlang::abort("position = 'left' or 'right' expects `y`, not `x`.")
+    if (is.null(y))  rlang::abort("position = 'left' or 'right' requires `y` to be specified.")
     use_normalized <- y_is_normalized
   }
 
@@ -426,7 +427,7 @@ annotate_axis_ticks <- function(
   axis   <- if (position %in% c("top", "bottom")) "x" else "y"
   breaks <- if (!is.null(x)) x else y
 
-  if (length(breaks) == 0) return(list())
+  if (base::length(breaks) == 0) return(list())
 
   current_theme <- ggplot2::theme_get()
 
@@ -462,7 +463,6 @@ annotate_axis_ticks <- function(
   if (is.null(linewidth) && (tick_intentionally_blank || is.null(resolved_tick_element$linewidth))) rlang::warn("The set theme does not define an `axis.ticks` linewidth. Defaulting to `0.5`.")
 
   if (is.null(resolved_tick_element)) resolved_tick_element <- list(colour = "black", linewidth = 0.5)
-  tick_colour <- colour %||% resolved_tick_element$colour %||% "black"
 
   length_hierarchy <- if (minor) {
     c(
@@ -516,20 +516,20 @@ annotate_axis_ticks <- function(
 
   flip_direction <- FALSE
 
-  if (is.null(length)) {
+  if (is.null(tick_length)) {
     tick_length <- calculate_default_length()
-  } else if (inherits(length, "rel")) {
-    rel_value   <- as.numeric(length)
+  } else if (inherits(tick_length, "rel")) {
+    rel_value   <- as.numeric(tick_length)
     default_pts <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
     tick_length <- grid::unit(abs(rel_value) * default_pts, "pt")
     flip_direction <- rel_value < 0
-  } else if (inherits(length, "unit")) {
-    tick_pts    <- as.numeric(grid::convertUnit(length, "pt"))
+  } else if (inherits(tick_length, "unit")) {
+    tick_pts    <- as.numeric(grid::convertUnit(tick_length, "pt"))
     tick_length <- grid::unit(abs(tick_pts), "pt")
     flip_direction <- tick_pts < 0
-  } else if (is.numeric(length)) {
-    tick_length    <- grid::unit(abs(length), "pt")
-    flip_direction <- length < 0
+  } else if (is.numeric(tick_length)) {
+    flip_direction <- tick_length < 0
+    tick_length    <- grid::unit(abs(tick_length), "pt")
   } else {
     tick_length <- calculate_default_length()
   }
@@ -602,7 +602,7 @@ annotate_axis_ticks <- function(
 #' and labels are placed relative to the relevant axis edge. When both `x` and
 #' `y` are provided, labels are placed at those exact coordinates.
 #'
-#' @param ... Named arguments. Support trailing commas.
+#' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
 #'   from `x`/`y` if not provided.
 #' @param x A vector of x positions. Use `I()` for normalized coordinates (0-1).
@@ -614,7 +614,7 @@ annotate_axis_ticks <- function(
 #' @param colour Inherits from `axis.text` in the set theme.
 #' @param size Inherits from `axis.text` in the set theme.
 #' @param family Inherits from `axis.text` in the set theme.
-#' @param length Offset from the axis edge as a grid unit, including tick length
+#' @param tick_length Offset from the axis edge as a grid unit, including tick length
 #'   and margin. Supports `rel()`. Negative values place labels on the inside of
 #'   the panel. Axis mode only.
 #' @param hjust,vjust Justification. Auto-calculated from position if `NULL`.
@@ -644,7 +644,7 @@ annotate_axis_ticks <- function(
 #'
 #' # Inward labels using negative length
 #' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-#'                        length = grid::unit(-15, "pt"))
+#'                        tick_length = grid::unit(-15, "pt"))
 #'
 #' # Arbitrary positioning — label a specific point on the plot
 #' p + annotate_axis_text(x = 3.215, y = 21.4, label = "this one")
@@ -657,19 +657,21 @@ annotate_axis_text <- function(
     colour   = NULL,
     size     = NULL,
     family   = NULL,
-    length   = NULL,
+    tick_length = NULL,
     hjust    = NULL,
     vjust    = NULL,
     angle    = 0,
     element_to = "keep"
 ) {
+  rlang::check_dots_empty()
+
   arbitrary_position <- !is.null(x) && !is.null(y)
 
   if (!arbitrary_position) {
     if (is.null(position)) {
       if (!is.null(x))      position <- "bottom"
       else if (!is.null(y)) position <- "left"
-      else                  stop("Must specify either position, x, y, or both x and y.")
+      else                  rlang::abort("Must specify either position, x, y, or both x and y.")
     }
     position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
   }
@@ -679,26 +681,26 @@ annotate_axis_text <- function(
 
   if (x_is_normalized) {
     x <- unclass(x)
-    if (any(x < 0 | x > 1)) stop("Normalized x coordinates must be between 0 and 1.")
+    if (any(x < 0 | x > 1)) rlang::abort("Normalized x coordinates must be between 0 and 1.")
   }
   if (y_is_normalized) {
     y <- unclass(y)
-    if (any(y < 0 | y > 1)) stop("Normalized y coordinates must be between 0 and 1.")
+    if (any(y < 0 | y > 1)) rlang::abort("Normalized y coordinates must be between 0 and 1.")
   }
 
   if (arbitrary_position) {
-    if (length(x) != length(y)) stop("x and y must have the same length when both are specified.")
+    if (base::length(x) != base::length(y)) rlang::abort("x and y must have the same length when both are specified.")
     use_normalized <- x_is_normalized || y_is_normalized
     axis           <- "x"
     breaks         <- list(x = x, y = y)
   } else {
     if (position %in% c("top", "bottom")) {
-      if (!is.null(y)) stop("For top or bottom positions, only x can be specified.")
-      if (is.null(x))  stop("For top or bottom positions, x must be specified.")
+      if (!is.null(y)) rlang::abort("position = 'top' or 'bottom' expects `x`, not `y`.")
+      if (is.null(x))  rlang::abort("position = 'top' or 'bottom' requires `x` to be specified.")
       use_normalized <- x_is_normalized
     } else {
-      if (!is.null(x)) stop("For left or right positions, only y can be specified.")
-      if (is.null(y))  stop("For left or right positions, y must be specified.")
+      if (!is.null(x)) rlang::abort("position = 'left' or 'right' expects `y`, not `x`.")
+      if (is.null(y))  rlang::abort("position = 'left' or 'right' requires `y` to be specified.")
       use_normalized <- y_is_normalized
     }
     axis   <- if (position %in% c("top", "bottom")) "x" else "y"
@@ -709,7 +711,7 @@ annotate_axis_text <- function(
 
   current_theme <- ggplot2::theme_get()
 
-  n_breaks <- if (arbitrary_position) length(breaks$x) else length(breaks)
+  n_breaks <- if (arbitrary_position) base::length(breaks$x) else base::length(breaks)
   if (n_breaks == 0) return(list())
 
   # ---- Resolve text element -------------------------------------------------
@@ -737,7 +739,7 @@ annotate_axis_text <- function(
 
   if (is.null(label)) {
     labels <- if (arbitrary_position) {
-      if (use_normalized) paste0("(", breaks$x, ", ", breaks$y, ")") else paste0("(", breaks$x, ", ", breaks$y, ")")
+      paste0("(", breaks$x, ", ", breaks$y, ")")
     } else if (use_normalized) {
       as.character(breaks)
     } else if (inherits(breaks, "Date")) {
@@ -757,7 +759,7 @@ annotate_axis_text <- function(
     labels <- label
   }
 
-  if (length(labels) != n_breaks) stop("Length of labels must match length of breaks.")
+  if (base::length(labels) != n_breaks) rlang::abort("Length of labels must match length of breaks.")
 
   # ---- Resolve tick length offset (axis mode only) --------------------------
 
@@ -791,20 +793,20 @@ annotate_axis_text <- function(
       }
     }
 
-    if (is.null(length)) {
+    if (is.null(tick_length)) {
       tick_length <- calculate_default_tick_length()
-    } else if (inherits(length, "rel")) {
-      rel_value   <- as.numeric(length)
+    } else if (inherits(tick_length, "rel")) {
+      rel_value   <- as.numeric(tick_length)
       default_pts <- as.numeric(grid::convertUnit(calculate_default_tick_length(), "pt"))
       tick_length    <- grid::unit(abs(rel_value) * default_pts, "pt")
       flip_direction <- rel_value < 0
-    } else if (inherits(length, "unit")) {
-      tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
+    } else if (inherits(tick_length, "unit")) {
+      tick_pts       <- as.numeric(grid::convertUnit(tick_length, "pt"))
       tick_length    <- grid::unit(abs(tick_pts), "pt")
       flip_direction <- tick_pts < 0
-    } else if (is.numeric(length)) {
-      tick_length    <- grid::unit(abs(length), "pt")
-      flip_direction <- length < 0
+    } else if (is.numeric(tick_length)) {
+      flip_direction <- tick_length < 0
+      tick_length    <- grid::unit(abs(tick_length), "pt")
     } else {
       tick_length <- calculate_default_tick_length()
     }
@@ -815,8 +817,8 @@ annotate_axis_text <- function(
     if (!is.null(text_margin)) {
       margin_index <- switch(position, bottom = 1L, top = 3L, left = 2L, right = 4L)
       if (inherits(text_margin, c("margin", "unit"))) {
-        if (length(text_margin) >= margin_index) margin_unit <- text_margin[margin_index]
-        else if (length(text_margin) == 1)        margin_unit <- text_margin
+        if (base::length(text_margin) >= margin_index) margin_unit <- text_margin[margin_index]
+        else if (base::length(text_margin) == 1)        margin_unit <- text_margin
       }
     }
 
@@ -865,7 +867,7 @@ annotate_axis_text <- function(
           text_grob <- grid::textGrob(labels[i], x = grid::unit(breaks$x[i], "npc"), y = grid::unit(breaks$y[i], "npc"), just = c(hjust, vjust), rot = angle, gp = make_gpar())
           ggplot2::annotation_custom(text_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
         } else {
-          ggplot2::annotate("text", x = breaks$x[i], y = breaks$y[i], label = labels[i], colour = text_colour, size = text_size / 2.845276, family = text_family, hjust = hjust, vjust = vjust, angle = angle)
+          ggplot2::annotate("text", x = breaks$x[i], y = breaks$y[i], label = labels[i], colour = text_colour, size = text_size / ggplot2::.pt, family = text_family, hjust = hjust, vjust = vjust, angle = angle)
         }
       })
   } else {

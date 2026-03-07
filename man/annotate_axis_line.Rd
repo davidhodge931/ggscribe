@@ -25,8 +25,7 @@ annotate_axis_line(
 )
 }
 \arguments{
-\item{...}{Named arguments passed to \code{ggplot2::annotate()}. Support trailing
-commas.}
+\item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Axis
 line mode only.}
@@ -83,10 +82,6 @@ Operates in two modes:
 \item \strong{Segment/curve mode}: triggered when \code{x}, \code{y}, \code{xend}, and \code{yend} are
 all provided. Pass \code{curvature} to draw a curve instead of a straight line.
 }
-
-Does not support date or datetime positional scales in axis line mode. Use
-\link[ggplot2:geom_segment]{ggplot2::geom_segment}, \link[ggplot2:geom_abline]{ggplot2::geom_hline}, or \link[ggplot2:geom_abline]{ggplot2::geom_vline}
-instead.
 }
 \examples{
 library(ggplot2)

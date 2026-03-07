@@ -6,8 +6,7 @@
 #' the `panel.grid` element of the set theme. Specify `x` for vertical lines
 #' or `y` for horizontal lines.
 #'
-#' @param ... Named arguments passed to `ggplot2::annotate()`. Support trailing
-#'   commas.
+#' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param x A vector of x-axis breaks for vertical grid lines. Cannot be used
 #'   together with `y`. Use `I()` for normalized coordinates (0-1).
 #' @param y A vector of y-axis breaks for horizontal grid lines. Cannot be used
@@ -42,13 +41,13 @@
 #' p + annotate_panel_grid(x = c(2, 3, 4, 5))
 #'
 #' # Horizontal grid lines at specific y breaks, native lines suppressed
-#' p + annotate_panel_grid(y = c(10, 20, 30), element_to = "blank")
+#' p + annotate_panel_grid(y = c(10, 20, 30), element_to = "transparent")
 #'
 #' # Minor vertical grid lines
 #' p + annotate_panel_grid(x = seq(2, 5, by = 0.5), minor = TRUE)
 #'
 #' # Partial horizontal lines that don't span the full panel width
-#' p + annotate_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "blank")
+#' p + annotate_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
 annotate_panel_grid <- function(
     ...,
     x         = NULL,
@@ -63,6 +62,8 @@ annotate_panel_grid <- function(
     linetype  = NULL,
     element_to = "keep"
 ) {
+  rlang::check_dots_empty()
+
   if (is.null(x) && is.null(y)) {
     rlang::abort("Either x or y must be specified")
   }
@@ -110,9 +111,19 @@ annotate_panel_grid <- function(
     c(paste0("panel.grid.major.", axis), "panel.grid.major", "panel.grid")
   }
 
-  resolved_grid_element <- grid_hierarchy |>
-    purrr::map(\(x) ggplot2::calc_element(x, current_theme, skip_blank = TRUE)) |>
-    purrr::detect(\(x) !is.null(x) && !inherits(x, "element_blank"))
+  grid_element_blank <- grid_hierarchy |>
+    purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)) |>
+    purrr::detect(\(el) !is.null(el))
+  grid_intentionally_blank <- is.null(grid_element_blank) || inherits(grid_element_blank, "element_blank")
+
+  resolved_grid_element <- if (grid_intentionally_blank) NULL else {
+    grid_hierarchy |>
+      purrr::map(\(nm) ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)) |>
+      purrr::detect(\(el) !is.null(el) && !inherits(el, "element_blank"))
+  }
+
+  if (is.null(colour)    && (grid_intentionally_blank || is.null(resolved_grid_element$colour)))    rlang::warn("The set theme does not define a `panel.grid` colour. Defaulting to grey.")
+  if (is.null(linewidth) && (grid_intentionally_blank || is.null(resolved_grid_element$linewidth))) rlang::warn("The set theme does not define a `panel.grid` linewidth. Defaulting to `0.5`.")
 
   if (is.null(resolved_grid_element)) {
     resolved_grid_element <- list(
@@ -192,9 +203,9 @@ annotate_panel_grid <- function(
 
   } else {
     if (axis == "x") {
-      stamp <- c(stamp, list(ggplot2::annotate("segment", x = breaks, xend = breaks, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = grid_colour, linewidth = grid_linewidth, linetype = grid_linetype, ...)))
+      stamp <- c(stamp, list(ggplot2::annotate("segment", x = breaks, xend = breaks, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = grid_colour, linewidth = grid_linewidth, linetype = grid_linetype)))
     } else {
-      stamp <- c(stamp, list(ggplot2::annotate("segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = breaks, yend = breaks, colour = grid_colour, linewidth = grid_linewidth, linetype = grid_linetype, ...)))
+      stamp <- c(stamp, list(ggplot2::annotate("segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = breaks, yend = breaks, colour = grid_colour, linewidth = grid_linewidth, linetype = grid_linetype)))
     }
   }
 
@@ -210,8 +221,7 @@ annotate_panel_grid <- function(
 #' set theme. Defaults to a subtle overlay across the full panel, with the fill
 #' automatically adapting to light or dark panel backgrounds.
 #'
-#' @param ... Named arguments passed to `ggplot2::annotate()`. Support trailing
-#'   commas.
+#' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param xmin,xmax Left and right edges of the rectangle. Defaults to `-Inf`
 #'   and `Inf`. Use `I()` for normalized coordinates (0-1).
 #' @param ymin,ymax Bottom and top edges of the rectangle. Defaults to `-Inf`
@@ -258,7 +268,9 @@ annotate_panel_shade <- function(
     linewidth = NULL,
     linetype  = NULL
 ) {
-  if (rlang::is_null(fill)) {
+  rlang::check_dots_empty()
+
+  if (is.null(fill)) {
     fill <- if (is_panel_dark()) {
       flexoki::flexoki$base["base600"]
     } else {
@@ -294,10 +306,10 @@ annotate_panel_shade <- function(
 
   current_theme  <- ggplot2::theme_get()
   panel_border   <- ggplot2::calc_element("panel.border", current_theme, skip_blank = TRUE)
-  base_linewidth <- if (!rlang::is_null(panel_border) && !inherits(panel_border, "element_blank")) panel_border$linewidth %||% 0.5 else 0.5
+  base_linewidth <- if (!is.null(panel_border) && !inherits(panel_border, "element_blank")) panel_border$linewidth %||% 0.5 else 0.5
 
   alpha    <- alpha %||% 1
-  linewidth <- if (rlang::is_null(linewidth)) base_linewidth else if (inherits(linewidth, "rel")) as.numeric(linewidth) * base_linewidth else linewidth
+  linewidth <- if (is.null(linewidth)) base_linewidth else if (inherits(linewidth, "rel")) as.numeric(linewidth) * base_linewidth else linewidth
   linetype <- linetype %||% 1
 
   if (use_grob) {
@@ -317,6 +329,6 @@ annotate_panel_shade <- function(
 
     list(ggplot2::annotation_custom(rect_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf))
   } else {
-    list(ggplot2::annotate("rect", xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill, colour = colour, linewidth = linewidth, linetype = linetype, alpha = alpha, ...))
+    list(ggplot2::annotate("rect", xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill, colour = colour, linewidth = linewidth, linetype = linetype, alpha = alpha))
   }
 }

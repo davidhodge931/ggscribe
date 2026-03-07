@@ -18,8 +18,7 @@ annotate_panel_shade(
 )
 }
 \arguments{
-\item{...}{Named arguments passed to \code{ggplot2::annotate()}. Support trailing
-commas.}
+\item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
 \item{xmin, xmax}{Left and right edges of the rectangle. Defaults to \code{-Inf}
 and \code{Inf}. Use \code{I()} for normalized coordinates (0-1).}

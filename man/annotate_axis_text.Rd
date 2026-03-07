@@ -13,7 +13,7 @@ annotate_axis_text(
   colour = NULL,
   size = NULL,
   family = NULL,
-  length = NULL,
+  tick_length = NULL,
   hjust = NULL,
   vjust = NULL,
   angle = 0,
@@ -21,7 +21,7 @@ annotate_axis_text(
 )
 }
 \arguments{
-\item{...}{Named arguments. Support trailing commas.}
+\item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
 from \code{x}/\code{y} if not provided.}
@@ -41,7 +41,7 @@ labels. Defaults to formatted break values.}
 
 \item{family}{Inherits from \code{axis.text} in the set theme.}
 
-\item{length}{Offset from the axis edge as a grid unit, including tick length
+\item{tick_length}{Offset from the axis edge as a grid unit, including tick length
 and margin. Supports \code{rel()}. Negative values place labels on the inside of
 the panel. Axis mode only.}
 
@@ -84,7 +84,7 @@ p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
 
 # Inward labels using negative length
 p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-                       length = grid::unit(-15, "pt"))
+                       tick_length = grid::unit(-15, "pt"))
 
 # Arbitrary positioning — label a specific point on the plot
 p + annotate_axis_text(x = 3.215, y = 21.4, label = "this one")

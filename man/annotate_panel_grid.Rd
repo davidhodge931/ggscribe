@@ -20,8 +20,7 @@ annotate_panel_grid(
 )
 }
 \arguments{
-\item{...}{Named arguments passed to \code{ggplot2::annotate()}. Support trailing
-commas.}
+\item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
 \item{x}{A vector of x-axis breaks for vertical grid lines. Cannot be used
 together with \code{y}. Use \code{I()} for normalized coordinates (0-1).}
@@ -70,11 +69,11 @@ p <- ggplot(mtcars, aes(wt, mpg)) +
 p + annotate_panel_grid(x = c(2, 3, 4, 5))
 
 # Horizontal grid lines at specific y breaks, native lines suppressed
-p + annotate_panel_grid(y = c(10, 20, 30), element_to = "blank")
+p + annotate_panel_grid(y = c(10, 20, 30), element_to = "transparent")
 
 # Minor vertical grid lines
 p + annotate_panel_grid(x = seq(2, 5, by = 0.5), minor = TRUE)
 
 # Partial horizontal lines that don't span the full panel width
-p + annotate_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "blank")
+p + annotate_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
 }
