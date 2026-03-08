@@ -1,8 +1,8 @@
 # Annotate axis ticks
 
 Draws axis ticks at specified break positions, with style defaults taken
-from the `axis.ticks` element of the set theme. Requires
-`coord_cartesian(clip = "off")`.
+from the `axis.ticks` element of the set theme. Ticks along or outside
+the panel boundary requires `coord_cartesian(clip = "off")`.
 
 ## Usage
 

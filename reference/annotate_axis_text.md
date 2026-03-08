@@ -1,9 +1,10 @@
 # Annotate axis text
 
-Draws text labels at specified break positions along an axis, or at
-arbitrary (x, y) coordinates. Style defaults are taken from the
-`axis.text` element of the set theme. Requires
-`coord_cartesian(clip = "off")`.
+Draws text labels at specified break positions along an axis, with style
+defaults taken from the `axis.text` element of the set theme. Text along
+or outside the panel boundary requires `coord_cartesian(clip = "off")`.
+Can also place labels at arbitrary (x, y) coordinates when both `x` and
+`y` are provided.
 
 ## Usage
 
@@ -90,12 +91,6 @@ annotate_axis_text(
 ## Value
 
 A list of ggplot2 annotation layers and theme elements.
-
-## Details
-
-When only `x` or only `y` is provided, the function operates in axis
-mode and labels are placed relative to the relevant axis edge. When both
-`x` and `y` are provided, labels are placed at those exact coordinates.
 
 ## Examples
 

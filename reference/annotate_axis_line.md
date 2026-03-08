@@ -1,8 +1,10 @@
 # Annotate an axis line
 
-Draws a line along an axis edge or between two arbitrary points, with
-style defaults taken from the `axis.line` element of the set theme.
-Requires `coord_cartesian(clip = "off")`.
+Draws a line with style defaults taken from the `axis.line` element of
+the set theme. Typically used to place a line along an axis edge or as
+an interior reference line, with optional `xmin`/`xmax`/`ymin`/`ymax` to
+draw a partial line. Lines along or outside the panel boundary requires
+`coord_cartesian(clip = "off")`.
 
 ## Usage
 
@@ -110,11 +112,8 @@ A list of ggplot2 annotation layers and theme elements.
 
 ## Details
 
-Operates in two modes. The primary **Axis line mode** of a
-horizontal/vertical line is triggered by `position`, `x`, or `y` alone.
-The secondary **Segment/curve mode** is triggered when `x`, `y`, `xend`,
-and `yend` are all provided. Pass `curvature` etc to draw a curve
-instead of a straight line (with axis line defaults).
+Can also draw a straight segment or curve between two arbitrary points
+when `x`, `y`, `xend`, and `yend` are all provided.
 
 ## Examples
 
