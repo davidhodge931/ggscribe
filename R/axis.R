@@ -2,15 +2,14 @@
 
 #' Annotate an axis line
 #'
-#' Draws a line along an axis edge or between two arbitrary points, with style
-#' defaults taken from the `axis.line` element of the set theme. Requires
+#' Draws a line with style defaults taken from the `axis.line` element of the
+#' set theme. Typically used to place a line along an axis edge or as an
+#' interior reference line, with optional `xmin`/`xmax`/`ymin`/`ymax` to draw
+#' a partial line. Lines along or outside the panel boundary requires
 #' `coord_cartesian(clip = "off")`.
 #'
-#' Operates in two modes. The primary **Axis line mode** of a horizontal/vertical
-#' line is triggered by `position`, `x`, or `y` alone. The secondary
-#' **Segment/curve mode** is triggered when `x`, `y`, `xend`, and `yend` are
-#' all provided. Pass `curvature` etc to draw a curve instead of a straight line
-#'  (with axis line defaults).
+#' Can also draw a straight segment or curve between two arbitrary points when
+#' `x`, `y`, `xend`, and `yend` are all provided.
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Axis
@@ -339,8 +338,8 @@ annotate_axis_line <- function(
 #' Annotate axis ticks
 #'
 #' Draws axis ticks at specified break positions, with style defaults taken
-#' from the `axis.ticks` element of the set theme. Requires
-#' `coord_cartesian(clip = "off")`.
+#' from the `axis.ticks` element of the set theme. Ticks along or outside the
+#' panel boundary requires `coord_cartesian(clip = "off")`.
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
@@ -602,13 +601,11 @@ annotate_axis_ticks <- function(
 
 #' Annotate axis text
 #'
-#' Draws text labels at specified break positions along an axis, or at
-#' arbitrary (x, y) coordinates. Style defaults are taken from the `axis.text`
-#' element of the set theme. Requires `coord_cartesian(clip = "off")`.
-#'
-#' When only `x` or only `y` is provided, the function operates in axis mode
-#' and labels are placed relative to the relevant axis edge. When both `x` and
-#' `y` are provided, labels are placed at those exact coordinates.
+#' Draws text labels at specified break positions along an axis, with style
+#' defaults taken from the `axis.text` element of the set theme. Text along or
+#' outside the panel boundary requires `coord_cartesian(clip = "off")`. Can also
+#' place labels at arbitrary (x, y) coordinates when both `x` and `y` are
+#' provided.
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred

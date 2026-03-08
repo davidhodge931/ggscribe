@@ -71,16 +71,15 @@ Axis line mode only.}
 A list of ggplot2 annotation layers and theme elements.
 }
 \description{
-Draws a line along an axis edge or between two arbitrary points, with style
-defaults taken from the \code{axis.line} element of the set theme. Requires
+Draws a line with style defaults taken from the \code{axis.line} element of the
+set theme. Typically used to place a line along an axis edge or as an
+interior reference line, with optional \code{xmin}/\code{xmax}/\code{ymin}/\code{ymax} to draw
+a partial line. Lines along or outside the panel boundary requires
 \code{coord_cartesian(clip = "off")}.
 }
 \details{
-Operates in two modes. The primary \strong{Axis line mode} of a horizontal/vertical
-line is triggered by \code{position}, \code{x}, or \code{y} alone. The secondary
-\strong{Segment/curve mode} is triggered when \code{x}, \code{y}, \code{xend}, and \code{yend} are
-all provided. Pass \code{curvature} etc to draw a curve instead of a straight line
-(with axis line defaults).
+Can also draw a straight segment or curve between two arbitrary points when
+\code{x}, \code{y}, \code{xend}, and \code{yend} are all provided.
 }
 \examples{
 library(ggplot2)

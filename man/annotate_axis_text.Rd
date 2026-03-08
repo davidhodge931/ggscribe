@@ -57,14 +57,11 @@ mode only.}
 A list of ggplot2 annotation layers and theme elements.
 }
 \description{
-Draws text labels at specified break positions along an axis, or at
-arbitrary (x, y) coordinates. Style defaults are taken from the \code{axis.text}
-element of the set theme. Requires \code{coord_cartesian(clip = "off")}.
-}
-\details{
-When only \code{x} or only \code{y} is provided, the function operates in axis mode
-and labels are placed relative to the relevant axis edge. When both \code{x} and
-\code{y} are provided, labels are placed at those exact coordinates.
+Draws text labels at specified break positions along an axis, with style
+defaults taken from the \code{axis.text} element of the set theme. Text along or
+outside the panel boundary requires \code{coord_cartesian(clip = "off")}. Can also
+place labels at arbitrary (x, y) coordinates when both \code{x} and \code{y} are
+provided.
 }
 \examples{
 library(ggplot2)

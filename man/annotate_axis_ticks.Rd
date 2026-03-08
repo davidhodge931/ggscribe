@@ -46,8 +46,8 @@ A list of ggplot2 annotation layers and theme elements.
 }
 \description{
 Draws axis ticks at specified break positions, with style defaults taken
-from the \code{axis.ticks} element of the set theme. Requires
-\code{coord_cartesian(clip = "off")}.
+from the \code{axis.ticks} element of the set theme. Ticks along or outside the
+panel boundary requires \code{coord_cartesian(clip = "off")}.
 }
 \examples{
 library(ggplot2)
