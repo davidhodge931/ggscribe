@@ -1,8 +1,8 @@
-# Annotate panel grid segments
+# Annotate panel grid lines
 
-Create annotated segments of the panel grid.
-
-This function is designed to work with a theme that is globally set.
+Draws grid lines at specified break positions with style defaults taken
+from the `panel.grid` element of the set theme. Specify `x` for vertical
+lines or `y` for horizontal lines.
 
 ## Usage
 
@@ -19,7 +19,7 @@ scribe_panel_grid(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  theme = "keep"
+  element_to = "keep"
 )
 ```
 
@@ -27,59 +27,84 @@ scribe_panel_grid(
 
 - ...:
 
-  Arguments passed to `ggplot2::annotate("segment", ....)` (if
-  normalised coordinates not used). Require named arguments (and support
-  trailing commas).
+  Not used. Allows trailing commas and named-argument style calls.
 
 - x:
 
   A vector of x-axis breaks for vertical grid lines. Cannot be used
-  together with `y`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) to
-  specify normalized coordinates (0-1).
+  together with `y`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) for
+  normalized coordinates (0-1).
 
 - y:
 
   A vector of y-axis breaks for horizontal grid lines. Cannot be used
-  together with `x`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) to
-  specify normalized coordinates (0-1).
+  together with `x`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) for
+  normalized coordinates (0-1).
 
 - xmin, xmax:
 
-  The starting and ending x positions for horizontal grid lines. Use
+  Start and end x positions for horizontal grid lines. Use
   [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
   (0-1). Defaults to `-Inf` and `Inf`.
 
 - ymin, ymax:
 
-  The starting and ending y positions for vertical grid lines. Use
+  Start and end y positions for vertical grid lines. Use
   [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
   (0-1). Defaults to `-Inf` and `Inf`.
 
 - minor:
 
-  Logical. If `FALSE` (default), creates major grid lines. If `TRUE`,
-  creates minor grid lines.
+  Logical. If `TRUE`, uses minor grid theme defaults. Defaults to
+  `FALSE`.
 
 - colour:
 
-  The colour of grid lines. Inherits from current theme
-  `panel.grid.major` or `panel.grid.minor` etc.
+  Inherits from `panel.grid.major` or `panel.grid.minor` in the set
+  theme.
 
 - linewidth:
 
-  A number. Inherits from current theme `panel.grid.major` or
-  `panel.grid.minor` etc.
+  Inherits from `panel.grid.major` or `panel.grid.minor` in the set
+  theme. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
 
 - linetype:
 
-  An integer. Inherits from current theme `panel.grid.major` or
-  `panel.grid.minor` etc.
+  Inherits from `panel.grid.major` or `panel.grid.minor` in the set
+  theme.
 
-- theme:
+- element_to:
 
-  What to do with the equivalent theme elements. Either `"keep"`,
-  `"transparent"`, or `"blank"`. Defaults `"keep"`.
+  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
+  native theme grid lines are suppressed. Defaults to `"keep"`.
 
 ## Value
 
-A list of annotate annotates and theme elements.
+A list of ggplot2 annotation layers and theme elements.
+
+## Examples
+
+``` r
+library(ggplot2)
+
+set_theme(theme_minimal())
+
+p <- ggplot(mtcars, aes(wt, mpg)) +
+  geom_point()
+
+# Vertical grid lines at specific x breaks
+p + scribe_panel_grid(x = c(2, 3, 4, 5))
+
+
+# Horizontal grid lines at specific y breaks, native lines suppressed
+p + scribe_panel_grid(y = c(10, 20, 30), element_to = "transparent")
+
+
+# Minor vertical grid lines
+p + scribe_panel_grid(x = seq(2, 5, by = 0.5), minor = TRUE)
+
+
+# Partial horizontal lines that don't span the full panel width
+p + scribe_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
+```

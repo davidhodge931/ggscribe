@@ -1,11 +1,8 @@
-# Annotate axis ticks segments
+# Annotate axis ticks
 
-Create annotated segments of the axis ticks.
-
-This function is designed to work with a theme that is globally set.
-
-It should be used with a `coord` of
-`ggplot2::coord_cartesian(clip = "off")`.
+Draws axis ticks at specified break positions, with style defaults taken
+from the `axis.ticks` element of the set theme. Ticks along or outside
+the panel boundary requires `coord_cartesian(clip = "off")`.
 
 ## Usage
 
@@ -18,8 +15,8 @@ scribe_axis_ticks(
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
-  length = NULL,
-  theme = "keep"
+  tick_length = NULL,
+  element_to = "keep"
 )
 ```
 
@@ -27,50 +24,77 @@ scribe_axis_ticks(
 
 - ...:
 
-  Require named arguments (and support trailing commas).
+  Not used. Allows trailing commas and named-argument style calls.
 
 - position:
 
-  The position of the axis ticks. One of `"top"`, `"bottom"`, `"left"`,
-  or `"right"`.
+  One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
 
 - x:
 
-  A vector of x-axis breaks for ticks positioning. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
-  coordinates (0-1).
+  A vector of x-axis break positions for top/bottom ticks. Use
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
+  (0-1).
 
 - y:
 
-  A vector of y-axis breaks for ticks positioning. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
-  coordinates (0-1).
+  A vector of y-axis break positions for left/right ticks. Use
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
+  (0-1).
 
 - minor:
 
-  `TRUE` or `FALSE` whether to relate to minor ticks. Defaults `FALSE`.
+  Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
+  `FALSE`.
 
 - colour:
 
-  The colour of the ticks. Inherits from the current theme `axis.ticks`
-  etc.
+  Inherits from `axis.ticks` in the set theme.
 
 - linewidth:
 
-  The linewidth of the ticks. Inherits from the current theme
-  `axis.ticks` etc.
+  Inherits from `axis.ticks` in the set theme. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
 
-- length:
+- tick_length:
 
-  The total distance from the axis line to the ticks as a grid unit. Use
-  `rel()` to scale relative to default length. Negative values or
-  `rel()` with negative multiplier flip direction.
+  Total tick length as a grid unit. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html) to
+  scale relative to the theme default. Negative values flip the tick
+  direction.
 
-- theme:
+- element_to:
 
-  What to do with the equivalent theme elements. Either `"keep"`,
-  `"transparent"`, or `"blank"`. Defaults `"keep"`.
+  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
+  native theme ticks are suppressed. Defaults to `"keep"`.
 
 ## Value
 
-A list of annotation annotates and theme elements.
+A list of ggplot2 annotation layers and theme elements.
+
+## Examples
+
+``` r
+library(ggplot2)
+
+set_theme(theme_classic())
+
+p <- ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  coord_cartesian(clip = "off")
+
+# Bottom ticks at specific breaks
+p + scribe_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
+
+
+# Left ticks with native ticks suppressed
+p + scribe_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
+
+
+# Inward ticks using a negative length
+p + scribe_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
+
+
+# Minor ticks
+p + scribe_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
+```

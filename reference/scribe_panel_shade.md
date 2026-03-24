@@ -1,7 +1,8 @@
-# Annotate the panel background
+# Annotate a shaded panel region
 
-Annotate a filled rectangle on the panel background. It is designed to
-work with a theme that is globally set.
+Draws a filled rectangle over the panel with colour defaults taken from
+the set theme. Defaults to a subtle overlay across the full panel, with
+the fill automatically adapting to light or dark panel backgrounds.
 
 ## Usage
 
@@ -12,7 +13,7 @@ scribe_panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = NULL,
+  fill = "#878580",
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -24,58 +25,67 @@ scribe_panel_shade(
 
 - ...:
 
-  Arguments passed to `ggplot2::annotate("rect", ....)` (if normalised
-  coordinates not used). Require named arguments (and support trailing
-  commas).
+  Not used. Allows trailing commas and named-argument style calls.
 
-- xmin:
+- xmin, xmax:
 
-  A value of length 1. Defaults to `-Inf`. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
+  Left and right edges of the rectangle. Defaults to `-Inf` and `Inf`.
+  Use [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized
   coordinates (0-1).
 
-- xmax:
+- ymin, ymax:
 
-  A value of length 1. Defaults to `Inf`. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
-  coordinates (0-1).
-
-- ymin:
-
-  A value of length 1. Defaults to `-Inf`. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
-  coordinates (0-1).
-
-- ymax:
-
-  A value of length 1. Defaults to `Inf`. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
+  Bottom and top edges of the rectangle. Defaults to `-Inf` and `Inf`.
+  Use [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized
   coordinates (0-1).
 
 - fill:
 
-  The fill color to blend with the panel background. Defaults to
-  `"#8991A1FF"`. The final rectangle color is created by blending this
-  fill with the current panel background: screen blend for dark
-  backgrounds, multiply blend for light backgrounds.
+  Fill colour. Defaults to a neutral grey.
 
 - alpha:
 
-  The transparency of the rectangle. Defaults to `0.2` (subtle overlay).
+  Opacity of the rectangle. Defaults to `0.25`.
 
 - colour:
 
-  The border colour of the rectangle. Defaults to `"transparent"`.
+  Border colour. Defaults to `"transparent"`.
 
 - linewidth:
 
-  A number. Inherits from the current theme `panel.border` linewidth.
-  Supports `rel()` for relative sizing.
+  Inherits from `panel.border` in the set theme. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
 
 - linetype:
 
-  An integer. Defaults to `1`.
+  Border linetype. Defaults to `1`.
 
 ## Value
 
-A list containing an annotation annotate.
+A list containing an annotation layer.
+
+## Examples
+
+``` r
+library(ggplot2)
+
+set_theme(theme_classic())
+
+p <- ggplot(mtcars, aes(wt, mpg)) +
+  geom_point()
+
+# Shade the full panel
+p + scribe_panel_shade()
+
+
+# Shade a specific data range
+p + scribe_panel_shade(xmin = 3, xmax = 4)
+
+
+# Shade using normalized coordinates
+p + scribe_panel_shade(xmin = I(0.25), xmax = I(0.75))
+
+
+# Custom fill and opacity
+p + scribe_panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
+```

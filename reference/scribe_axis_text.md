@@ -1,11 +1,10 @@
 # Annotate axis text
 
-Create annotated text labels for axis breaks.
-
-This function is designed to work with a theme that is globally set.
-
-It should be used with a `coord` of
-`ggplot2::coord_cartesian(clip = "off")`.
+Draws text labels at specified break positions along an axis, with style
+defaults taken from the `axis.text` element of the set theme. Text along
+or outside the panel boundary requires `coord_cartesian(clip = "off")`.
+Can also place labels at arbitrary (x, y) coordinates when both `x` and
+`y` are provided.
 
 ## Usage
 
@@ -19,11 +18,11 @@ scribe_axis_text(
   colour = NULL,
   size = NULL,
   family = NULL,
-  length = NULL,
+  tick_length = NULL,
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  theme = "keep"
+  element_to = "keep"
 )
 ```
 
@@ -31,66 +30,93 @@ scribe_axis_text(
 
 - ...:
 
-  Require named arguments (and support trailing commas).
+  Not used. Allows trailing commas and named-argument style calls.
 
 - position:
 
-  The position of the axis text. One of `"top"`, `"bottom"`, `"left"`,
-  or `"right"`. Ignored if both `x` and `y` are provided.
+  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
+  `x`/`y` if not provided.
 
 - x:
 
-  A vector of x-axis breaks for text positioning. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
-  coordinates (0-1).
+  A vector of x positions. Use [`I()`](https://rdrr.io/r/base/AsIs.html)
+  for normalized coordinates (0-1). When combined with `y`, triggers
+  arbitrary positioning mode.
 
 - y:
 
-  A vector of y-axis breaks for text positioning. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) to specify normalized
-  coordinates (0-1).
+  A vector of y positions. Use [`I()`](https://rdrr.io/r/base/AsIs.html)
+  for normalized coordinates (0-1). When combined with `x`, triggers
+  arbitrary positioning mode.
 
 - label:
 
-  A vector of text labels or a function that takes breaks and returns
-  labels. If `NULL`, uses appropriate formatting based on data type.
+  A vector of labels or a function that takes breaks and returns labels.
+  Defaults to formatted break values.
 
 - colour:
 
-  The colour of the text. Inherits from the current theme `axis.text`
-  etc.
+  Inherits from `axis.text` in the set theme.
 
 - size:
 
-  The size of the text. Inherits from the current theme `axis.text` etc.
+  Inherits from `axis.text` in the set theme.
 
 - family:
 
-  The font family of the text. Inherits from the current theme
-  `axis.text` etc.
+  Inherits from `axis.text` in the set theme.
 
-- length:
+- tick_length:
 
-  The tick length as a grid unit. Use `rel()` to scale relative to
-  default length. Negative values or `rel()` with negative multiplier
-  place text on the opposite side of the axis (inside the panel).
-  Inherits from the current theme `axis.ticks.length` etc.
+  Offset from the axis edge as a grid unit, including tick length and
+  margin. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  Negative values place labels on the inside of the panel. Axis mode
+  only.
 
 - hjust, vjust:
 
-  Horizontal and vertical justification. Auto-calculated based on
-  position if `NULL`. When `length` is negative, justification
-  automatically adjusts for the flipped position.
+  Justification. Auto-calculated from position if `NULL`.
 
 - angle:
 
   Text rotation angle. Defaults to `0`.
 
-- theme:
+- element_to:
 
-  What to do with the equivalent theme elements. Either `"keep"`,
-  `"transparent"`, or `"blank"`. Defaults to `"keep"`.
+  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
+  native theme axis text is suppressed. Defaults to `"keep"`. Axis mode
+  only.
 
 ## Value
 
-A list of annotation annotates and theme elements.
+A list of ggplot2 annotation layers and theme elements.
+
+## Examples
+
+``` r
+library(ggplot2)
+
+set_theme(theme_classic())
+
+p <- ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  coord_cartesian(clip = "off")
+
+# Bottom axis labels at specific breaks
+p + scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5))
+
+
+# Custom labels
+p + scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5),
+                       label = c("two", "three", "four", "five"))
+
+
+# Inward labels using negative length
+p + scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5),
+                       tick_length = grid::unit(-15, "pt"))
+
+
+# Arbitrary positioning — label a specific point on the plot
+p + scribe_axis_text(x = 3.215, y = 21.4, label = "this one")
+```
