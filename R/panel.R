@@ -1,4 +1,4 @@
-# annotate_panel_grid ---------------------------------------------------------
+# scribe_panel_grid ---------------------------------------------------------
 
 #' Annotate panel grid lines
 #'
@@ -38,17 +38,17 @@
 #'   geom_point()
 #'
 #' # Vertical grid lines at specific x breaks
-#' p + annotate_panel_grid(x = c(2, 3, 4, 5))
+#' p + scribe_panel_grid(x = c(2, 3, 4, 5))
 #'
 #' # Horizontal grid lines at specific y breaks, native lines suppressed
-#' p + annotate_panel_grid(y = c(10, 20, 30), element_to = "transparent")
+#' p + scribe_panel_grid(y = c(10, 20, 30), element_to = "transparent")
 #'
 #' # Minor vertical grid lines
-#' p + annotate_panel_grid(x = seq(2, 5, by = 0.5), minor = TRUE)
+#' p + scribe_panel_grid(x = seq(2, 5, by = 0.5), minor = TRUE)
 #'
 #' # Partial horizontal lines that don't span the full panel width
-#' p + annotate_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
-annotate_panel_grid <- function(
+#' p + scribe_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
+scribe_panel_grid <- function(
     ...,
     x         = NULL,
     y         = NULL,
@@ -214,7 +214,7 @@ annotate_panel_grid <- function(
 }
 
 
-# annotate_panel_shade --------------------------------------------------------
+# scribe_panel_shade --------------------------------------------------------
 
 #' Annotate a shaded panel region
 #'
@@ -246,17 +246,17 @@ annotate_panel_grid <- function(
 #'   geom_point()
 #'
 #' # Shade the full panel
-#' p + annotate_panel_shade()
+#' p + scribe_panel_shade()
 #'
 #' # Shade a specific data range
-#' p + annotate_panel_shade(xmin = 3, xmax = 4)
+#' p + scribe_panel_shade(xmin = 3, xmax = 4)
 #'
 #' # Shade using normalized coordinates
-#' p + annotate_panel_shade(xmin = I(0.25), xmax = I(0.75))
+#' p + scribe_panel_shade(xmin = I(0.25), xmax = I(0.75))
 #'
 #' # Custom fill and opacity
-#' p + annotate_panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
-annotate_panel_shade <- function(
+#' p + scribe_panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
+scribe_panel_shade <- function(
     ...,
     xmin      = -Inf,
     xmax      = Inf,

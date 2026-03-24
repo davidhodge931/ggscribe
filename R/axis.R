@@ -1,4 +1,4 @@
-# annotate_axis_line ----------------------------------------------------------
+# scribe_axis_line ----------------------------------------------------------
 
 #' Annotate an axis line
 #'
@@ -53,20 +53,20 @@
 #'   coord_cartesian(clip = "off")
 #'
 #' # Replace the bottom axis line
-#' p + annotate_axis_line(position = "bottom", element_to = "transparent")
+#' p + scribe_axis_line(position = "bottom", element_to = "transparent")
 #'
 #' # Partial bottom axis between x = 2 and x = 4
-#' p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "transparent")
+#' p + scribe_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "transparent")
 #'
 #' # Vertical rule at x = 3.5
-#' p + annotate_axis_line(x = 3.5)
+#' p + scribe_axis_line(x = 3.5)
 #'
 #' # Straight line between two data points
-#' p + annotate_axis_line(x = 2, y = 15, xend = 5, yend = 30)
+#' p + scribe_axis_line(x = 2, y = 15, xend = 5, yend = 30)
 #'
 #' # Curved line between two data points
-#' p + annotate_axis_line(x = 2, y = 15, xend = 5, yend = 30, curvature = 0.3)
-annotate_axis_line <- function(
+#' p + scribe_axis_line(x = 2, y = 15, xend = 5, yend = 30, curvature = 0.3)
+scribe_axis_line <- function(
     ...,
     position  = NULL,
     x         = NULL,
@@ -333,7 +333,7 @@ annotate_axis_line <- function(
 }
 
 
-# annotate_axis_ticks ---------------------------------------------------------
+# scribe_axis_ticks ---------------------------------------------------------
 
 #' Annotate axis ticks
 #'
@@ -370,17 +370,17 @@ annotate_axis_line <- function(
 #'   coord_cartesian(clip = "off")
 #'
 #' # Bottom ticks at specific breaks
-#' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
+#' p + scribe_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
 #'
 #' # Left ticks with native ticks suppressed
-#' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
+#' p + scribe_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
 #'
 #' # Inward ticks using a negative length
-#' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
+#' p + scribe_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
 #'
 #' # Minor ticks
-#' p + annotate_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
-annotate_axis_ticks <- function(
+#' p + scribe_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
+scribe_axis_ticks <- function(
     ...,
     position  = NULL,
     x         = NULL,
@@ -597,7 +597,7 @@ annotate_axis_ticks <- function(
 }
 
 
-# annotate_axis_text ----------------------------------------------------------
+# scribe_axis_text ----------------------------------------------------------
 
 #' Annotate axis text
 #'
@@ -641,19 +641,19 @@ annotate_axis_ticks <- function(
 #'   coord_cartesian(clip = "off")
 #'
 #' # Bottom axis labels at specific breaks
-#' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5))
+#' p + scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5))
 #'
 #' # Custom labels
-#' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
+#' p + scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5),
 #'                        label = c("two", "three", "four", "five"))
 #'
 #' # Inward labels using negative length
-#' p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
+#' p + scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5),
 #'                        tick_length = grid::unit(-15, "pt"))
 #'
 #' # Arbitrary positioning — label a specific point on the plot
-#' p + annotate_axis_text(x = 3.215, y = 21.4, label = "this one")
-annotate_axis_text <- function(
+#' p + scribe_axis_text(x = 3.215, y = 21.4, label = "this one")
+scribe_axis_text <- function(
     ...,
     position = NULL,
     x        = NULL,
