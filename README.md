@@ -33,26 +33,26 @@ ggplot(mpg, aes(displ, hwy)) +
   geom_point(colour = "grey60", size = 1.5) +
   coord_cartesian(clip = "off") +
   # Axis lines — partial bottom axis up to displ = 6, full left axis
-  scribe_axis_line(position = "bottom", xmax = 6, element_to = "blank") +
-  scribe_axis_line(position = "left", element_to = "blank") +
+  annotate_axis_line(position = "bottom", xmax = 6, element_to = "blank") +
+  annotate_axis_line(position = "left", element_to = "blank") +
   # Axis ticks
-  scribe_axis_ticks(position = "bottom", x = c(2, 3, 4, 5, 6)) +
-  scribe_axis_ticks(position = "left", y = c(20, 30, 40)) +
+  annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5, 6)) +
+  annotate_axis_ticks(position = "left", y = c(20, 30, 40)) +
   # Axis text — native text blanked so custom labels are the sole source
-  scribe_axis_text(position = "bottom", x = c(2, 3, 4, 5, 6),
+  annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5, 6),
                      label = c("2L", "3L", "4L", "5L", "6L"),
                      element_to = "transparent") +
-  scribe_axis_text(position = "left", y = c(20, 30, 40),
+  annotate_axis_text(position = "left", y = c(20, 30, 40),
                      element_to = "transparent") +
   # Panel grid — horizontal lines at y breaks only
-  scribe_panel_grid(y = c(20, 30, 40), element_to = "transparent") +
+  annotate_panel_grid(y = c(20, 30, 40), element_to = "transparent") +
   # Panel shade — highlight the high efficiency region
-  scribe_panel_shade(ymin = 35, ymax = Inf, alpha = 0.15) +
+  annotate_panel_shade(ymin = 35, ymax = Inf, alpha = 0.15) +
   # Label the shaded region — placed above and to the right of the panel
-  scribe_axis_text(x = I(1), y = I(1), label = "High efficiency",
+  annotate_axis_text(x = I(1), y = I(1), label = "High efficiency",
                      hjust = 1, vjust = 1) +
   # Curve from label down into the shaded region, avoiding the data
-  scribe_axis_line(x = 5.8, y = 43, xend = 4, yend = 37,
+  annotate_axis_line(x = 5.8, y = 43, xend = 4, yend = 37,
                      curvature = -0.2) +
   labs(
     x = "Engine displacement (L)",

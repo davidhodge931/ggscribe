@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Provides annotation functions that replicate and extend 'ggplot2' theme elements, inheriting style defaults from the globally set theme. Covers axis lines, axis ticks, axis text, panel grid lines, and shaded regions, with support for both data and normalised coordinates.
+Provides annotation functions that replicate and extend 'ggplot2' theme elements, inheriting style defaults from the globally set theme. Covers axis lines, axis ticks, axis text, panel grid lines, and shaded regions - as well as a constrast aesthetic for text on fill.
 }
 \seealso{
 Useful links:

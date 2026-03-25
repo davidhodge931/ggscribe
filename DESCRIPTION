@@ -6,14 +6,14 @@ Authors@R:
            comment = c(ORCID = "0000-0002-3868-7501"))
 Description: Provides annotation functions that replicate and extend 'ggplot2' theme
     elements, inheriting style defaults from the globally set theme. Covers
-    axis lines, axis ticks, axis text, panel grid lines, and shaded regions,
-    with support for both data and normalised coordinates.
+    axis lines, axis ticks, axis text, panel grid lines, and shaded regions - as well as a constrast aesthetic for text on fill.
 License: MIT + file LICENSE
 URL: https://github.com/davidhodge931/ggscribe, https://davidhodge931.github.io/ggscribe/
 BugReports: https://github.com/davidhodge931/ggscribe/issues
 Depends: 
     R (>= 4.1.0)
 Imports: 
+    farver,
     ggplot2 (>= 4.0.0),
     grid,
     rlang,
@@ -23,5 +23,7 @@ Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests: 
+    dplyr,
+    stringr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
