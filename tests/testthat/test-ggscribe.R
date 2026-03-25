@@ -11,7 +11,9 @@ base_plot <- function() {
 # Helper: silently add layers and check plot builds without error
 expect_builds <- function(layers) {
   p <- base_plot()
-  for (l in layers) p <- p + l
+  for (l in layers) {
+    p <- p + l
+  }
   expect_no_error(ggplot_build(p))
 }
 
@@ -100,7 +102,11 @@ test_that("scribe_axis_line warns when theme has no axis.line (theme_grey)", {
 
 test_that("scribe_axis_line does not warn when colour supplied explicitly", {
   set_theme(theme_grey())
-  expect_no_warning(scribe_axis_line(position = "bottom", colour = "black", linewidth = 0.5))
+  expect_no_warning(scribe_axis_line(
+    position = "bottom",
+    colour = "black",
+    linewidth = 0.5
+  ))
 })
 
 test_that("scribe_axis_line builds with normalized x coordinate", {
@@ -120,7 +126,13 @@ test_that("scribe_axis_line segment mode builds", {
 
 test_that("scribe_axis_line curve mode builds", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_line(x = 2, y = 15, xend = 5, yend = 30, curvature = 0.3))
+  expect_builds(scribe_axis_line(
+    x = 2,
+    y = 15,
+    xend = 5,
+    yend = 30,
+    curvature = 0.3
+  ))
 })
 
 test_that("scribe_axis_line segment mode returns single-element list", {
@@ -142,8 +154,15 @@ test_that("scribe_axis_line segment mode warns when theme has no axis.line", {
 
 test_that("scribe_axis_line curvature angle and ncp are accepted", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_line(x = 2, y = 15, xend = 5, yend = 30,
-                                   curvature = 0.3, angle = 45, ncp = 10))
+  expect_builds(scribe_axis_line(
+    x = 2,
+    y = 15,
+    xend = 5,
+    yend = 30,
+    curvature = 0.3,
+    angle = 45,
+    ncp = 10
+  ))
 })
 
 
@@ -211,25 +230,38 @@ test_that("scribe_axis_ticks returns one grob per break", {
 
 test_that("scribe_axis_ticks minor = TRUE builds", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_ticks(position = "bottom", x = seq(2, 5, 0.5), minor = TRUE))
+  expect_builds(scribe_axis_ticks(
+    position = "bottom",
+    x = seq(2, 5, 0.5),
+    minor = TRUE
+  ))
 })
 
 test_that("scribe_axis_ticks negative length flips direction", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_ticks(position = "bottom", x = c(2, 3, 4),
-                                    tick_length = grid::unit(-5, "pt")))
+  expect_builds(scribe_axis_ticks(
+    position = "bottom",
+    x = c(2, 3, 4),
+    tick_length = grid::unit(-5, "pt")
+  ))
 })
 
 test_that("scribe_axis_ticks rel() length builds", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_ticks(position = "bottom", x = c(2, 3, 4),
-                                    tick_length = rel(1.5)))
+  expect_builds(scribe_axis_ticks(
+    position = "bottom",
+    x = c(2, 3, 4),
+    tick_length = rel(1.5)
+  ))
 })
 
 test_that("scribe_axis_ticks element_to adds theme layer", {
   set_theme(theme_classic())
-  result <- scribe_axis_ticks(position = "bottom", x = c(2, 3, 4),
-                                element_to = "transparent")
+  result <- scribe_axis_ticks(
+    position = "bottom",
+    x = c(2, 3, 4),
+    element_to = "transparent"
+  )
   has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
@@ -247,7 +279,10 @@ test_that("scribe_axis_ticks warns when theme has no axis.ticks", {
 
 test_that("scribe_axis_ticks normalized x coordinates build", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_ticks(position = "bottom", x = I(c(0.25, 0.5, 0.75))))
+  expect_builds(scribe_axis_ticks(
+    position = "bottom",
+    x = I(c(0.25, 0.5, 0.75))
+  ))
 })
 
 test_that("scribe_axis_ticks normalized coordinates out of range error", {
@@ -268,9 +303,9 @@ test_that("scribe_axis_text builds in axis mode", {
 test_that("scribe_axis_text builds for all positions", {
   set_theme(theme_classic())
   expect_builds(scribe_axis_text(position = "bottom", x = c(2, 3, 4)))
-  expect_builds(scribe_axis_text(position = "top",    x = c(2, 3, 4)))
-  expect_builds(scribe_axis_text(position = "left",   y = c(15, 20, 25)))
-  expect_builds(scribe_axis_text(position = "right",  y = c(15, 20, 25)))
+  expect_builds(scribe_axis_text(position = "top", x = c(2, 3, 4)))
+  expect_builds(scribe_axis_text(position = "left", y = c(15, 20, 25)))
+  expect_builds(scribe_axis_text(position = "right", y = c(15, 20, 25)))
 })
 
 test_that("scribe_axis_text infers position from x", {
@@ -292,8 +327,11 @@ test_that("scribe_axis_text arbitrary positioning mode builds", {
 
 test_that("scribe_axis_text arbitrary mode with multiple points builds", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_text(x = c(2, 4), y = c(15, 30),
-                                   label = c("low", "high")))
+  expect_builds(scribe_axis_text(
+    x = c(2, 4),
+    y = c(15, 30),
+    label = c("low", "high")
+  ))
 })
 
 test_that("scribe_axis_text errors if x and y lengths differ", {
@@ -314,32 +352,47 @@ test_that("scribe_axis_text returns empty list for empty breaks", {
 
 test_that("scribe_axis_text custom labels work", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_text(position = "bottom", x = c(2, 3, 4),
-                                   label = c("two", "three", "four")))
+  expect_builds(scribe_axis_text(
+    position = "bottom",
+    x = c(2, 3, 4),
+    label = c("two", "three", "four")
+  ))
 })
 
 test_that("scribe_axis_text label function works", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_text(position = "bottom", x = c(2, 3, 4),
-                                   label = scales::comma))
+  expect_builds(scribe_axis_text(
+    position = "bottom",
+    x = c(2, 3, 4),
+    label = scales::comma
+  ))
 })
 
 test_that("scribe_axis_text errors if label length mismatches breaks", {
   set_theme(theme_classic())
-  expect_error(scribe_axis_text(position = "bottom", x = c(2, 3, 4),
-                                  label = c("a", "b")))
+  expect_error(scribe_axis_text(
+    position = "bottom",
+    x = c(2, 3, 4),
+    label = c("a", "b")
+  ))
 })
 
 test_that("scribe_axis_text negative length flips inward", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_text(position = "bottom", x = c(2, 3, 4),
-                                   tick_length = grid::unit(-15, "pt")))
+  expect_builds(scribe_axis_text(
+    position = "bottom",
+    x = c(2, 3, 4),
+    tick_length = grid::unit(-15, "pt")
+  ))
 })
 
 test_that("scribe_axis_text element_to adds theme layer in axis mode", {
   set_theme(theme_classic())
-  result <- scribe_axis_text(position = "bottom", x = c(2, 3, 4),
-                               element_to = "transparent")
+  result <- scribe_axis_text(
+    position = "bottom",
+    x = c(2, 3, 4),
+    element_to = "transparent"
+  )
   has_theme <- any(vapply(result, \(x) inherits(x, "theme"), logical(1)))
   expect_true(has_theme)
 })
@@ -347,13 +400,20 @@ test_that("scribe_axis_text element_to adds theme layer in axis mode", {
 test_that("scribe_axis_text element_to ignored in arbitrary mode", {
   set_theme(theme_classic())
   # Should not error or warn
-  expect_no_error(scribe_axis_text(x = 3, y = 20, label = "here",
-                                     element_to = "transparent"))
+  expect_no_error(scribe_axis_text(
+    x = 3,
+    y = 20,
+    label = "here",
+    element_to = "transparent"
+  ))
 })
 
 test_that("scribe_axis_text normalized coordinates build", {
   set_theme(theme_classic())
-  expect_builds(scribe_axis_text(position = "bottom", x = I(c(0.25, 0.5, 0.75))))
+  expect_builds(scribe_axis_text(
+    position = "bottom",
+    x = I(c(0.25, 0.5, 0.75))
+  ))
 })
 
 test_that("scribe_axis_text Date breaks format without error", {
@@ -368,7 +428,7 @@ test_that("scribe_axis_text combined: inward y labels + normalized top label bui
     theme_classic() +
       theme(
         panel.heights = rep(grid::unit(50, "mm"), 100),
-        panel.widths  = rep(grid::unit(75, "mm"), 100),
+        panel.widths = rep(grid::unit(75, "mm"), 100),
       )
   )
   p <- ggplot2::ggplot(
@@ -378,20 +438,24 @@ test_that("scribe_axis_text combined: inward y labels + normalized top label bui
     ggplot2::geom_point() +
     ggplot2::coord_cartesian(clip = "off") +
     scribe_axis_text(
-      y           = c(20, 30, 40),
-      element_to  = "blank",
+      y = c(20, 30, 40),
+      element_to = "blank",
       tick_length = rel(-1),
-      hjust       = 0,
-      vjust       = -0.5,
+      hjust = 0,
+      vjust = -0.5,
     ) +
     scribe_axis_text(
-      position    = "top",
-      x           = I(0),
-      label       = "Highway mpg",
+      position = "top",
+      x = I(0),
+      label = "Highway mpg",
       tick_length = rel(0),
-      hjust       = 0,
+      hjust = 0,
     ) +
-    ggplot2::labs(title = "Fuel economy", subtitle = "Engine displacement vs highway mpg\n\n", y = NULL) +
+    ggplot2::labs(
+      title = "Fuel economy",
+      subtitle = "Engine displacement vs highway mpg\n\n",
+      y = NULL
+    ) +
     ggplot2::theme(plot.title.position = "panel")
 
   expect_no_error(ggplot_build(p))

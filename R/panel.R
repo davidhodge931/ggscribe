@@ -49,18 +49,18 @@
 #' # Partial horizontal lines that don't span the full panel width
 #' p + scribe_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
 scribe_panel_grid <- function(
-    ...,
-    x         = NULL,
-    y         = NULL,
-    xmin      = NULL,
-    xmax      = NULL,
-    ymin      = NULL,
-    ymax      = NULL,
-    minor     = FALSE,
-    colour    = NULL,
-    linewidth = NULL,
-    linetype  = NULL,
-    element_to = "keep"
+  ...,
+  x = NULL,
+  y = NULL,
+  xmin = NULL,
+  xmax = NULL,
+  ymin = NULL,
+  ymax = NULL,
+  minor = FALSE,
+  colour = NULL,
+  linewidth = NULL,
+  linetype = NULL,
+  element_to = "keep"
 ) {
   rlang::check_dots_empty()
 
@@ -74,8 +74,8 @@ scribe_panel_grid <- function(
 
   element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
 
-  x_is_normalized    <- !is.null(x)    && inherits(x,    "AsIs")
-  y_is_normalized    <- !is.null(y)    && inherits(y,    "AsIs")
+  x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
+  y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
   xmin_is_normalized <- !is.null(xmin) && inherits(xmin, "AsIs")
   xmax_is_normalized <- !is.null(xmax) && inherits(xmax, "AsIs")
   ymin_is_normalized <- !is.null(ymin) && inherits(ymin, "AsIs")
@@ -83,23 +83,53 @@ scribe_panel_grid <- function(
 
   if (x_is_normalized) {
     x <- unclass(x)
-    if (any(x < 0 | x > 1)) rlang::abort("Normalized x coordinates must be between 0 and 1.")
+    if (any(x < 0 | x > 1)) {
+      rlang::abort("Normalized x coordinates must be between 0 and 1.")
+    }
   }
   if (y_is_normalized) {
     y <- unclass(y)
-    if (any(y < 0 | y > 1)) rlang::abort("Normalized y coordinates must be between 0 and 1.")
+    if (any(y < 0 | y > 1)) {
+      rlang::abort("Normalized y coordinates must be between 0 and 1.")
+    }
   }
-  if (xmin_is_normalized) { xmin <- unclass(xmin); if (xmin < 0 || xmin > 1) rlang::abort("Normalized xmin must be between 0 and 1.") }
-  if (xmax_is_normalized) { xmax <- unclass(xmax); if (xmax < 0 || xmax > 1) rlang::abort("Normalized xmax must be between 0 and 1.") }
-  if (ymin_is_normalized) { ymin <- unclass(ymin); if (ymin < 0 || ymin > 1) rlang::abort("Normalized ymin must be between 0 and 1.") }
-  if (ymax_is_normalized) { ymax <- unclass(ymax); if (ymax < 0 || ymax > 1) rlang::abort("Normalized ymax must be between 0 and 1.") }
+  if (xmin_is_normalized) {
+    xmin <- unclass(xmin)
+    if (xmin < 0 || xmin > 1) {
+      rlang::abort("Normalized xmin must be between 0 and 1.")
+    }
+  }
+  if (xmax_is_normalized) {
+    xmax <- unclass(xmax)
+    if (xmax < 0 || xmax > 1) {
+      rlang::abort("Normalized xmax must be between 0 and 1.")
+    }
+  }
+  if (ymin_is_normalized) {
+    ymin <- unclass(ymin)
+    if (ymin < 0 || ymin > 1) {
+      rlang::abort("Normalized ymin must be between 0 and 1.")
+    }
+  }
+  if (ymax_is_normalized) {
+    ymax <- unclass(ymax)
+    if (ymax < 0 || ymax > 1) {
+      rlang::abort("Normalized ymax must be between 0 and 1.")
+    }
+  }
 
-  axis             <- if (!is.null(x)) "x" else "y"
+  axis <- if (!is.null(x)) "x" else "y"
   breaks_normalized <- if (axis == "x") x_is_normalized else y_is_normalized
-  limits_normalized <- if (axis == "x") ymin_is_normalized || ymax_is_normalized else xmin_is_normalized || xmax_is_normalized
-  breaks           <- if (!is.null(x)) x else y
+  limits_normalized <- if (axis == "x") {
+    ymin_is_normalized || ymax_is_normalized
+  } else {
+    xmin_is_normalized || xmax_is_normalized
+  }
+  breaks <- if (!is.null(x)) x else y
 
-  if (length(breaks) == 0) return(list())
+  if (length(breaks) == 0) {
+    return(list())
+  }
 
   current_theme <- ggplot2::theme_get()
 
@@ -114,37 +144,61 @@ scribe_panel_grid <- function(
   grid_element_blank <- NULL
   for (nm in grid_hierarchy) {
     el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
-    if (!is.null(el)) { grid_element_blank <- el; break }
+    if (!is.null(el)) {
+      grid_element_blank <- el
+      break
+    }
   }
-  grid_intentionally_blank <- is.null(grid_element_blank) || inherits(grid_element_blank, "element_blank")
+  grid_intentionally_blank <- is.null(grid_element_blank) ||
+    inherits(grid_element_blank, "element_blank")
 
   resolved_grid_element <- NULL
   if (!grid_intentionally_blank) {
     for (nm in grid_hierarchy) {
       el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
-      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_grid_element <- el; break }
+      if (!is.null(el) && !inherits(el, "element_blank")) {
+        resolved_grid_element <- el
+        break
+      }
     }
   }
 
-  if (is.null(colour)    && (grid_intentionally_blank || is.null(resolved_grid_element$colour)))    rlang::warn("The set theme does not define a `panel.grid` colour. Defaulting to grey.")
-  if (is.null(linewidth) && (grid_intentionally_blank || is.null(resolved_grid_element$linewidth))) rlang::warn("The set theme does not define a `panel.grid` linewidth. Defaulting to `0.5`.")
+  if (
+    is.null(colour) &&
+      (grid_intentionally_blank || is.null(resolved_grid_element$colour))
+  ) {
+    rlang::warn(
+      "The set theme does not define a `panel.grid` colour. Defaulting to grey."
+    )
+  }
+  if (
+    is.null(linewidth) &&
+      (grid_intentionally_blank || is.null(resolved_grid_element$linewidth))
+  ) {
+    rlang::warn(
+      "The set theme does not define a `panel.grid` linewidth. Defaulting to `0.5`."
+    )
+  }
 
   if (is.null(resolved_grid_element)) {
     resolved_grid_element <- list(
-      colour    = if (minor) "grey95" else "grey90",
+      colour = if (minor) "grey95" else "grey90",
       linewidth = if (minor) 0.25 else 0.5,
-      linetype  = 1
+      linetype = 1
     )
   }
 
   # ---- Extract properties ---------------------------------------------------
 
-  grid_colour <- colour %||% resolved_grid_element$colour %||% if (minor) "grey95" else "grey90"
+  grid_colour <- colour %||%
+    resolved_grid_element$colour %||%
+    if (minor) "grey95" else "grey90"
 
   grid_linewidth <- if (is.null(linewidth)) {
     resolved_grid_element$linewidth %||% if (minor) 0.25 else 0.5
   } else if (inherits(linewidth, "rel")) {
-    as.numeric(linewidth) * (resolved_grid_element$linewidth %||% if (minor) 0.25 else 0.5)
+    as.numeric(linewidth) *
+      (resolved_grid_element$linewidth %||% if (minor) 0.25 else 0.5)
   } else {
     linewidth
   }
@@ -156,57 +210,154 @@ scribe_panel_grid <- function(
   # ---- Theme modification ---------------------------------------------------
 
   if (element_to != "keep") {
-    element_name <- if (minor) paste0("panel.grid.minor.", axis) else paste0("panel.grid.major.", axis)
-    stamp <- c(stamp, list(ggplot2::theme(
-      !!element_name := if (element_to == "transparent") ggplot2::element_line(colour = "transparent") else ggplot2::element_blank()
-    )))
+    element_name <- if (minor) {
+      paste0("panel.grid.minor.", axis)
+    } else {
+      paste0("panel.grid.major.", axis)
+    }
+    stamp <- c(
+      stamp,
+      list(ggplot2::theme(
+        !!element_name := if (element_to == "transparent") {
+          ggplot2::element_line(colour = "transparent")
+        } else {
+          ggplot2::element_blank()
+        }
+      ))
+    )
   }
 
   # ---- Build grid annotations -----------------------------------------------
 
   make_gpar <- function() {
-    ggplot2::gg_par(col = grid_colour, stroke = grid_linewidth, lty = grid_linetype, lineend = "butt")
+    ggplot2::gg_par(
+      col = grid_colour,
+      stroke = grid_linewidth,
+      lty = grid_linetype,
+      lineend = "butt"
+    )
   }
 
   if (breaks_normalized && limits_normalized) {
     grid_annotations <- lapply(breaks, \(break_val) {
       grid_grob <- if (axis == "x") {
-        grid::linesGrob(x = grid::unit(c(break_val, break_val), "npc"), y = grid::unit(c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1), "npc"), gp = make_gpar())
+        grid::linesGrob(
+          x = grid::unit(c(break_val, break_val), "npc"),
+          y = grid::unit(
+            c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1),
+            "npc"
+          ),
+          gp = make_gpar()
+        )
       } else {
-        grid::linesGrob(x = grid::unit(c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1), "npc"), y = grid::unit(c(break_val, break_val), "npc"), gp = make_gpar())
+        grid::linesGrob(
+          x = grid::unit(
+            c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1),
+            "npc"
+          ),
+          y = grid::unit(c(break_val, break_val), "npc"),
+          gp = make_gpar()
+        )
       }
-      ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      ggplot2::annotation_custom(
+        grid_grob,
+        xmin = -Inf,
+        xmax = Inf,
+        ymin = -Inf,
+        ymax = Inf
+      )
     })
     stamp <- c(stamp, grid_annotations)
-
   } else if (!breaks_normalized && limits_normalized) {
     grid_annotations <- lapply(breaks, \(break_val) {
       if (axis == "x") {
-        grid_grob <- grid::linesGrob(x = grid::unit(c(0.5, 0.5), "npc"), y = grid::unit(c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1), "npc"), gp = make_gpar())
-        ggplot2::annotation_custom(grid_grob, xmin = break_val, xmax = break_val, ymin = -Inf, ymax = Inf)
+        grid_grob <- grid::linesGrob(
+          x = grid::unit(c(0.5, 0.5), "npc"),
+          y = grid::unit(
+            c(if (!is.null(ymin)) ymin else 0, if (!is.null(ymax)) ymax else 1),
+            "npc"
+          ),
+          gp = make_gpar()
+        )
+        ggplot2::annotation_custom(
+          grid_grob,
+          xmin = break_val,
+          xmax = break_val,
+          ymin = -Inf,
+          ymax = Inf
+        )
       } else {
-        grid_grob <- grid::linesGrob(x = grid::unit(c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1), "npc"), y = grid::unit(c(0.5, 0.5), "npc"), gp = make_gpar())
-        ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = break_val, ymax = break_val)
+        grid_grob <- grid::linesGrob(
+          x = grid::unit(
+            c(if (!is.null(xmin)) xmin else 0, if (!is.null(xmax)) xmax else 1),
+            "npc"
+          ),
+          y = grid::unit(c(0.5, 0.5), "npc"),
+          gp = make_gpar()
+        )
+        ggplot2::annotation_custom(
+          grid_grob,
+          xmin = -Inf,
+          xmax = Inf,
+          ymin = break_val,
+          ymax = break_val
+        )
       }
     })
     stamp <- c(stamp, grid_annotations)
-
   } else if (breaks_normalized && !limits_normalized) {
     grid_annotations <- lapply(breaks, \(break_val) {
       grid_grob <- if (axis == "x") {
-        grid::linesGrob(x = grid::unit(c(break_val, break_val), "npc"), y = grid::unit(c(0, 1), "npc"), gp = make_gpar())
+        grid::linesGrob(
+          x = grid::unit(c(break_val, break_val), "npc"),
+          y = grid::unit(c(0, 1), "npc"),
+          gp = make_gpar()
+        )
       } else {
-        grid::linesGrob(x = grid::unit(c(0, 1), "npc"), y = grid::unit(c(break_val, break_val), "npc"), gp = make_gpar())
+        grid::linesGrob(
+          x = grid::unit(c(0, 1), "npc"),
+          y = grid::unit(c(break_val, break_val), "npc"),
+          gp = make_gpar()
+        )
       }
-      ggplot2::annotation_custom(grid_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      ggplot2::annotation_custom(
+        grid_grob,
+        xmin = -Inf,
+        xmax = Inf,
+        ymin = -Inf,
+        ymax = Inf
+      )
     })
     stamp <- c(stamp, grid_annotations)
-
   } else {
     if (axis == "x") {
-      stamp <- c(stamp, list(ggplot2::annotate("segment", x = breaks, xend = breaks, y = if (!is.null(ymin)) ymin else -Inf, yend = if (!is.null(ymax)) ymax else Inf, colour = grid_colour, linewidth = grid_linewidth, linetype = grid_linetype)))
+      stamp <- c(
+        stamp,
+        list(ggplot2::annotate(
+          "segment",
+          x = breaks,
+          xend = breaks,
+          y = if (!is.null(ymin)) ymin else -Inf,
+          yend = if (!is.null(ymax)) ymax else Inf,
+          colour = grid_colour,
+          linewidth = grid_linewidth,
+          linetype = grid_linetype
+        ))
+      )
     } else {
-      stamp <- c(stamp, list(ggplot2::annotate("segment", x = if (!is.null(xmin)) xmin else -Inf, xend = if (!is.null(xmax)) xmax else Inf, y = breaks, yend = breaks, colour = grid_colour, linewidth = grid_linewidth, linetype = grid_linetype)))
+      stamp <- c(
+        stamp,
+        list(ggplot2::annotate(
+          "segment",
+          x = if (!is.null(xmin)) xmin else -Inf,
+          xend = if (!is.null(xmax)) xmax else Inf,
+          y = breaks,
+          yend = breaks,
+          colour = grid_colour,
+          linewidth = grid_linewidth,
+          linetype = grid_linetype
+        ))
+      )
     }
   }
 
@@ -257,16 +408,16 @@ scribe_panel_grid <- function(
 #' # Custom fill and opacity
 #' p + scribe_panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
 scribe_panel_shade <- function(
-    ...,
-    xmin      = -Inf,
-    xmax      = Inf,
-    ymin      = -Inf,
-    ymax      = Inf,
-    fill      = "#878580",
-    alpha     = 0.25,
-    colour    = "transparent",
-    linewidth = NULL,
-    linetype  = NULL
+  ...,
+  xmin = -Inf,
+  xmax = Inf,
+  ymin = -Inf,
+  ymax = Inf,
+  fill = "#878580",
+  alpha = 0.25,
+  colour = "transparent",
+  linewidth = NULL,
+  linetype = NULL
 ) {
   rlang::check_dots_empty()
 
@@ -279,48 +430,132 @@ scribe_panel_shade <- function(
   y_uses_normalized <- ymin_is_normalized || ymax_is_normalized
 
   if (x_uses_normalized) {
-    if (!((xmin_is_normalized || is.infinite(xmin)) && (xmax_is_normalized || is.infinite(xmax)))) {
-      rlang::abort("Cannot mix normalized (I()) and data coordinates for x. Use I() for both xmin and xmax, or neither.")
+    if (
+      !((xmin_is_normalized || is.infinite(xmin)) &&
+        (xmax_is_normalized || is.infinite(xmax)))
+    ) {
+      rlang::abort(
+        "Cannot mix normalized (I()) and data coordinates for x. Use I() for both xmin and xmax, or neither."
+      )
     }
   }
   if (y_uses_normalized) {
-    if (!((ymin_is_normalized || is.infinite(ymin)) && (ymax_is_normalized || is.infinite(ymax)))) {
-      rlang::abort("Cannot mix normalized (I()) and data coordinates for y. Use I() for both ymin and ymax, or neither.")
+    if (
+      !((ymin_is_normalized || is.infinite(ymin)) &&
+        (ymax_is_normalized || is.infinite(ymax)))
+    ) {
+      rlang::abort(
+        "Cannot mix normalized (I()) and data coordinates for y. Use I() for both ymin and ymax, or neither."
+      )
     }
   }
 
-  if (xmin_is_normalized) { xmin <- unclass(xmin); if (length(xmin) != 1 || xmin < 0 || xmin > 1) rlang::abort("Normalized xmin must be a single value between 0 and 1.") }
-  if (xmax_is_normalized) { xmax <- unclass(xmax); if (length(xmax) != 1 || xmax < 0 || xmax > 1) rlang::abort("Normalized xmax must be a single value between 0 and 1.") }
-  if (ymin_is_normalized) { ymin <- unclass(ymin); if (length(ymin) != 1 || ymin < 0 || ymin > 1) rlang::abort("Normalized ymin must be a single value between 0 and 1.") }
-  if (ymax_is_normalized) { ymax <- unclass(ymax); if (length(ymax) != 1 || ymax < 0 || ymax > 1) rlang::abort("Normalized ymax must be a single value between 0 and 1.") }
+  if (xmin_is_normalized) {
+    xmin <- unclass(xmin)
+    if (length(xmin) != 1 || xmin < 0 || xmin > 1) {
+      rlang::abort("Normalized xmin must be a single value between 0 and 1.")
+    }
+  }
+  if (xmax_is_normalized) {
+    xmax <- unclass(xmax)
+    if (length(xmax) != 1 || xmax < 0 || xmax > 1) {
+      rlang::abort("Normalized xmax must be a single value between 0 and 1.")
+    }
+  }
+  if (ymin_is_normalized) {
+    ymin <- unclass(ymin)
+    if (length(ymin) != 1 || ymin < 0 || ymin > 1) {
+      rlang::abort("Normalized ymin must be a single value between 0 and 1.")
+    }
+  }
+  if (ymax_is_normalized) {
+    ymax <- unclass(ymax)
+    if (length(ymax) != 1 || ymax < 0 || ymax > 1) {
+      rlang::abort("Normalized ymax must be a single value between 0 and 1.")
+    }
+  }
 
   use_grob <- x_uses_normalized || y_uses_normalized
 
-  current_theme  <- ggplot2::theme_get()
-  panel_border   <- ggplot2::calc_element("panel.border", current_theme, skip_blank = TRUE)
-  base_linewidth <- if (!is.null(panel_border) && !inherits(panel_border, "element_blank")) panel_border$linewidth %||% 0.5 else 0.5
+  current_theme <- ggplot2::theme_get()
+  panel_border <- ggplot2::calc_element(
+    "panel.border",
+    current_theme,
+    skip_blank = TRUE
+  )
+  base_linewidth <- if (
+    !is.null(panel_border) && !inherits(panel_border, "element_blank")
+  ) {
+    panel_border$linewidth %||% 0.5
+  } else {
+    0.5
+  }
 
-  alpha    <- alpha %||% 1
-  linewidth <- if (is.null(linewidth)) base_linewidth else if (inherits(linewidth, "rel")) as.numeric(linewidth) * base_linewidth else linewidth
+  alpha <- alpha %||% 1
+  linewidth <- if (is.null(linewidth)) {
+    base_linewidth
+  } else if (inherits(linewidth, "rel")) {
+    as.numeric(linewidth) * base_linewidth
+  } else {
+    linewidth
+  }
   linetype <- linetype %||% 1
 
   if (use_grob) {
-    x_left   <- if (xmin_is_normalized) grid::unit(xmin, "npc") else grid::unit(0, "npc")
-    x_right  <- if (xmax_is_normalized) grid::unit(xmax, "npc") else grid::unit(1, "npc")
-    y_bottom <- if (ymin_is_normalized) grid::unit(ymin, "npc") else grid::unit(0, "npc")
-    y_top    <- if (ymax_is_normalized) grid::unit(ymax, "npc") else grid::unit(1, "npc")
+    x_left <- if (xmin_is_normalized) {
+      grid::unit(xmin, "npc")
+    } else {
+      grid::unit(0, "npc")
+    }
+    x_right <- if (xmax_is_normalized) {
+      grid::unit(xmax, "npc")
+    } else {
+      grid::unit(1, "npc")
+    }
+    y_bottom <- if (ymin_is_normalized) {
+      grid::unit(ymin, "npc")
+    } else {
+      grid::unit(0, "npc")
+    }
+    y_top <- if (ymax_is_normalized) {
+      grid::unit(ymax, "npc")
+    } else {
+      grid::unit(1, "npc")
+    }
 
     rect_grob <- grid::rectGrob(
-      x      = x_left,
-      y      = y_bottom,
-      width  = x_right - x_left,
+      x = x_left,
+      y = y_bottom,
+      width = x_right - x_left,
       height = y_top - y_bottom,
-      just   = c("left", "bottom"),
-      gp     = ggplot2::gg_par(fill = scales::alpha(fill, alpha), col = colour, stroke = linewidth, lty = linetype)
+      just = c("left", "bottom"),
+      gp = ggplot2::gg_par(
+        fill = scales::alpha(fill, alpha),
+        col = colour,
+        stroke = linewidth,
+        lty = linetype
+      )
     )
 
-    list(ggplot2::annotation_custom(rect_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf))
+    list(ggplot2::annotation_custom(
+      rect_grob,
+      xmin = -Inf,
+      xmax = Inf,
+      ymin = -Inf,
+      ymax = Inf
+    ))
   } else {
-    list(ggplot2::annotate("rect", xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill, colour = colour, linewidth = linewidth, linetype = linetype, alpha = alpha))
+    list(ggplot2::annotate(
+      "rect",
+      xmin = xmin,
+      xmax = xmax,
+      ymin = ymin,
+      ymax = ymax,
+      fill = fill,
+      colour = colour,
+      linewidth = linewidth,
+      linetype = linetype,
+      alpha = alpha
+    ))
   }
 }
