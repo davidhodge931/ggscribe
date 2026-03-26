@@ -1,4 +1,4 @@
-# ggscribe: 'ggplot2' Annotation Helpers
+# ggscribe: Annotate 'ggplot2' Visualisation
 
 Annotation helpers for 'ggplot2'.
 
