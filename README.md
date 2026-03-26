@@ -9,8 +9,8 @@
 status](https://www.r-pkg.org/badges/version/ggscribe)](https://CRAN.R-project.org/package=ggscribe)
 <!-- badges: end -->
 
-The objective of ggscribe is to provide annotation helpers for
-‘ggplot2’.
+The objective of ggscribe is to provide helpers to annotate ‘ggplot2’
+Visualisation
 
 ## Installation
 
