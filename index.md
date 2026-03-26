@@ -1,7 +1,7 @@
 # ggscribe
 
-The objective of ggscribe is to provide annotation helpers for
-‘ggplot2’.
+The objective of ggscribe is to provide helpers to annotate ‘ggplot2’
+Visualisation
 
 ## Installation
 
