@@ -2,3 +2,10 @@ url: https://davidhodge931.github.io/ggscribe/
 template:
   bootstrap: 5
   light-switch: yes
+reference:
+- title: Annotate
+- contents:
+  - starts_with("annotate")
+- title: Other
+- contents:
+  - aes_contrast

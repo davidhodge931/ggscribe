@@ -1,12 +1,10 @@
 Package: ggscribe
-Title: Annotate 'ggplot2' Theme Elements
+Title: 'ggplot2' Annotation Helpers
 Version: 0.0.9000
 Authors@R: 
     person("David", "Hodge", , "davidhodge931@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-3868-7501"))
-Description: Provides annotation functions that replicate and extend 'ggplot2' theme
-    elements, inheriting style defaults from the globally set theme. Covers
-    axis lines, axis ticks, axis text, panel grid lines, and shaded regions - as well as a constrast aesthetic for text on fill.
+Description: Annotation helpers for 'ggplot2'.
 License: MIT + file LICENSE
 URL: https://github.com/davidhodge931/ggscribe, https://davidhodge931.github.io/ggscribe/
 BugReports: https://github.com/davidhodge931/ggscribe/issues

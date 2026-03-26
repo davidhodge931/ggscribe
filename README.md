@@ -5,11 +5,12 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/ggscribe)](https://CRAN.R-project.org/package=ggscribe)
 <!-- badges: end -->
 
-ggscribe provides annotation functions for ‘ggplot2’ that inherit style
-defaults from the globally set theme. This includes axis lines, axis
-ticks, axis text, panel grid lines, and shaded regions.
+The objective of ggscribe is to provide annotation helpers for
+‘ggplot2’.
 
 ## Installation
 
