@@ -1,8 +1,7 @@
 # ggscribe
 
-ggscribe provides annotation functions for ‘ggplot2’ that inherit style
-defaults from the globally set theme. This includes axis lines, axis
-ticks, axis text, panel grid lines, and shaded regions.
+The objective of ggscribe is to provide annotation helpers for
+‘ggplot2’.
 
 ## Installation
 

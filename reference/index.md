@@ -1,9 +1,7 @@
 # Package index
 
-## All functions
+## Annotate
 
-- [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
-  : A mapped aesthetic for text colour on fill
 - [`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md)
   : Annotate an axis line
 - [`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md)
@@ -14,3 +12,8 @@
   : Annotate panel grid lines
 - [`annotate_panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_shade.md)
   : Annotate a shaded panel region
+
+## Other
+
+- [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
+  : A mapped aesthetic for text colour on fill

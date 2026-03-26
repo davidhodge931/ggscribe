@@ -1,8 +1,7 @@
 # ggscribe
 
-ggscribe provides annotation functions for ‘ggplot2’ that inherit style
-defaults from the globally set theme. This includes axis lines, axis
-ticks, axis text, panel grid lines, and shaded regions.
+The objective of ggscribe is to provide annotation helpers for
+‘ggplot2’.
 
 ## Installation
 
@@ -61,10 +60,8 @@ ggplot(mpg, aes(displ, hwy)) +
 
 # Package index
 
-## All functions
+## Annotate
 
-- [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
-  : A mapped aesthetic for text colour on fill
 - [`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md)
   : Annotate an axis line
 - [`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md)
@@ -75,4 +72,9 @@ ggplot(mpg, aes(displ, hwy)) +
   : Annotate panel grid lines
 - [`annotate_panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_shade.md)
   : Annotate a shaded panel region
+
+## Other
+
+- [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
+  : A mapped aesthetic for text colour on fill
 

@@ -1,9 +1,6 @@
-# ggscribe: Annotate 'ggplot2' Theme Elements
+# ggscribe: 'ggplot2' Annotation Helpers
 
-Provides annotation functions that replicate and extend 'ggplot2' theme
-elements, inheriting style defaults from the globally set theme. Covers
-axis lines, axis ticks, axis text, panel grid lines, and shaded
-regions - as well as a constrast aesthetic for text on fill.
+Annotation helpers for 'ggplot2'.
 
 ## See also
 
