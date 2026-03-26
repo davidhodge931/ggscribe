@@ -4,7 +4,7 @@
 \name{ggscribe-package}
 \alias{ggscribe}
 \alias{ggscribe-package}
-\title{ggscribe: 'ggplot2' Annotation Helpers}
+\title{ggscribe: Annotate 'ggplot2' Visualisation}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
