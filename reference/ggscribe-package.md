@@ -1,6 +1,10 @@
 # ggscribe: Annotate 'ggplot2' Visualisation
 
-Annotation helpers for 'ggplot2'.
+Annotation helpers for 'ggplot2' visualisations, with style defaults
+inherited from the active theme. This includes annotation functions that
+cover axis lines, ticks, text, panel grid lines, and shaded regions.
+This makes it straightforward to annotate plots in a way that stays
+consistent with the set theme.
 
 ## See also
 
