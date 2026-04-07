@@ -4,7 +4,11 @@ Version: 0.1.0
 Authors@R: 
     person("David", "Hodge", , "davidhodge931@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-3868-7501"))
-Description: Annotation helpers for 'ggplot2'.
+Description: Annotation helpers for 'ggplot2' visualisations, with
+    style defaults inherited from the active theme. This includes
+    annotation functions that cover axis lines, ticks, text, panel grid
+    lines, and shaded regions. This makes it straightforward to annotate
+    plots in a way that stays consistent with the set theme.
 License: MIT + file LICENSE
 URL: https://github.com/davidhodge931/ggscribe, https://davidhodge931.github.io/ggscribe/
 BugReports: https://github.com/davidhodge931/ggscribe/issues
