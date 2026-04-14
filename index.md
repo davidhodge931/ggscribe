@@ -17,17 +17,7 @@ pak::pak("davidhodge931/ggscribe")
 
 ``` r
 library(ggplot2)
-#> Warning: package 'ggplot2' was built under R version 4.5.3
 library(dplyr)
-#> Warning: package 'dplyr' was built under R version 4.5.3
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(stringr)
 
 set_theme(
@@ -99,8 +89,7 @@ ggplot2::mpg |>
   ) +
   ggscribe::annotate_axis_text(
     position = "right",
-    y = (20 + (range(mpg$hwy)[1] - 0.05 * diff(range(mpg$hwy)))) / 2,
-    vjust = 0.5,
+    y = (20 + (min(mpg$hwy) - 0.05 * diff(range(mpg$hwy)))) / 2,
     label = "Inefficient",
     element_to = "transparent",
   ) +
@@ -116,7 +105,7 @@ ggplot2::mpg |>
   ) +
   ggscribe::annotate_axis_text(
     position = "right",
-    y = (30 + (range(mpg$hwy)[2] + 0.05 * diff(range(mpg$hwy)))) / 2,
+    y = (30 + (max(mpg$hwy) + 0.05 * diff(range(mpg$hwy)))) / 2,
     label = "Efficient",
   ) +
   #titles
