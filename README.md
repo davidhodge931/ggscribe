@@ -37,6 +37,7 @@ library(dplyr)
 #> The following objects are masked from 'package:base':
 #> 
 #>     intersect, setdiff, setequal, union
+library(stringr)
 
 set_theme(
   ggrefine::theme_grey(
@@ -54,9 +55,8 @@ ggplot2::mpg |>
   ) |>
   ggplot(aes(x = displ, y = hwy, fill = drv, colour = drv)) +
   geom_point() +
-  scale_fill_discrete(palette = jumble::jumble) +
-  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
   ggrefine::refine_modern() +
+  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
   #required for ggscribe
   coord_cartesian(clip = "off") +
   #top labels of low, normal, high
@@ -88,14 +88,16 @@ ggplot2::mpg |>
     tick_length = rel(0),
     hjust = 1,
   ) +
-  #hack to create space between legend and right labels
+  #create space between legend and right labels
   scale_y_continuous(
     position = "right",
-    labels = \(x) paste0(x, rep("              ")),
+    labels = \(x) paste0(
+      str_sub(x, 0, 0), #Create space for the word 'Efficient'
+      str_flatten(rep(" ", times = str_length("Efficient") + 2))),
     name = NULL,
   ) +
   #inefficient shade and labels
-  ggscribe::annotate_panel_shade(ymax = 20, , fill = flexoki::flexoki$red["red200"]) +
+  ggscribe::annotate_panel_shade(ymax = 20, fill = flexoki::flexoki$red["red200"]) +
   ggscribe::annotate_axis_text(
     position = "right",
     y = c(20),
@@ -106,12 +108,13 @@ ggplot2::mpg |>
   ) +
   ggscribe::annotate_axis_text(
     position = "right",
-    y = mean(c(min(ggplot2::mpg$hwy), 20)),
+    y = (20 + (range(mpg$hwy)[1] - 0.05 * diff(range(mpg$hwy)))) / 2,
+    vjust = 0.5,
     label = "Inefficient",
     element_to = "transparent",
   ) +
   #efficient shade and labels
-  ggscribe::annotate_panel_shade(ymin = 30, fill = flexoki::flexoki$green["green200"]) +
+  ggscribe::annotate_panel_shade(ymin = 30, fill = flexoki::flexoki$blue["blue200"]) +
   ggscribe::annotate_axis_text(
     position = "right",
     y = c(30),
@@ -122,14 +125,14 @@ ggplot2::mpg |>
   ) +
   ggscribe::annotate_axis_text(
     position = "right",
-    y = mean(c(30, max(ggplot2::mpg$hwy))),
+    y = (30 + (range(mpg$hwy)[2] + 0.05 * diff(range(mpg$hwy)))) / 2,
     label = "Efficient",
   ) +
   #titles
   labs(
-    y = NULL,
     title = "Highway fuel economy",
     subtitle = "By displacement and drive train\n\n",
+    y = NULL,
   )
 ```
 
