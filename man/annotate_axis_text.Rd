@@ -66,7 +66,12 @@ provided.
 \examples{
 library(ggplot2)
 
-set_theme(theme_classic())
+set_theme(
+  ggrefine::theme_grey(
+    panel_heights = rep(unit(50, "mm"), 100),
+    panel_widths = rep(unit(75, "mm"), 100),
+   )
+ )
 
 p <- ggplot(mtcars, aes(wt, mpg)) +
   geom_point() +

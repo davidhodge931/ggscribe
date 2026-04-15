@@ -1,0 +1,201 @@
+---
+title: "ggscribe"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ggscribe}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+First, let's create a pretty base plot to work with.
+
+ggscribe annotation functions generally require:
+
+* a globally set theme with panel dimensions
+* cartesian space with `clipping = "off"`
+
+```{r setup, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(stringr)
+
+set_theme(
+  ggrefine::theme_grey(
+    panel_heights = rep(unit(50, "mm"), 100),
+    panel_widths = rep(unit(75, "mm"), 100),
+  )
+)
+
+p <- ggplot2::mpg |>
+  mutate(drv = case_when(
+    drv == "4" ~ "4-wheel",
+    drv == "f" ~ "Front",
+    drv == "r" ~ "Rear",
+  )
+  ) |>
+  ggplot(aes(x = displ, y = hwy, fill = drv, colour = drv)) +
+  geom_point() +
+  scale_fill_discrete(palette = jumble::jumble) +
+  scale_colour_discrete(palette = blends::multiply(ggplot2::get_theme()$palette.fill.discrete)) +
+  labs(
+    title = "Highway fuel economy",
+    subtitle = "By displacement and drive train\n",
+  ) +
+  coord_cartesian(clip = "off") + #required to annotate outside the panel
+  ggrefine::refine_modern()
+
+p
+```
+
+Now let's demo some uses of ggscribe. 
+
+1). A custom axis line.
+
+```{r}
+p +
+  ggscribe::annotate_axis_line(
+    position = "bottom",
+    xmin = 2,
+    xmax = 7,
+    element_to = "transparent",
+  ) 
+```
+
+2). Annotated labels along the top of the panel. Note how a different `hjust` is used for each label.
+
+```{r}
+p +
+  ggscribe::annotate_axis_text(
+    position = "top",
+    x = I(0),
+    label = "Low",
+    tick_length = rel(0),
+    hjust = 0,
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "top",
+    x = I(0.5),
+    label = "Normal",
+    tick_length = rel(0),
+    hjust = 0.5,
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "top",
+    x = I(1),
+    label = "High",
+    tick_length = rel(0),
+    hjust = 1,
+  ) +
+  labs(subtitle = "By displacement and drive train\n\n",)
+```
+
+3). A shaded band and text along the right hand side of the panel.
+
+```{r}
+p +
+  ggscribe::annotate_panel_shade(ymax = 20, fill = flexoki::flexoki$red["red200"]) +
+  ggscribe::annotate_axis_text(
+    position = "right",
+    y = c(20),
+  ) +
+  ggscribe::annotate_axis_ticks(
+    position = "right",
+    y = c(20),
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "right",
+    y = (20 + (min(mpg$hwy) - 0.05 * diff(range(mpg$hwy)))) / 2,
+    label = "Inefficient",
+    element_to = "transparent",
+  )
+```
+
+4). A shaded band and text along the right hand side of the panel - and positioned such that we need to create more space for the label.
+
+```{r}
+p +
+  scale_y_continuous(
+    sec.axis = dup_axis(
+      labels = \(x) paste0(
+        str_sub(x, 0, 0), #Create space for the word 'Efficient'
+        str_flatten(rep(" ", times = str_length("Efficient") + 2))),
+      name = NULL,
+    )
+  ) +
+  ggscribe::annotate_panel_shade(ymin = 30, fill = flexoki::flexoki$blue["blue200"]) +
+  ggscribe::annotate_axis_text(
+    position = "right",
+    y = c(30),
+  ) +
+  ggscribe::annotate_axis_ticks(
+    position = "right",
+    y = c(30),
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "right",
+    y = (30 + (max(mpg$hwy) + 0.05 * diff(range(mpg$hwy)))) / 2,
+    label = "Efficient",
+  )
+```
+
+5). Mobile friendly y axis text.
+
+```{r}
+p +
+  ggscribe::annotate_axis_text(
+    y = c(20, 30, 40),
+    element_to = "blank",
+    tick_length = rel(-1),
+    hjust = 0,
+    vjust = -0.5,
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "top",
+    x = I(0),
+    label = "hwy",
+    tick_length = rel(0),
+    hjust = 0,
+  ) +
+  labs(
+    subtitle = "By displacement and drive train\n\n",
+    y = NULL,
+  )
+```
+
+6). Text coloured dark or light depending on the fill.
+
+```{r}
+ggwidth::set_equiwidth(equiwidth = 1.75)
+
+mtcars |>
+  count(cyl, am) |>
+  mutate(
+    am = if_else(am == 0, "Automatic", "Manual"),
+    cyl = as.factor(cyl)
+  ) |>
+  ggplot(aes(x = am, y = n, colour = cyl, fill = cyl, label = n)) +
+  geom_col(
+    position = position_dodge2(preserve = "single"),
+    width = ggwidth::get_width(n = 2, n_dodge = 3),
+  ) +
+  scale_fill_discrete(palette = jumble::jumble) +
+  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
+  geom_text(
+    mapping = ggscribe::aes_contrast(), # or aes(!!!ggscribe::aes_contrast()),
+    position = position_dodge2(
+      width = ggwidth::get_width(n = 2, n_dodge = 3),
+      preserve = "single"),
+    vjust = 1.33,
+    show.legend = FALSE,
+  ) +
+  scale_y_continuous(expand = expansion(c(0, 0.05))) +
+  ggrefine::refine_modern(x_type = "discrete")
+```
+
