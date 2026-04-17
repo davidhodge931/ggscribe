@@ -2,7 +2,7 @@
 % Please edit documentation in R/axis.R
 \name{annotate_axis_ticks}
 \alias{annotate_axis_ticks}
-\title{Annotate axis ticks}
+\title{annotate_axis_line ----------------------------------------------------------}
 \usage{
 annotate_axis_ticks(
   ...,
@@ -45,10 +45,268 @@ whether native theme ticks are suppressed. Defaults to \code{"keep"}.}
 A list of ggplot2 annotation layers and theme elements.
 }
 \description{
-Draws axis ticks at specified break positions, with style defaults taken
-from the \code{axis.ticks} element of the set theme. Ticks along or outside the
-panel boundary requires \code{coord_cartesian(clip = "off")}.
+
 }
+\section{---- Mode detection -------------------------------------------------------}{
+segment_mode <- !is.null(x) && !is.null(y) && !is.null(xend) && !is.null(yend)
+}
+
+\section{---- Segment / curve mode -------------------------------------------------}{
+if (segment_mode) {
+current_theme <- ggplot2::theme_get()
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{theme_element_blank <- NULL
+for (nm in c("axis.line.x", "axis.line")) \{
+  el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
+  if (!is.null(el)) \{
+    theme_element_blank <- el
+    break
+  \}
+\}
+axis_line_intentionally_blank <- is.null(theme_element_blank) ||
+  inherits(theme_element_blank, "element_blank")
+
+resolved_element <- NULL
+if (!axis_line_intentionally_blank) \{
+  for (nm in c("axis.line.x", "axis.line")) \{
+    el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+    if (!is.null(el) && !inherits(el, "element_blank")) \{
+      resolved_element <- el
+      break
+    \}
+  \}
+\}
+
+if (
+  is.null(colour) &&
+    (axis_line_intentionally_blank || is.null(resolved_element$colour))
+) \{
+  rlang::warn(
+    "The set theme does not define an `axis.line` colour. Defaulting to \\"black\\"."
+  )
+\}
+if (
+  is.null(linewidth) &&
+    (axis_line_intentionally_blank || is.null(resolved_element$linewidth))
+) \{
+  rlang::warn(
+    "The set theme does not define an `axis.line` linewidth. Defaulting to `0.5`."
+  )
+\}
+
+if (is.null(resolved_element)) \{
+  resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
+\}
+line_colour <- colour \%||\% resolved_element$colour \%||\% "black"
+
+line_linewidth <- if (is.null(linewidth)) \{
+  resolved_element$linewidth \%||\% 0.5
+\} else if (inherits(linewidth, "rel")) \{
+  as.numeric(linewidth) * (resolved_element$linewidth \%||\% 0.5)
+\} else \{
+  linewidth
+\}
+
+line_linetype <- linetype \%||\% resolved_element$linetype \%||\% 1
+
+geom_type <- if (!is.null(curvature)) "curve" else "segment"
+extra_args <- if (!is.null(curvature)) \{
+  list(curvature = curvature, angle = angle, ncp = ncp)
+\} else \{
+  list()
+\}
+
+return(list(
+  rlang::exec(
+    ggplot2::annotate,
+    geom_type,
+    x = x,
+    y = y,
+    xend = xend,
+    yend = yend,
+    colour = line_colour,
+    linewidth = line_linewidth,
+    linetype = line_linetype,
+    !!!extra_args
+  )
+))
+}\if{html}{\out{</div>}}
+
+}
+}
+
+\section{---- Axis line mode -------------------------------------------------------}{
+if (!is.null(x) && !is.null(y)) {
+rlang::abort(
+"Cannot specify both x and y. To draw a segment, also provide xend and yend."
+)
+}
+if (!is.null(x) && (!is.null(xmin) || !is.null(xmax))) {
+rlang::abort("Cannot specify both x and xmin/xmax.")
+}
+if (!is.null(y) && (!is.null(ymin) || !is.null(ymax))) {
+rlang::abort("Cannot specify both y and ymin/ymax.")
+}
+
+use_xy_positioning <- !is.null(x) || !is.null(y)
+
+if (use_xy_positioning && !is.null(position)) {
+rlang::warn("\code{position} is ignored when \code{x} or \code{y} is provided.")
+}
+
+if (use_xy_positioning) {
+x_is_normalized <- !is.null(x) && inherits(x, "AsIs")
+y_is_normalized <- !is.null(y) && inherits(y, "AsIs")
+xmin_is_normalized <- !is.null(xmin) && inherits(xmin, "AsIs")
+xmax_is_normalized <- !is.null(xmax) && inherits(xmax, "AsIs")
+ymin_is_normalized <- !is.null(ymin) && inherits(ymin, "AsIs")
+ymax_is_normalized <- !is.null(ymax) && inherits(ymax, "AsIs")
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{if (x_is_normalized) \{
+  x <- unclass(x)
+  if (length(x) != 1 || x < 0 || x > 1) \{
+    rlang::abort("Normalized x must be a single value between 0 and 1.")
+  \}
+\} else if (!is.null(x) && length(x) != 1) \{
+  rlang::abort("x must be a single value.")
+\}
+
+if (y_is_normalized) \{
+  y <- unclass(y)
+  if (length(y) != 1 || y < 0 || y > 1) \{
+    rlang::abort("Normalized y must be a single value between 0 and 1.")
+  \}
+\} else if (!is.null(y) && length(y) != 1) \{
+  rlang::abort("y must be a single value.")
+\}
+
+if (xmin_is_normalized) \{
+  xmin <- unclass(xmin)
+  if (length(xmin) != 1 || xmin < 0 || xmin > 1) \{
+    rlang::abort("Normalized xmin must be between 0 and 1.")
+  \}
+\}
+if (xmax_is_normalized) \{
+  xmax <- unclass(xmax)
+  if (length(xmax) != 1 || xmax < 0 || xmax > 1) \{
+    rlang::abort("Normalized xmax must be between 0 and 1.")
+  \}
+\}
+if (ymin_is_normalized) \{
+  ymin <- unclass(ymin)
+  if (length(ymin) != 1 || ymin < 0 || ymin > 1) \{
+    rlang::abort("Normalized ymin must be between 0 and 1.")
+  \}
+\}
+if (ymax_is_normalized) \{
+  ymax <- unclass(ymax)
+  if (length(ymax) != 1 || ymax < 0 || ymax > 1) \{
+    rlang::abort("Normalized ymax must be between 0 and 1.")
+  \}
+\}
+
+# axis refers to the axis.line theme element, not line direction:
+# a vertical line (x provided) maps to axis.line.y; horizontal to axis.line.x
+axis <- if (!is.null(x)) "y" else "x"
+
+use_normalized <- x_is_normalized ||
+  y_is_normalized ||
+  xmin_is_normalized ||
+  xmax_is_normalized ||
+  ymin_is_normalized ||
+  ymax_is_normalized
+}\if{html}{\out{</div>}}
+
+} else {
+if (is.null(position)) {
+rlang::abort("Must specify either position, x, or y.")
+}
+position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
+axis <- if (position \%in\% c("top", "bottom")) "x" else "y"
+use_normalized <- FALSE
+}
+
+element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+}
+
+\section{---- Resolve theme properties ---------------------------------------------}{
+current_theme <- ggplot2::theme_get()
+
+element_hierarchy <- if (use_xy_positioning) {
+c(paste0("axis.line.", axis), "axis.line")
+} else {
+c(
+paste0("axis.line.", axis, ".", position),
+paste0("axis.line.", axis),
+"axis.line"
+)
+}
+
+theme_element_blank <- NULL
+for (nm in element_hierarchy) {
+el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
+if (!is.null(el)) {
+theme_element_blank <- el
+break
+}
+}
+axis_line_intentionally_blank <- is.null(theme_element_blank) ||
+inherits(theme_element_blank, "element_blank")
+
+resolved_element <- NULL
+if (!axis_line_intentionally_blank) {
+for (nm in element_hierarchy) {
+el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
+if (!is.null(el) && !inherits(el, "element_blank")) {
+resolved_element <- el
+break
+}
+}
+}
+
+if (
+is.null(colour) &&
+(axis_line_intentionally_blank || is.null(resolved_element$colour))
+) {
+rlang::warn(
+"The set theme does not define an \code{axis.line} colour. Defaulting to \"black\"."
+)
+}
+if (
+is.null(linewidth) &&
+(axis_line_intentionally_blank || is.null(resolved_element$linewidth))
+) {
+rlang::warn(
+"The set theme does not define an \code{axis.line} linewidth. Defaulting to \code{0.5}."
+)
+}
+
+if (is.null(resolved_element)) {
+resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
+}
+line_colour <- colour \%||\% resolved_element$colour \%||\% "black"
+
+line_linewidth <- if (is.null(linewidth)) {
+resolved_element$linewidth \%||\% 0.5
+} else if (inherits(linewidth, "rel")) {
+as.numeric(linewidth) * (resolved_element$linewidth \%||\% 0.5)
+} else {
+linewidth
+}
+
+line_linetype <- linetype \%||\% resolved_element$linetype \%||\% 1
+
+stamp <- list()
+}
+
+\section{---- Build annotation -----------------------------------------------------}{
+
+}
+
+\section{---- Theme modification ---------------------------------------------------}{
+
+}
+
 \examples{
 library(ggplot2)
 
