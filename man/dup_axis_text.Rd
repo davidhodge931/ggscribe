@@ -4,7 +4,12 @@
 \alias{dup_axis_text}
 \title{Duplicate axis with axis text only}
 \usage{
-dup_axis_text(breaks = ggplot2::waiver(), labels = ggplot2::derive(), ...)
+dup_axis_text(
+  breaks = ggplot2::waiver(),
+  labels = ggplot2::derive(),
+  elements_to = "transparent",
+  ...
+)
 }
 \arguments{
 \item{breaks}{One of:
@@ -22,6 +27,9 @@ positions (e.g. \verb{\\(x) mean(c(x[2], 32))})
 \item A character vector of labels, the same length as \code{breaks}
 \item A function that takes break positions as input and returns labels
 }}
+
+\item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
+whether native theme ticks are suppressed. Defaults to \code{"keep"}.}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:sec_axis]{ggplot2::dup_axis()}}.}
 }

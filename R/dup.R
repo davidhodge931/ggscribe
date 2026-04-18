@@ -15,6 +15,8 @@
 #'   - A character vector of labels, the same length as `breaks`
 #'   - A function that takes break positions as input and returns labels
 #' @param ... Additional arguments passed to [ggplot2::dup_axis()].
+#' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#'   whether native theme ticks are suppressed. Defaults to `"keep"`.
 #'
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
 #'   `scale_x_continuous()` or `scale_y_continuous()`.
@@ -34,22 +36,50 @@
 #'     )
 #'   )
 dup_axis_text <- function(
-    breaks = ggplot2::waiver(),
-    labels = ggplot2::derive(),
-    ...
-  ) {
+  breaks = ggplot2::waiver(),
+  labels = ggplot2::derive(),
+  elements_to = "transparent",
+  ...
+) {
+
+  if (elements_to == "transparent") {
+    guide_theme <- ggplot2::theme(
+      axis.line.x         = ggplot2::element_line(colour = "transparent"),
+      axis.line.x.top     = ggplot2::element_line(colour = "transparent"),
+      axis.line.x.bottom  = ggplot2::element_line(colour = "transparent"),
+      axis.line.y         = ggplot2::element_line(colour = "transparent"),
+      axis.line.y.left    = ggplot2::element_line(colour = "transparent"),
+      axis.line.y.right   = ggplot2::element_line(colour = "transparent"),
+      axis.ticks.x        = ggplot2::element_line(colour = "transparent"),
+      axis.ticks.x.top    = ggplot2::element_line(colour = "transparent"),
+      axis.ticks.x.bottom = ggplot2::element_line(colour = "transparent"),
+      axis.ticks.y        = ggplot2::element_line(colour = "transparent"),
+      axis.ticks.y.left   = ggplot2::element_line(colour = "transparent"),
+      axis.ticks.y.right  = ggplot2::element_line(colour = "transparent"),
+    )
+  } else if (elements_to == "blank") {
+    guide_theme <- ggplot2::theme(
+      axis.line.x         = ggplot2::element_blank(),
+      axis.line.x.top     = ggplot2::element_blank(),
+      axis.line.x.bottom  = ggplot2::element_blank(),
+      axis.line.y         = ggplot2::element_blank(),
+      axis.line.y.left    = ggplot2::element_blank(),
+      axis.line.y.right   = ggplot2::element_blank(),
+      axis.ticks.x        = ggplot2::element_blank(),
+      axis.ticks.x.top    = ggplot2::element_blank(),
+      axis.ticks.x.bottom = ggplot2::element_blank(),
+      axis.ticks.y        = ggplot2::element_blank(),
+      axis.ticks.y.left   = ggplot2::element_blank(),
+      axis.ticks.y.right  = ggplot2::element_blank(),
+    )
+  } else {
+    guide_theme <- ggplot2::theme()
+  }
 
   ggplot2::dup_axis(
     breaks = breaks,
     labels = labels,
     name = NULL,
-    guide = ggplot2::guide_axis(
-      theme = ggplot2::theme(
-        axis.line.x = ggplot2::element_blank(),
-        axis.ticks.y = ggplot2::element_line(colour = "transparent"),
-        axis.ticks.x = ggplot2::element_blank(),
-        axis.line.y = ggplot2::element_line(colour = "transparent"),
-      )
-    )
+    guide = ggplot2::guide_axis(theme = guide_theme)
   )
 }

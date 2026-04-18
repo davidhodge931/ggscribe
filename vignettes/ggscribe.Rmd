@@ -44,44 +44,59 @@ p <- ggplot2::mpg |>
   coord_cartesian(clip = "off") +
   scale_fill_discrete(palette = jumble::jumble) +
   scale_colour_discrete(palette = blends::multiply(ggplot2::get_theme()$palette.fill.discrete)) +
-  labs(title = "Highway fuel economy", subtitle = "By displacement\n") +
-  ggrefine::refine_modern()
+  labs(title = "Highway fuel economy", subtitle = "By displacement\n")
 ```
 
-Annotate a axis line.
-
-```{r axis-line}
-p +
-  geom_point() +
-  annotate_axis_line(
-    position    = "bottom",
-    xmin        = 2,
-    xmax        = 7,
-    element_to  = "transparent",
-  )
-```
-
-Annotate a threshold without affecting gridlines etc.
+Add threshold lines and labels (but not extra gridlines etc).
 
 ```{r}
 p +
-  ggrefine::theme_grey() +
-  annotate_axis_line(x = 2.33, linetype = "dashed") +
-  annotate_axis_text(x = 2.33, label = "Threshold", tick_length = rel(0), position = "top") +
-  geom_point() +
-  labs(subtitle = "By displacement\n\n") +
-  geom_point() +
+  #top threshold
+  annotate_axis_line(x = 2.4, linetype = "dashed") +
+  scale_x_continuous(
+    sec.axis = dup_axis_text(
+      breaks = 2.4,
+      labels = "Threshold",
+      elements_to = "blank",
+    )
+  ) +
+  #right threshold
   annotate_axis_line(y = 32, linetype = "dashed") +
+  geom_point(aes(colour = drv, fill = drv,)) +
   scale_y_continuous(
     sec.axis = dup_axis_text(
       breaks = 32, 
       labels = "Threshold",
     )
-  )
+  )  
 ```
 
+Add category bands and labels (but not extra gridlines etc).
 
-
+```{r}
+p +
+  #top category
+  annotate_panel_shade(xmin = -Inf, xmax = 3.33) +
+  annotate_axis_line(position = "top", xmin = -Inf, xmax = 3.33) +
+  annotate_axis_ticks(position = "top", x = c(-Inf, 3.33)) +
+  scale_x_continuous(
+    sec.axis = dup_axis_text(
+      breaks = \(x) c(x[1], mean(c(x[1], 3.33)), 3.33), 
+      labels = \(x) c(x[1], "Low", x[length(x)])
+    )
+  ) +
+  #right category
+  annotate_panel_shade(ymin = 29.5, ymax = Inf) +
+  annotate_axis_line(position = "right", ymin = 29.5, ymax = Inf) +
+  annotate_axis_ticks(position = "right", y = c(29.5, Inf)) +
+  geom_point() +
+  scale_y_continuous(
+    sec.axis = dup_axis_text(
+      breaks = \(x) c(29.5, mean(c(29.5, x[2])), x[2]), 
+      labels = \(x) c(x[1], "Inefficient", x[length(x)]),
+    )
+  )
+```
 
 Annotate axis text with different hjusts.
 
@@ -90,7 +105,7 @@ p +
   geom_point() +
   annotate_axis_text(position = "top", x = I(0),   label = "Low",    tick_length = rel(0), hjust = 0) +
   annotate_axis_text(position = "top", x = I(0.5), label = "Normal", tick_length = rel(0), hjust = 0.5) +
-  annotate_axis_text(position = "top", x = I(1),   label = "High",   tick_length = rel(0), hjust = 1) +
+  annotate_axis_text(position = "top", x = I(1),   label = "Inefficient",   tick_length = rel(0), hjust = 1) +
   labs(subtitle = "By displacement\n\n")
 ```
 
@@ -99,22 +114,8 @@ p +
   geom_point() +
   annotate_axis_text(x = I(0.5), label = "Displacement", tick_length = rel(6)) +
   annotate_axis_text(x = I(0),   label = "Low",           tick_length = rel(6), hjust = 0) +
-  annotate_axis_text(x = I(1),   label = "High",          tick_length = rel(6), hjust = 1) +
+  annotate_axis_text(x = I(1),   label = "Inefficient",          tick_length = rel(6), hjust = 1) +
   labs(x = "")
-```
-
-Annotate axis text with space automatically added.
-
-```{r panel-shade}
-p +
-  annotate_panel_shade(ymin = 32) +
-  geom_point(aes(fill = drv, colour = drv)) +
-  scale_y_continuous(
-    sec.axis = dup_axis_text(
-      breaks = \(x) mean(c(x[2], 32)),
-      labels = "Inefficient",
-    )
-  )
 ```
 
 Annotate with a bracket for a label.
@@ -143,7 +144,7 @@ p +
     position   = "right",
     y          = (20 + (min(mpg$hwy) - 0.05 * diff(range(mpg$hwy)))) / 2,
     label      = "Inefficient",
-    element_to = "transparent",
+    elements_to = "transparent",
   )
 ```
 
@@ -154,10 +155,10 @@ p +
   geom_point() +
   annotate_axis_text(
     y           = c(20, 30, 40),
-    element_to  = "blank",
     tick_length = rel(-1),
     hjust       = 0,
     vjust       = -0.5,
+    elements_to  = "transparent",
   ) +
   annotate_axis_text(
     position    = "top",
@@ -165,8 +166,11 @@ p +
     label       = "hwy",
     tick_length = rel(0),
     hjust       = 0,
+    elements_to  = "transparent",
   ) +
-  labs(subtitle = "By displacement\n\n", y = NULL)
+  labs(subtitle = "By displacement\n\n", y = NULL) +
+  theme(axis.ticks.y = element_blank()) +
+  theme(axis.line.y = element_blank()) 
 ```
 
 Add a aesthetic that determines colour based on the fill.

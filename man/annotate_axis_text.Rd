@@ -17,7 +17,7 @@ annotate_axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  element_to = "keep"
+  elements_to = "keep"
 )
 }
 \arguments{
@@ -49,7 +49,7 @@ the panel. Axis mode only.}
 
 \item{angle}{Text rotation angle. Defaults to \code{0}.}
 
-\item{element_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
+\item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
 whether native theme axis text is suppressed. Defaults to \code{"keep"}. Axis
 mode only.}
 }

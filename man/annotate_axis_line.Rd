@@ -16,7 +16,7 @@ annotate_axis_line(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  element_to = "keep"
+  elements_to = "keep"
 )
 }
 \arguments{
@@ -44,7 +44,7 @@ normalized coordinates (0-1).}
 
 \item{linetype}{Inherits from \code{axis.line} in the set theme.}
 
-\item{element_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
+\item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
 whether the native theme axis line is suppressed. Defaults to \code{"keep"}.}
 }
 \value{
@@ -75,10 +75,10 @@ p <- ggplot(mtcars, aes(wt, mpg)) +
   coord_cartesian(clip = "off")
 
 # Replace the bottom axis line
-p + annotate_axis_line(position = "bottom", element_to = "transparent")
+p + annotate_axis_line(position = "bottom", elements_to = "transparent")
 
 # Partial bottom axis between x = 2 and x = 4
-p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "transparent")
+p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, elements_to = "transparent")
 
 # Vertical reference line at x = 3.5
 p + annotate_axis_line(x = 3.5)

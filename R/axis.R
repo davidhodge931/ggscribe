@@ -19,7 +19,7 @@
 #'   `rel()`.
 #' @param tick_length Total tick length as a grid unit. Supports `rel()` to scale
 #'   relative to the theme default. Negative values flip the tick direction.
-#' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether native theme ticks are suppressed. Defaults to `"keep"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
@@ -43,7 +43,7 @@
 #' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
 #'
 #' # Left ticks with native ticks suppressed
-#' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
+#' p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), elements_to = "transparent")
 #'
 #' # Inward ticks using a negative length
 #' p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
@@ -59,7 +59,7 @@ annotate_axis_ticks <- function(
   colour = NULL,
   linewidth = NULL,
   tick_length = NULL,
-  element_to = "keep"
+  elements_to = "keep"
 ) {
   rlang::check_dots_empty()
 
@@ -112,7 +112,7 @@ annotate_axis_ticks <- function(
     use_normalized <- y_is_normalized
   }
 
-  element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+  elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   axis <- if (position %in% c("top", "bottom")) "x" else "y"
   breaks <- if (!is.null(x)) x else y
@@ -271,14 +271,14 @@ annotate_axis_ticks <- function(
 
   # ---- Theme modification ---------------------------------------------------
 
-  if (element_to != "keep") {
+  if (elements_to != "keep") {
     theme_name <- if (minor) {
       paste0("axis.minor.ticks.", axis, ".", position)
     } else {
       paste0("axis.ticks.", axis, ".", position)
     }
     theme_mod <- list()
-    theme_mod[[theme_name]] <- if (element_to == "transparent") {
+    theme_mod[[theme_name]] <- if (elements_to == "transparent") {
       ggplot2::element_line(colour = "transparent")
     } else {
       ggplot2::element_blank()
@@ -451,7 +451,7 @@ annotate_axis_ticks <- function(
 #'   the panel. Axis mode only.
 #' @param hjust,vjust Justification. Auto-calculated from position if `NULL`.
 #' @param angle Text rotation angle. Defaults to `0`.
-#' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether native theme axis text is suppressed. Defaults to `"keep"`. Axis
 #'   mode only.
 #'
@@ -498,7 +498,7 @@ annotate_axis_text <- function(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  element_to = "keep"
+  elements_to = "keep"
 ) {
   rlang::check_dots_empty()
 
@@ -566,7 +566,7 @@ annotate_axis_text <- function(
     breaks <- if (!is.null(x)) x else y
   }
 
-  element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+  elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   current_theme <- ggplot2::theme_get()
 
@@ -758,10 +758,10 @@ annotate_axis_text <- function(
 
   # ---- Theme modification ---------------------------------------------------
 
-  if (!arbitrary_position && element_to != "keep") {
+  if (!arbitrary_position && elements_to != "keep") {
     theme_name <- paste0("axis.text.", axis, ".", position)
     theme_mod <- list()
-    theme_mod[[theme_name]] <- if (element_to == "transparent") {
+    theme_mod[[theme_name]] <- if (elements_to == "transparent") {
       ggplot2::element_text(colour = "transparent")
     } else {
       ggplot2::element_blank()

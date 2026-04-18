@@ -25,7 +25,7 @@
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports
 #'   `rel()`.
 #' @param linetype Inherits from `axis.line` in the set theme.
-#' @param element_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
+#' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether the native theme axis line is suppressed. Defaults to `"keep"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
@@ -47,10 +47,10 @@
 #'   coord_cartesian(clip = "off")
 #'
 #' # Replace the bottom axis line
-#' p + annotate_axis_line(position = "bottom", element_to = "transparent")
+#' p + annotate_axis_line(position = "bottom", elements_to = "transparent")
 #'
 #' # Partial bottom axis between x = 2 and x = 4
-#' p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, element_to = "transparent")
+#' p + annotate_axis_line(position = "bottom", xmin = 2, xmax = 4, elements_to = "transparent")
 #'
 #' # Vertical reference line at x = 3.5
 #' p + annotate_axis_line(x = 3.5)
@@ -66,7 +66,7 @@ annotate_axis_line <- function(
     colour = NULL,
     linewidth = NULL,
     linetype = NULL,
-    element_to = "keep"
+    elements_to = "keep"
 ) {
   rlang::check_dots_empty()
 
@@ -158,7 +158,7 @@ annotate_axis_line <- function(
     use_normalized <- FALSE
   }
 
-  element_to <- rlang::arg_match(element_to, c("keep", "transparent", "blank"))
+  elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   # ---- Resolve theme properties ---------------------------------------------
 
@@ -302,7 +302,7 @@ annotate_axis_line <- function(
 
   # ---- Theme modification ---------------------------------------------------
 
-  if (element_to != "keep") {
+  if (elements_to != "keep") {
     theme_name <- NULL
 
     if (use_xy_positioning) {
@@ -327,7 +327,7 @@ annotate_axis_line <- function(
 
     if (!is.null(theme_name)) {
       theme_mod <- list()
-      theme_mod[[theme_name]] <- if (element_to == "transparent") {
+      theme_mod[[theme_name]] <- if (elements_to == "transparent") {
         ggplot2::element_line(colour = "transparent")
       } else {
         ggplot2::element_blank()
