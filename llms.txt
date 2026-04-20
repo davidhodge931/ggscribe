@@ -33,6 +33,8 @@ ggscribe provides annotations like those here:
   : Annotate axis text
 - [`annotate_axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_ticks.md)
   : Annotate axis ticks
+- [`annotate_axis_title()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_title.md)
+  : Annotate an axis title
 - [`annotate_panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_shade.md)
   : Annotate a shaded panel region
 - [`annotate_reference_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_reference_line.md)

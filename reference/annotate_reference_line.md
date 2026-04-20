@@ -10,12 +10,11 @@ linetype, which defaults to "dashed"). Requires
 ``` r
 annotate_reference_line(
   ...,
-  breaks = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
-  linetype = "dashed",
-  xintercept = NULL,
-  yintercept = NULL
+  linetype = "dashed"
 )
 ```
 
@@ -25,10 +24,13 @@ annotate_reference_line(
 
   Not used. Allows trailing commas and named-argument style calls.
 
-- breaks:
+- xintercept:
 
-  Optional numeric vector of length 2 specifying `c(from, to)` to draw a
-  partial line. Defaults to the full axis extent.
+  Draw a vertical reference line at this x position.
+
+- yintercept:
+
+  Draw a horizontal reference line at this y position.
 
 - colour:
 
@@ -42,14 +44,6 @@ annotate_reference_line(
 - linetype:
 
   Inherits from `axis.line` in the set theme.
-
-- xintercept:
-
-  Draw a vertical reference line at this x position.
-
-- yintercept:
-
-  Draw a horizontal reference line at this y position.
 
 ## Value
 

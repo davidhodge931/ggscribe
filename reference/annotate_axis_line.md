@@ -10,7 +10,6 @@ Draws a line along an axis edge, with style defaults taken from the
 annotate_axis_line(
   ...,
   position = NULL,
-  breaks = NULL,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
@@ -29,11 +28,6 @@ annotate_axis_line(
 - position:
 
   One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
-
-- breaks:
-
-  Optional numeric vector of length 2 specifying `c(from, to)` to draw a
-  partial line. Defaults to the full axis extent.
 
 - colour:
 
