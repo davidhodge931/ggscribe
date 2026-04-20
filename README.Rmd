@@ -35,7 +35,6 @@ ggscribe provides annotations like those here:
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 library(ggplot2)
 library(dplyr)
-library(stringr)
 
 set_theme(
   ggrefine::theme_grey(
@@ -49,90 +48,26 @@ ggplot2::mpg |>
     drv == "4" ~ "4-wheel",
     drv == "f" ~ "Front",
     drv == "r" ~ "Rear",
-  )
-  ) |>
-  ggplot(aes(x = displ, y = hwy, fill = drv, colour = drv)) +
-  geom_point() +
+  )) |>
+  ggplot(aes(x = displ, y = hwy)) +
+  coord_cartesian(clip = "off") +
   scale_fill_discrete(palette = jumble::jumble) +
   scale_colour_discrete(palette = blends::multiply(ggplot2::get_theme()$palette.fill.discrete)) +
-  labs(
-    title = "Highway fuel economy",
-    subtitle = "By displacement and drive train\n",
-  ) +
-  coord_cartesian(clip = "off") + #required to annotate outside the panel
-  ggrefine::refine_modern() +
-  #a custom axis line
-  ggscribe::annotate_axis_line(
-    position = "bottom",
-    xmin = 2,
-    xmax = 7,
-    element_to = "transparent",
-  ) +
-  #top x axis text
-  ggscribe::annotate_axis_text(
-    position = "top",
-    x = I(0),
-    label = "Low",
-    tick_length = rel(0),
-    hjust = 0,
-  ) +
-  ggscribe::annotate_axis_text(
-    position = "top",
-    x = I(0.5),
-    label = "Normal",
-    tick_length = rel(0),
-    hjust = 0.5,
-  ) +
-  ggscribe::annotate_axis_text(
-    position = "top",
-    x = I(1),
-    label = "High",
-    tick_length = rel(0),
-    hjust = 1,
-  ) +
-  labs(subtitle = "By displacement and drive train\n\n",) +
-  #right y axis text and ticks 
-  ggscribe::annotate_axis_text(
-    position = "right",
-    y = c(20, 30),
-  ) +
-  ggscribe::annotate_axis_ticks(
-    position = "right",
-    y = c(20, 30),
-  ) +
-  #shaded bands and right y axis text
-  ggscribe::annotate_panel_shade(ymax = 20, fill = flexoki::flexoki$red["red200"]) +
-  ggscribe::annotate_panel_shade(ymin = 30, fill = flexoki::flexoki$blue["blue200"]) +
-  ggscribe::annotate_axis_text(
-    position = "right",
-    y = (20 + (min(mpg$hwy) - 0.05 * diff(range(mpg$hwy)))) / 2,
-    label = "Inefficient",
-    element_to = "transparent",
-  ) +
-  ggscribe::annotate_axis_text(
-    position = "right",
-    y = (30 + (max(mpg$hwy) + 0.05 * diff(range(mpg$hwy)))) / 2,
-    label = "Efficient",
-  ) +
-  scale_y_continuous(
-    sec.axis = dup_axis(
-      breaks = c(20, 30),
-      labels = \(x) paste0(
-        str_sub(x, 0, 0), #create space for the word 'Efficient'
-        str_flatten(rep(" ", times = str_length("Efficient") + 2))),
-      name = NULL,
+  labs(title = "Highway fuel economy", subtitle = "By displacement\n") +
+  ggscribe::annotate_reference_line(xintercept = 2.4) +
+  ggscribe::annotate_reference_line(yintercept = 32)  +
+  geom_point(aes(colour = drv, fill = drv)) +
+  scale_x_continuous(
+    sec.axis = ggscribe::dup_axis_text(
+      breaks = 2.4,
+      labels = "Threshold",
     )
   ) +
-  #mobile-friendly left y axis text 
-  ggscribe::annotate_axis_text(
-    y = c(20, 30, 40),
-    element_to = "blank",
-    tick_length = rel(-1),
-    hjust = 0,
-    vjust = -0.5,
-  ) +
-  labs(
-    y = NULL
+  scale_y_continuous(
+    sec.axis = ggscribe::dup_axis_text(
+      breaks = 32, 
+      labels = "Threshold",
+    ) 
   ) 
 ```
 

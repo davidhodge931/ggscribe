@@ -20,6 +20,7 @@ Depends:
 Imports: 
     farver,
     ggplot2 (>= 4.0.0),
+    glue,
     grid,
     rlang,
     scales

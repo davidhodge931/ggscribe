@@ -7,9 +7,8 @@
 annotate_axis_text(
   ...,
   position = NULL,
-  x = NULL,
-  y = NULL,
-  label = NULL,
+  breaks,
+  labels = NULL,
   colour = NULL,
   size = NULL,
   family = NULL,
@@ -17,23 +16,24 @@ annotate_axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  elements_to = "keep"
+  xintercept = NULL,
+  yintercept = NULL,
+  elements_to = "transparent"
 )
 }
 \arguments{
 \item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
-from \code{x}/\code{y} if not provided.}
+\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
 
-\item{x}{A vector of x positions. Use \code{I()} for normalized coordinates (0-1).
-When combined with \code{y}, triggers arbitrary positioning mode.}
+\item{breaks}{A numeric vector of break positions.}
 
-\item{y}{A vector of y positions. Use \code{I()} for normalized coordinates (0-1).
-When combined with \code{x}, triggers arbitrary positioning mode.}
-
-\item{label}{A vector of labels or a function that takes breaks and returns
-labels. Defaults to formatted break values.}
+\item{labels}{One of:
+\itemize{
+\item \code{NULL} (default) to auto-format break values
+\item A character vector the same length as \code{breaks}
+\item A function taking break values and returning labels
+}}
 
 \item{colour}{Inherits from \code{axis.text} in the set theme.}
 
@@ -41,53 +41,30 @@ labels. Defaults to formatted break values.}
 
 \item{family}{Inherits from \code{axis.text} in the set theme.}
 
-\item{tick_length}{Offset from the axis edge as a grid unit, including tick length
-and margin. Supports \code{rel()}. Negative values place labels on the inside of
-the panel. Axis mode only.}
+\item{tick_length}{Offset from the axis edge including tick length and
+margin. Supports \code{rel()}. Negative values place labels inside the panel.}
 
-\item{hjust, vjust}{Justification. Auto-calculated from position if \code{NULL}.}
+\item{hjust, vjust}{Justification. Auto-calculated from \code{position} if \code{NULL}.}
 
 \item{angle}{Text rotation angle. Defaults to \code{0}.}
 
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
+position in data coordinates instead of the panel edge.}
+
 \item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
-whether native theme axis text is suppressed. Defaults to \code{"keep"}. Axis
-mode only.}
+whether native theme axis text is suppressed. Defaults to \code{"transparent"}.}
 }
 \value{
 A list of ggplot2 annotation layers and theme elements.
 }
 \description{
 Draws text labels at specified break positions along an axis, with style
-defaults taken from the \code{axis.text} element of the set theme. Text along or
-outside the panel boundary requires \code{coord_cartesian(clip = "off")}. Can also
-place labels at arbitrary (x, y) coordinates when both \code{x} and \code{y} are
-provided.
+defaults taken from the \code{axis.text} element of the set theme. Requires
+\code{coord_cartesian(clip = "off")}.
 }
-\examples{
-library(ggplot2)
-
-set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-   )
- )
-
-p <- ggplot(mtcars, aes(wt, mpg)) +
-  geom_point() +
-  coord_cartesian(clip = "off")
-
-# Bottom axis labels at specific breaks
-p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5))
-
-# Custom labels
-p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-                       label = c("two", "three", "four", "five"))
-
-# Inward labels using negative length
-p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-                       tick_length = grid::unit(-15, "pt"))
-
-# Arbitrary positioning — label a specific point on the plot
-p + annotate_axis_text(x = 3.215, y = 21.4, label = "this one")
+\seealso{
+\code{\link[=annotate_axis_line]{annotate_axis_line()}}, \code{\link[=annotate_axis_ticks]{annotate_axis_ticks()}}, \code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}}
 }

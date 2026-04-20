@@ -18,14 +18,14 @@ knitr::opts_chunk$set(
 
 Note: 
 
-* `annotate_axis_ticks` and `annotate_axis_text` require (1) a globally set theme with explicit panel dimensions and (2) `coord_cartesian(clip = "off")`
+* `annotate_axis_ticks`, `annotate_axis_text` and `annotate_axis_bracket` require (1) a globally set theme with explicit panel dimensions and (2) `coord_cartesian(clip = "off")`
 * `annotate_panel_shade` should be before geoms.
 
 In general, use the relevant scale function and breaks argument to annotate the axis unless there is a reason not to.
 
 ```{r base-setup, message=FALSE}
-library(tidyverse)
-library(ggscribe)
+library(ggplot2)
+library(dplyr)
 
 set_theme(
   ggrefine::theme_grey(
@@ -47,159 +47,25 @@ p <- ggplot2::mpg |>
   labs(title = "Highway fuel economy", subtitle = "By displacement\n")
 ```
 
-Add threshold lines and labels (but not extra gridlines etc).
+Add reference lines and labels.
 
 ```{r}
 p +
-  #top threshold
-  annotate_axis_line(x = 2.4, linetype = "dashed") +
+  ggscribe::annotate_reference_line(xintercept = 2.4) +
+  ggscribe::annotate_reference_line(yintercept = 32)  +
+  geom_point(aes(colour = drv, fill = drv)) +
   scale_x_continuous(
-    sec.axis = dup_axis_text(
+    sec.axis = ggscribe::dup_axis_text(
       breaks = 2.4,
       labels = "Threshold",
-      elements_to = "blank",
     )
   ) +
-  #right threshold
-  annotate_axis_line(y = 32, linetype = "dashed") +
-  geom_point(aes(colour = drv, fill = drv,)) +
   scale_y_continuous(
-    sec.axis = dup_axis_text(
+    sec.axis = ggscribe::dup_axis_text(
       breaks = 32, 
       labels = "Threshold",
-    )
-  )  
+    ) 
+  ) 
 ```
 
-Add category bands and labels (but not extra gridlines etc).
 
-```{r}
-p +
-  #top category
-  annotate_panel_shade(xmin = -Inf, xmax = 3.33) +
-  annotate_axis_line(position = "top", xmin = -Inf, xmax = 3.33) +
-  annotate_axis_ticks(position = "top", x = c(-Inf, 3.33)) +
-  scale_x_continuous(
-    sec.axis = dup_axis_text(
-      breaks = \(x) c(x[1], mean(c(x[1], 3.33)), 3.33), 
-      labels = \(x) c(x[1], "Low", x[length(x)])
-    )
-  ) +
-  #right category
-  annotate_panel_shade(ymin = 29.5, ymax = Inf) +
-  annotate_axis_line(position = "right", ymin = 29.5, ymax = Inf) +
-  annotate_axis_ticks(position = "right", y = c(29.5, Inf)) +
-  geom_point() +
-  scale_y_continuous(
-    sec.axis = dup_axis_text(
-      breaks = \(x) c(29.5, mean(c(29.5, x[2])), x[2]), 
-      labels = \(x) c(x[1], "Inefficient", x[length(x)]),
-    )
-  )
-```
-
-Annotate axis text with different hjusts.
-
-```{r axis-text-top}
-p +
-  geom_point() +
-  annotate_axis_text(position = "top", x = I(0),   label = "Low",    tick_length = rel(0), hjust = 0) +
-  annotate_axis_text(position = "top", x = I(0.5), label = "Normal", tick_length = rel(0), hjust = 0.5) +
-  annotate_axis_text(position = "top", x = I(1),   label = "Inefficient",   tick_length = rel(0), hjust = 1) +
-  labs(subtitle = "By displacement\n\n")
-```
-
-```{r axis-text-ticks}
-p +
-  geom_point() +
-  annotate_axis_text(x = I(0.5), label = "Displacement", tick_length = rel(6)) +
-  annotate_axis_text(x = I(0),   label = "Low",           tick_length = rel(6), hjust = 0) +
-  annotate_axis_text(x = I(1),   label = "Inefficient",          tick_length = rel(6), hjust = 1) +
-  labs(x = "")
-```
-
-Annotate with a bracket for a label.
-
-```{r panel-shade-bracket}
-p +
-  annotate_panel_shade(ymin = 32) +
-  geom_point(aes(fill = drv, colour = drv)) +
-  scale_y_continuous(
-    sec.axis = dup_axis_text(
-      breaks = \(x) mean(c(x[2], 32)),
-      labels = "Inefficient",
-    )
-  ) +
-  annotate_axis_line(position = "right", ymin = 32,       ymax = Inf) +
-  annotate_axis_ticks(position = "right", y   = c(32, Inf))
-```
-
-Annotate with no space automatically added.
-
-```{r panel-shade-inline}
-p +
-  annotate_panel_shade(ymax = 20, fill = flexoki::flexoki$red["red200"]) +
-  geom_point(aes(fill = drv, colour = drv)) +
-  annotate_axis_text(
-    position   = "right",
-    y          = (20 + (min(mpg$hwy) - 0.05 * diff(range(mpg$hwy)))) / 2,
-    label      = "Inefficient",
-    elements_to = "transparent",
-  )
-```
-
-Add in a mobile-friendly y axis.
-
-```{r mobile-y}
-p +
-  geom_point() +
-  annotate_axis_text(
-    y           = c(20, 30, 40),
-    tick_length = rel(-1),
-    hjust       = 0,
-    vjust       = -0.5,
-    elements_to  = "transparent",
-  ) +
-  annotate_axis_text(
-    position    = "top",
-    x           = I(0),
-    label       = "hwy",
-    tick_length = rel(0),
-    hjust       = 0,
-    elements_to  = "transparent",
-  ) +
-  labs(subtitle = "By displacement\n\n", y = NULL) +
-  theme(axis.ticks.y = element_blank()) +
-  theme(axis.line.y = element_blank()) 
-```
-
-Add a aesthetic that determines colour based on the fill.
-
-```{r contrast-text}
-ggwidth::set_equiwidth(equiwidth = 1.75)
-
-mtcars |>
-  count(cyl, am) |>
-  mutate(
-    am  = if_else(am == 0, "Automatic", "Manual"),
-    cyl = as.factor(cyl)
-  ) |>
-  ggplot(aes(x = am, y = n, colour = cyl, fill = cyl, label = n)) +
-  geom_col(
-    position = position_dodge2(preserve = "single"),
-    width    = ggwidth::get_width(n = 2, n_dodge = 3),
-  ) +
-  scale_fill_discrete(palette = jumble::jumble) +
-  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
-  geom_text(
-    mapping  = aes_contrast(),
-    position = position_dodge2(
-      width    = ggwidth::get_width(n = 2, n_dodge = 3),
-      preserve = "single"
-    ),
-    vjust       = 1.33,
-    show.legend = FALSE,
-  ) +
-  scale_y_continuous(expand = expansion(c(0, 0.05))) +
-  ggrefine::refine_modern(x_type = "discrete")
-```

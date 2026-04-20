@@ -7,13 +7,14 @@
 annotate_axis_ticks(
   ...,
   position = NULL,
-  x = NULL,
-  y = NULL,
+  breaks,
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
   tick_length = NULL,
-  elements_to = "keep"
+  xintercept = NULL,
+  yintercept = NULL,
+  elements_to = "transparent"
 )
 }
 \arguments{
@@ -21,57 +22,35 @@ annotate_axis_ticks(
 
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
 
-\item{x}{A vector of x-axis break positions for top/bottom ticks. Use \code{I()}
-for normalized coordinates (0-1).}
-
-\item{y}{A vector of y-axis break positions for left/right ticks. Use \code{I()}
-for normalized coordinates (0-1).}
+\item{breaks}{A numeric vector of break positions.}
 
 \item{minor}{Logical. If \code{TRUE}, uses minor tick theme defaults. Defaults to
 \code{FALSE}.}
 
 \item{colour}{Inherits from \code{axis.ticks} in the set theme.}
 
-\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
-\code{rel()}.}
+\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports \code{rel()}.}
 
-\item{tick_length}{Total tick length as a grid unit. Supports \code{rel()} to scale
-relative to the theme default. Negative values flip the tick direction.}
+\item{tick_length}{Total tick length as a grid unit. Supports \code{rel()} to
+scale relative to the theme default. Negative values flip the tick direction.}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
+position in data coordinates instead of the panel edge.}
 
 \item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
-whether native theme ticks are suppressed. Defaults to \code{"keep"}.}
+whether native theme ticks are suppressed. Defaults to \code{"transparent"}.}
 }
 \value{
 A list of ggplot2 annotation layers and theme elements.
 }
 \description{
-Draws axis ticks at specified break positions, with style defaults taken
-from the \code{axis.ticks} element of the set theme. Ticks along or outside the
-panel boundary requires \code{coord_cartesian(clip = "off")}.
+Draws axis ticks at specified break positions, with style defaults taken from
+the \code{axis.ticks} element of the set theme. Requires
+\code{coord_cartesian(clip = "off")}.
 }
-\examples{
-library(ggplot2)
-
-set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-   )
- )
-
-p <- ggplot(mtcars, aes(wt, mpg)) +
-  geom_point() +
-  coord_cartesian(clip = "off")
-
-# Bottom ticks at specific breaks
-p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
-
-# Left ticks with native ticks suppressed
-p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), elements_to = "transparent")
-
-# Inward ticks using a negative length
-p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
-
-# Minor ticks
-p + annotate_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
+\seealso{
+\code{\link[=annotate_axis_line]{annotate_axis_line()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}}, \code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}}
 }
