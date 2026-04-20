@@ -33,8 +33,6 @@
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
-#' @param breaks Optional numeric vector of length 2 specifying `c(from, to)`
-#'   to draw a partial line. Defaults to the full axis extent.
 #' @param colour Inherits from `axis.line` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
 #' @param linetype Inherits from `axis.line` in the set theme.
@@ -51,7 +49,6 @@
 annotate_axis_line <- function(
     ...,
     position    = NULL,
-    breaks      = NULL,
     colour      = NULL,
     linewidth   = NULL,
     linetype    = NULL,
@@ -130,8 +127,8 @@ annotate_axis_line <- function(
 
   # 5. Calculate Coordinates & Extent -----------------------------------------
   intercept    <- .resolve_intercept(axis, position, xintercept, yintercept)
-  extent_from  <- if (!is.null(breaks) && length(breaks) >= 1) min(breaks) else -Inf
-  extent_to    <- if (!is.null(breaks) && length(breaks) >= 2) max(breaks) else Inf
+  extent_from <- -Inf
+  extent_to   <- Inf
 
   # 6. Build Annotation Layer -------------------------------------------------
   stamp <- list()
@@ -899,24 +896,21 @@ annotate_axis_bracket <- function(
 #' Requires `coord_cartesian(clip = "off")`.
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
-#' @param breaks Optional numeric vector of length 2 specifying `c(from, to)`
-#'   to draw a partial line. Defaults to the full axis extent.
+#' @param xintercept Draw a vertical reference line at this x position.
+#' @param yintercept Draw a horizontal reference line at this y position.
 #' @param colour Inherits from `axis.line` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
 #' @param linetype Inherits from `axis.line` in the set theme.
-#' @param xintercept Draw a vertical reference line at this x position.
-#' @param yintercept Draw a horizontal reference line at this y position.
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
 annotate_reference_line <- function(
     ...,
-    breaks      = NULL,
+    xintercept  = NULL,
+    yintercept  = NULL,
     colour      = NULL,
     linewidth   = NULL,
-    linetype    = "dashed",
-    xintercept  = NULL,
-    yintercept  = NULL
+    linetype    = "dashed"
 ) {
   rlang::check_dots_empty()
 
@@ -981,8 +975,8 @@ annotate_reference_line <- function(
 
   # 4. Coordinates & Extent ---------------------------------------------------
   intercept   <- .resolve_intercept(axis, position, xintercept, yintercept)
-  extent_from <- if (!is.null(breaks) && length(breaks) >= 1) min(breaks) else -Inf
-  extent_to   <- if (!is.null(breaks) && length(breaks) >= 2) max(breaks) else Inf
+  extent_from <- -Inf
+  extent_to   <- Inf
 
   # 5. Build Layer ------------------------------------------------------------
   if (axis == "x") {

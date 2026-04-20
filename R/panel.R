@@ -1,5 +1,3 @@
-
-
 # annotate_panel_shade --------------------------------------------------------
 
 #' Annotate a shaded panel region
@@ -48,16 +46,16 @@
 #' # Custom fill and opacity
 #' p + annotate_panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
 annotate_panel_shade <- function(
-  ...,
-  xmin = -Inf,
-  xmax = Inf,
-  ymin = -Inf,
-  ymax = Inf,
-  fill = "#878580",
-  alpha = 0.25,
-  colour = "transparent",
-  linewidth = NULL,
-  linetype = NULL
+    ...,
+    xmin = -Inf,
+    xmax = Inf,
+    ymin = -Inf,
+    ymax = Inf,
+    fill = "#878580",
+    alpha = 0.25,
+    colour = "transparent",
+    linewidth = NULL,
+    linetype = NULL
 ) {
   rlang::check_dots_empty()
 

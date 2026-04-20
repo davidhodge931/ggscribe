@@ -7,7 +7,6 @@
 annotate_axis_line(
   ...,
   position = NULL,
-  breaks = NULL,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
@@ -20,9 +19,6 @@ annotate_axis_line(
 \item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
-
-\item{breaks}{Optional numeric vector of length 2 specifying \code{c(from, to)}
-to draw a partial line. Defaults to the full axis extent.}
 
 \item{colour}{Inherits from \code{axis.line} in the set theme.}
 

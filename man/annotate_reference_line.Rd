@@ -6,29 +6,25 @@
 \usage{
 annotate_reference_line(
   ...,
-  breaks = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
-  linetype = "dashed",
-  xintercept = NULL,
-  yintercept = NULL
+  linetype = "dashed"
 )
 }
 \arguments{
 \item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
-\item{breaks}{Optional numeric vector of length 2 specifying \code{c(from, to)}
-to draw a partial line. Defaults to the full axis extent.}
+\item{xintercept}{Draw a vertical reference line at this x position.}
+
+\item{yintercept}{Draw a horizontal reference line at this y position.}
 
 \item{colour}{Inherits from \code{axis.line} in the set theme.}
 
 \item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
 
 \item{linetype}{Inherits from \code{axis.line} in the set theme.}
-
-\item{xintercept}{Draw a vertical reference line at this x position.}
-
-\item{yintercept}{Draw a horizontal reference line at this y position.}
 }
 \value{
 A list of ggplot2 annotation layers.
