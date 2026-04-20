@@ -1,8 +1,8 @@
 # Annotate axis ticks
 
 Draws axis ticks at specified break positions, with style defaults taken
-from the `axis.ticks` element of the set theme. Ticks along or outside
-the panel boundary requires `coord_cartesian(clip = "off")`.
+from the `axis.ticks` element of the set theme. Requires
+`coord_cartesian(clip = "off")`.
 
 ## Usage
 
@@ -10,13 +10,14 @@ the panel boundary requires `coord_cartesian(clip = "off")`.
 annotate_axis_ticks(
   ...,
   position = NULL,
-  x = NULL,
-  y = NULL,
+  breaks,
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
   tick_length = NULL,
-  element_to = "keep"
+  xintercept = NULL,
+  yintercept = NULL,
+  elements_to = "transparent"
 )
 ```
 
@@ -30,17 +31,9 @@ annotate_axis_ticks(
 
   One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
 
-- x:
+- breaks:
 
-  A vector of x-axis break positions for top/bottom ticks. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
-  (0-1).
-
-- y:
-
-  A vector of y-axis break positions for left/right ticks. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
-  (0-1).
+  A numeric vector of break positions.
 
 - minor:
 
@@ -63,38 +56,28 @@ annotate_axis_ticks(
   scale relative to the theme default. Negative values flip the tick
   direction.
 
-- element_to:
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
+
+- elements_to:
 
   One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme ticks are suppressed. Defaults to `"keep"`.
+  native theme ticks are suppressed. Defaults to `"transparent"`.
 
 ## Value
 
 A list of ggplot2 annotation layers and theme elements.
 
-## Examples
+## See also
 
-``` r
-library(ggplot2)
-
-set_theme(theme_classic())
-
-p <- ggplot(mtcars, aes(wt, mpg)) +
-  geom_point() +
-  coord_cartesian(clip = "off")
-
-# Bottom ticks at specific breaks
-p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5))
-
-
-# Left ticks with native ticks suppressed
-p + annotate_axis_ticks(position = "left", y = c(10, 20, 30), element_to = "transparent")
-
-
-# Inward ticks using a negative length
-p + annotate_axis_ticks(position = "bottom", x = c(2, 3, 4, 5), tick_length = grid::unit(-5, "pt"))
-
-
-# Minor ticks
-p + annotate_axis_ticks(position = "bottom", x = seq(2, 5, by = 0.5), minor = TRUE)
-```
+[`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md),
+[`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md),
+[`annotate_axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_bracket.md),
+[`annotate_reference_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_reference_line.md)

@@ -1,10 +1,8 @@
 # Annotate axis text
 
 Draws text labels at specified break positions along an axis, with style
-defaults taken from the `axis.text` element of the set theme. Text along
-or outside the panel boundary requires `coord_cartesian(clip = "off")`.
-Can also place labels at arbitrary (x, y) coordinates when both `x` and
-`y` are provided.
+defaults taken from the `axis.text` element of the set theme. Requires
+`coord_cartesian(clip = "off")`.
 
 ## Usage
 
@@ -12,9 +10,8 @@ Can also place labels at arbitrary (x, y) coordinates when both `x` and
 annotate_axis_text(
   ...,
   position = NULL,
-  x = NULL,
-  y = NULL,
-  label = NULL,
+  breaks,
+  labels = NULL,
   colour = NULL,
   size = NULL,
   family = NULL,
@@ -22,7 +19,9 @@ annotate_axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  element_to = "keep"
+  xintercept = NULL,
+  yintercept = NULL,
+  elements_to = "transparent"
 )
 ```
 
@@ -34,25 +33,21 @@ annotate_axis_text(
 
 - position:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
-  `x`/`y` if not provided.
+  One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
 
-- x:
+- breaks:
 
-  A vector of x positions. Use [`I()`](https://rdrr.io/r/base/AsIs.html)
-  for normalized coordinates (0-1). When combined with `y`, triggers
-  arbitrary positioning mode.
+  A numeric vector of break positions.
 
-- y:
+- labels:
 
-  A vector of y positions. Use [`I()`](https://rdrr.io/r/base/AsIs.html)
-  for normalized coordinates (0-1). When combined with `x`, triggers
-  arbitrary positioning mode.
+  One of:
 
-- label:
+  - `NULL` (default) to auto-format break values
 
-  A vector of labels or a function that takes breaks and returns labels.
-  Defaults to formatted break values.
+  - A character vector the same length as `breaks`
+
+  - A function taking break values and returning labels
 
 - colour:
 
@@ -68,55 +63,40 @@ annotate_axis_text(
 
 - tick_length:
 
-  Offset from the axis edge as a grid unit, including tick length and
-  margin. Supports
+  Offset from the axis edge including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values place labels on the inside of the panel. Axis mode
-  only.
+  Negative values place labels inside the panel.
 
 - hjust, vjust:
 
-  Justification. Auto-calculated from position if `NULL`.
+  Justification. Auto-calculated from `position` if `NULL`.
 
 - angle:
 
   Text rotation angle. Defaults to `0`.
 
-- element_to:
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
+
+- elements_to:
 
   One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme axis text is suppressed. Defaults to `"keep"`. Axis mode
-  only.
+  native theme axis text is suppressed. Defaults to `"transparent"`.
 
 ## Value
 
 A list of ggplot2 annotation layers and theme elements.
 
-## Examples
+## See also
 
-``` r
-library(ggplot2)
-
-set_theme(theme_classic())
-
-p <- ggplot(mtcars, aes(wt, mpg)) +
-  geom_point() +
-  coord_cartesian(clip = "off")
-
-# Bottom axis labels at specific breaks
-p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5))
-
-
-# Custom labels
-p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-                       label = c("two", "three", "four", "five"))
-
-
-# Inward labels using negative length
-p + annotate_axis_text(position = "bottom", x = c(2, 3, 4, 5),
-                       tick_length = grid::unit(-15, "pt"))
-
-
-# Arbitrary positioning — label a specific point on the plot
-p + annotate_axis_text(x = 3.215, y = 21.4, label = "this one")
-```
+[`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md),
+[`annotate_axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_ticks.md),
+[`annotate_axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_bracket.md),
+[`annotate_reference_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_reference_line.md)

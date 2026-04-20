@@ -56,26 +56,39 @@ library(dplyr)
 #>     intersect, setdiff, setequal, union
 library(stringr)
 
+set_theme(
+ ggrefine::theme_light(
+    panel_heights = rep(unit(50, "mm"), 100),
+    panel_widths = rep(unit(75, "mm"), 100),
+ )
+)
+
+ggwidth::set_equiwidth(equiwidth = 1.75)
+
 mtcars |>
   count(cyl, am) |>
   mutate(
-    am = if_else(am == 0, "automatic", "manual"),
-    am = str_to_sentence(am),
+    am = if_else(am == 0, "Automatic", "Manual"),
     cyl = as.factor(cyl)
   ) |>
-  ggplot(aes(x = am, y = n, fill = cyl, label = n)) +
+  ggplot(aes(x = am, y = n, colour = cyl, fill = cyl, label = n)) +
   geom_col(
-    position = position_dodge(preserve = "single"),
-    width = 0.75,
+    position = position_dodge2(preserve = "single", padding = 0.05),
+    width = ggwidth::get_width(n = 2, n_dodge = 3),
   ) +
-  scale_fill_manual(values = c("4" = "navy", "6" = "orange", "8" = "pink")) +
+  scale_fill_discrete(palette = jumble::jumble) +
+  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
   geom_text(
-    mapping = aes_contrast(),
-    position = position_dodge(width = 0.75, preserve = "single"),
+    mapping = ggscribe::aes_contrast(), # or aes(!!!ggscribe::aes_contrast()),
+    position = position_dodge2(
+      width = ggwidth::get_width(n = 2, n_dodge = 3),
+      padding = 0.05,
+      preserve = "single"),
     vjust = 1.33,
     show.legend = FALSE,
   ) +
-  scale_y_continuous(expand = expansion(c(0, 0.05)))
+  scale_y_continuous(expand = expansion(c(0, 0.05))) +
+  ggrefine::refine_modern(x_type = "discrete")
 
 
 mtcars |>
@@ -85,18 +98,24 @@ mtcars |>
     am = stringr::str_to_sentence(am),
     cyl = as.factor(cyl)
   ) |>
-  ggplot(aes(y = am, x = n, fill = cyl, label = n)) +
+  ggplot(aes(y = am, x = n, colour = cyl, fill = cyl, label = n)) +
   geom_col(
-    position = position_dodge(preserve = "single"),
-    width = 0.75,
+    position = position_dodge2(preserve = "single", padding = 0.05),
+    width = ggwidth::get_width(n = 2, n_dodge = 3, orientation = "y"),
   ) +
-  scale_fill_manual(values = c("4" = "navy", "6" = "orange", "8" = "pink")) +
+  scale_fill_discrete(palette = jumble::jumble) +
+  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
   geom_text(
-    mapping = aes_contrast(),
-    position = position_dodge(width = 0.75, preserve = "single"),
+    mapping = ggscribe::aes_contrast(), # or aes(!!!ggscribe::aes_contrast()),
+    position = position_dodge2(
+      width = ggwidth::get_width(n = 2, n_dodge = 3, orientation = "y"),
+      preserve = "single",
+      padding = 0.05,
+    ),
     hjust = 1.25,
     show.legend = FALSE,
   ) +
-  scale_x_continuous(expand = expansion(c(0, 0.05)))
+  scale_x_continuous(expand = expansion(c(0, 0.05))) +
+  ggrefine::refine_modern(y_type = "discrete")
 
 ```
