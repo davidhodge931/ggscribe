@@ -10,17 +10,17 @@ defaults taken from the `axis.text` element of the set theme. Requires
 annotate_axis_text(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
   labels = NULL,
   colour = NULL,
   size = NULL,
   family = NULL,
-  tick_length = NULL,
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  xintercept = NULL,
-  yintercept = NULL,
+  tick_length = NULL,
   elements_to = "transparent"
 )
 ```
@@ -29,11 +29,22 @@ annotate_axis_text(
 
 - ...:
 
-  Not used. Allows trailing commas and named-argument style calls.
+  Not used. Forces named arguments.
 
 - position:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
+  `xintercept` or `yintercept` if not provided.
+
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
 
 - breaks:
 
@@ -61,12 +72,6 @@ annotate_axis_text(
 
   Inherits from `axis.text` in the set theme.
 
-- tick_length:
-
-  Offset from the axis edge including tick length and margin. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values place labels inside the panel.
-
 - hjust, vjust:
 
   Justification. Auto-calculated from `position` if `NULL`.
@@ -75,15 +80,11 @@ annotate_axis_text(
 
   Text rotation angle. Defaults to `0`.
 
-- xintercept:
+- tick_length:
 
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
+  Offset from the axis edge including tick length and margin. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  Negative values place labels inside the panel.
 
 - elements_to:
 

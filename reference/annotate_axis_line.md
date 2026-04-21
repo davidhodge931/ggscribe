@@ -10,11 +10,11 @@ Draws a line along an axis edge, with style defaults taken from the
 annotate_axis_line(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   elements_to = "transparent"
 )
 ```
@@ -23,11 +23,22 @@ annotate_axis_line(
 
 - ...:
 
-  Not used. Allows trailing commas and named-argument style calls.
+  Not used. Forces named arguments.
 
 - position:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
+  `xintercept` or `yintercept` if not provided.
+
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
 
 - colour:
 
@@ -41,16 +52,6 @@ annotate_axis_line(
 - linetype:
 
   Inherits from `axis.line` in the set theme.
-
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
 
 - elements_to:
 

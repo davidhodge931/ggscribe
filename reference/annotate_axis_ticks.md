@@ -10,13 +10,13 @@ from the `axis.ticks` element of the set theme. Requires
 annotate_axis_ticks(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
   tick_length = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   elements_to = "transparent"
 )
 ```
@@ -25,11 +25,22 @@ annotate_axis_ticks(
 
 - ...:
 
-  Not used. Allows trailing commas and named-argument style calls.
+  Not used. Forces named arguments.
 
 - position:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
+  `xintercept` or `yintercept` if not provided.
+
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
 
 - breaks:
 
@@ -55,16 +66,6 @@ annotate_axis_ticks(
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html) to
   scale relative to the theme default. Negative values flip the tick
   direction.
-
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
 
 - elements_to:
 

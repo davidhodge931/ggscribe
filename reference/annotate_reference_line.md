@@ -1,8 +1,7 @@
 # Annotate a reference line
 
-Draws a reference line within the inside of the panel, with style
-defaults taken from the `axis.line` element of the set theme (apart from
-linetype, which defaults to "dashed"). Requires
+Draws a reference line within the panel, with style defaults taken from
+the `axis.line` element of the set theme. Requires
 `coord_cartesian(clip = "off")`.
 
 ## Usage
@@ -22,7 +21,7 @@ annotate_reference_line(
 
 - ...:
 
-  Not used. Allows trailing commas and named-argument style calls.
+  Not used. Forces named arguments.
 
 - xintercept:
 
@@ -43,8 +42,15 @@ annotate_reference_line(
 
 - linetype:
 
-  Inherits from `axis.line` in the set theme.
+  Defaults to `"dashed"`.
 
 ## Value
 
 A list of ggplot2 annotation layers.
+
+## See also
+
+[`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md),
+[`annotate_axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_ticks.md),
+[`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md),
+[`annotate_axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_bracket.md)
