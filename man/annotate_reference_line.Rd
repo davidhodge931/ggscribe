@@ -14,7 +14,7 @@ annotate_reference_line(
 )
 }
 \arguments{
-\item{...}{Not used. Allows trailing commas and named-argument style calls.}
+\item{...}{Not used. Forces named arguments.}
 
 \item{xintercept}{Draw a vertical reference line at this x position.}
 
@@ -24,13 +24,15 @@ annotate_reference_line(
 
 \item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
 
-\item{linetype}{Inherits from \code{axis.line} in the set theme.}
+\item{linetype}{Defaults to \code{"dashed"}.}
 }
 \value{
 A list of ggplot2 annotation layers.
 }
 \description{
-Draws a reference line within the inside of the panel, with style defaults taken from the
-\code{axis.line} element of the set theme (apart from linetype, which defaults to "dashed").
-Requires \code{coord_cartesian(clip = "off")}.
+Draws a reference line within the panel, with style defaults taken from the
+\code{axis.line} element of the set theme. Requires \code{coord_cartesian(clip = "off")}.
+}
+\seealso{
+\code{\link[=annotate_axis_line]{annotate_axis_line()}}, \code{\link[=annotate_axis_ticks]{annotate_axis_ticks()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}}, \code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}
 }

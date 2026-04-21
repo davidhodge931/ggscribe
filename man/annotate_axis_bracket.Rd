@@ -7,35 +7,32 @@
 annotate_axis_bracket(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
-  labels = NULL,
   colour = NULL,
-  size = NULL,
-  family = NULL,
   linewidth = NULL,
   linetype = NULL,
   tick_length = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   elements_to = "transparent"
 )
 }
 \arguments{
-\item{...}{Not used. Allows trailing commas and named-argument style calls.}
+\item{...}{Not used. Forces named arguments.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
+\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
+from \code{xintercept} or \code{yintercept} if not provided.}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to this y
+position in data coordinates instead of the panel edge.}
 
 \item{breaks}{A numeric vector of length >= 2. The bracket spans
 \code{min(breaks)} to \code{max(breaks)}.}
 
-\item{labels}{An optional label string (or function returning one) centered
-over the bracket. Defaults to \code{NULL} (no label).}
-
 \item{colour}{Inherits from \code{axis.line} in the set theme.}
-
-\item{size}{Label text size. Inherits from \code{axis.text} in the set theme.}
-
-\item{family}{Label font family. Inherits from \code{axis.text} in the set theme.}
 
 \item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
 
@@ -44,12 +41,6 @@ over the bracket. Defaults to \code{NULL} (no label).}
 \item{tick_length}{Length of the bracket end caps as a grid unit. Supports
 \code{rel()}. Defaults to the theme tick length.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to this x
-position in data coordinates instead of the panel edge.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to this y
-position in data coordinates instead of the panel edge.}
-
 \item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
 whether native theme ticks are suppressed. Defaults to \code{"transparent"}.}
 }
@@ -57,10 +48,9 @@ whether native theme ticks are suppressed. Defaults to \code{"transparent"}.}
 A list of ggplot2 annotation layers and theme elements.
 }
 \description{
-Draws a bracket spanning \code{min(breaks)} to \code{max(breaks)} along an axis edge,
-with an optional centered label. Style defaults are taken from the \code{axis.line}
-and \code{axis.text} elements of the set theme. Requires
-\code{coord_cartesian(clip = "off")}.
+Draws a bracket spanning \code{min(breaks)} to \code{max(breaks)} along an axis edge.
+Style defaults are taken from the \code{axis.line} element of the set theme.
+Requires \code{coord_cartesian(clip = "off")}.
 }
 \seealso{
 \code{\link[=annotate_axis_line]{annotate_axis_line()}}, \code{\link[=annotate_axis_ticks]{annotate_axis_ticks()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}}

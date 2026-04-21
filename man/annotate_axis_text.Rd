@@ -7,24 +7,31 @@
 annotate_axis_text(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
   labels = NULL,
   colour = NULL,
   size = NULL,
   family = NULL,
-  tick_length = NULL,
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  xintercept = NULL,
-  yintercept = NULL,
+  tick_length = NULL,
   elements_to = "transparent"
 )
 }
 \arguments{
-\item{...}{Not used. Allows trailing commas and named-argument style calls.}
+\item{...}{Not used. Forces named arguments.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
+\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
+from \code{xintercept} or \code{yintercept} if not provided.}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
+position in data coordinates instead of the panel edge.}
 
 \item{breaks}{A numeric vector of break positions.}
 
@@ -41,18 +48,12 @@ annotate_axis_text(
 
 \item{family}{Inherits from \code{axis.text} in the set theme.}
 
-\item{tick_length}{Offset from the axis edge including tick length and
-margin. Supports \code{rel()}. Negative values place labels inside the panel.}
-
 \item{hjust, vjust}{Justification. Auto-calculated from \code{position} if \code{NULL}.}
 
 \item{angle}{Text rotation angle. Defaults to \code{0}.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
+\item{tick_length}{Offset from the axis edge including tick length and margin.
+Supports \code{rel()}. Negative values place labels inside the panel.}
 
 \item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
 whether native theme axis text is suppressed. Defaults to \code{"transparent"}.}

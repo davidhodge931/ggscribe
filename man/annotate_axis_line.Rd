@@ -7,30 +7,31 @@
 annotate_axis_line(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   elements_to = "transparent"
 )
 }
 \arguments{
-\item{...}{Not used. Allows trailing commas and named-argument style calls.}
+\item{...}{Not used. Forces named arguments.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
-
-\item{colour}{Inherits from \code{axis.line} in the set theme.}
-
-\item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
-
-\item{linetype}{Inherits from \code{axis.line} in the set theme.}
+\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
+from \code{xintercept} or \code{yintercept} if not provided.}
 
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
 position in data coordinates instead of the panel edge.}
 
 \item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
 position in data coordinates instead of the panel edge.}
+
+\item{colour}{Inherits from \code{axis.line} in the set theme.}
+
+\item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
+
+\item{linetype}{Inherits from \code{axis.line} in the set theme.}
 
 \item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
 whether the native theme axis line is suppressed. Defaults to \code{"transparent"}.}

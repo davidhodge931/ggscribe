@@ -24,6 +24,18 @@
   }
 }
 
+.infer_position <- function(position, xintercept, yintercept) {
+  if (!is.null(position)) {
+    return(rlang::arg_match(position, c("top", "bottom", "left", "right")))
+  }
+  if (!is.null(yintercept)) return("bottom")
+  if (!is.null(xintercept)) return("left")
+  rlang::abort(
+    "Must specify `position`, or supply `xintercept` (implies left/right) or `yintercept` (implies top/bottom)."
+  )
+}
+
+
 # annotate_axis_line ----------------------------------------------------------
 
 #' Annotate an axis line
@@ -31,17 +43,18 @@
 #' Draws a line along an axis edge, with style defaults taken from the
 #' `axis.line` element of the set theme. Requires `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Not used. Allows trailing commas and named-argument style calls.
-#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+#' @param ... Not used. Forces named arguments.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
+#'   from `xintercept` or `yintercept` if not provided.
+#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
+#'   position in data coordinates instead of the panel edge.
+#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
+#'   position in data coordinates instead of the panel edge.
 #' @param colour Inherits from `axis.line` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
 #' @param linetype Inherits from `axis.line` in the set theme.
 #' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether the native theme axis line is suppressed. Defaults to `"transparent"`.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
-#'   position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
-#'   position in data coordinates instead of the panel edge.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
 #' @seealso [annotate_axis_ticks()], [annotate_axis_text()], [annotate_axis_bracket()], [annotate_reference_line()]
@@ -49,36 +62,22 @@
 annotate_axis_line <- function(
     ...,
     position    = NULL,
+    xintercept  = NULL,
+    yintercept  = NULL,
     colour      = NULL,
     linewidth   = NULL,
     linetype    = NULL,
-    xintercept  = NULL,
-    yintercept  = NULL,
     elements_to = "transparent"
 ) {
   rlang::check_dots_empty()
 
-  # 1. Infer Position & Axis --------------------------------------------------
-  if (is.null(position)) {
-    if (!is.null(xintercept)) {
-      position <- "left"
-    } else if (!is.null(yintercept)) {
-      position <- "bottom"
-    } else {
-      rlang::abort(
-        "Must specify `position`, or supply `xintercept` (implies left/right) or `yintercept` (implies top/bottom)."
-      )
-    }
-  } else {
-    position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
-  }
-
-  axis <- if (position %in% c("top", "bottom")) "x" else "y"
+  position    <- .infer_position(position, xintercept, yintercept)
+  axis        <- if (position %in% c("top", "bottom")) "x" else "y"
   elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   .validate_intercept(axis, position, xintercept, yintercept)
 
-  # 2. Resolve Theme Inheritance ----------------------------------------------
+  intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
   element_hierarchy <- c(
@@ -103,7 +102,6 @@ annotate_axis_line <- function(
     }
   }
 
-  # 3. Handle Fallbacks & Warnings --------------------------------------------
   if (is.null(colour) && (axis_line_intentionally_blank || is.null(resolved_element$colour))) {
     rlang::warn("The set theme does not define an `axis.line` colour. Defaulting to \"black\".")
   }
@@ -114,8 +112,7 @@ annotate_axis_line <- function(
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  # 4. Resolve Visual Properties ----------------------------------------------
-  line_colour    <- colour   %||% resolved_element$colour    %||% "black"
+  line_colour    <- colour %||% resolved_element$colour %||% "black"
   line_linewidth <- if (is.null(linewidth)) {
     resolved_element$linewidth %||% 0.5
   } else if (inherits(linewidth, "rel")) {
@@ -125,31 +122,20 @@ annotate_axis_line <- function(
   }
   line_linetype <- linetype %||% resolved_element$linetype %||% 1
 
-  # 5. Calculate Coordinates & Extent -----------------------------------------
-  intercept    <- .resolve_intercept(axis, position, xintercept, yintercept)
-  extent_from <- -Inf
-  extent_to   <- Inf
-
-  # 6. Build Annotation Layer -------------------------------------------------
   stamp <- list()
 
   if (axis == "x") {
     stamp <- c(stamp, list(ggplot2::annotate(
-      "segment",
-      x = extent_from, xend = extent_to,
-      y = intercept,   yend = intercept,
+      "segment", x = -Inf, xend = Inf, y = intercept, yend = intercept,
       colour = line_colour, linewidth = line_linewidth, linetype = line_linetype
     )))
   } else {
     stamp <- c(stamp, list(ggplot2::annotate(
-      "segment",
-      x = intercept,   xend = intercept,
-      y = extent_from, yend = extent_to,
+      "segment", x = intercept, xend = intercept, y = -Inf, yend = Inf,
       colour = line_colour, linewidth = line_linewidth, linetype = line_linetype
     )))
   }
 
-  # 7. Suppress Original Theme Elements ---------------------------------------
   if (elements_to != "keep") {
     theme_name <- paste0("axis.line.", axis, ".", position)
     theme_mod  <- list()
@@ -164,6 +150,7 @@ annotate_axis_line <- function(
   return(stamp)
 }
 
+
 # annotate_axis_ticks ---------------------------------------------------------
 
 #' Annotate axis ticks
@@ -172,8 +159,13 @@ annotate_axis_line <- function(
 #' the `axis.ticks` element of the set theme. Requires
 #' `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Not used. Allows trailing commas and named-argument style calls.
-#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+#' @param ... Not used. Forces named arguments.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
+#'   from `xintercept` or `yintercept` if not provided.
+#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
+#'   position in data coordinates instead of the panel edge.
+#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
+#'   position in data coordinates instead of the panel edge.
 #' @param breaks A numeric vector of break positions.
 #' @param minor Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
 #'   `FALSE`.
@@ -183,10 +175,6 @@ annotate_axis_line <- function(
 #'   scale relative to the theme default. Negative values flip the tick direction.
 #' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether native theme ticks are suppressed. Defaults to `"transparent"`.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
-#'   position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
-#'   position in data coordinates instead of the panel edge.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
 #' @seealso [annotate_axis_line()], [annotate_axis_text()], [annotate_axis_bracket()], [annotate_reference_line()]
@@ -194,55 +182,33 @@ annotate_axis_line <- function(
 annotate_axis_ticks <- function(
     ...,
     position    = NULL,
+    xintercept  = NULL,
+    yintercept  = NULL,
     breaks,
-    minor        = FALSE,
-    colour       = NULL,
-    linewidth    = NULL,
-    tick_length  = NULL,
-    xintercept   = NULL,
-    yintercept   = NULL,
-    elements_to  = "transparent"
+    minor       = FALSE,
+    colour      = NULL,
+    linewidth   = NULL,
+    tick_length = NULL,
+    elements_to = "transparent"
 ) {
   rlang::check_dots_empty()
 
-  # 1. Infer Position & Axis --------------------------------------------------
-  if (is.null(position)) {
-    if (!is.null(xintercept)) {
-      position <- "left"
-    } else if (!is.null(yintercept)) {
-      position <- "bottom"
-    } else {
-      rlang::abort(
-        "Must specify `position`, or supply `xintercept` (implies left/right) or `yintercept` (implies top/bottom)."
-      )
-    }
-  } else {
-    position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
-  }
-
-  axis <- if (position %in% c("top", "bottom")) "x" else "y"
+  position    <- .infer_position(position, xintercept, yintercept)
+  axis        <- if (position %in% c("top", "bottom")) "x" else "y"
   elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   .validate_intercept(axis, position, xintercept, yintercept)
 
   if (length(breaks) == 0) return(list())
 
+  intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
-  # 2. Resolve Tick Element Inheritance ---------------------------------------
   tick_hierarchy <- if (minor) {
-    c(
-      paste0("axis.minor.ticks.", axis, ".", position),
-      paste0("axis.ticks.", axis, ".", position),
-      paste0("axis.ticks.", axis),
-      "axis.ticks"
-    )
+    c(paste0("axis.minor.ticks.", axis, ".", position), paste0("axis.ticks.", axis, ".", position),
+      paste0("axis.ticks.", axis), "axis.ticks")
   } else {
-    c(
-      paste0("axis.ticks.", axis, ".", position),
-      paste0("axis.ticks.", axis),
-      "axis.ticks"
-    )
+    c(paste0("axis.ticks.", axis, ".", position), paste0("axis.ticks.", axis), "axis.ticks")
   }
 
   resolved_tick_element <- NULL
@@ -256,7 +222,6 @@ annotate_axis_ticks <- function(
     }
   }
 
-  # 3. Handle Fallbacks & Warnings --------------------------------------------
   if (is.null(colour) && (tick_intentionally_blank || is.null(resolved_tick_element$colour))) {
     rlang::warn("The set theme does not define an `axis.ticks` colour. Defaulting to \"black\".")
   }
@@ -267,22 +232,12 @@ annotate_axis_ticks <- function(
     resolved_tick_element <- list(colour = "black", linewidth = 0.5)
   }
 
-  # 4. Resolve Tick Length Hierarchy ------------------------------------------
   length_hierarchy <- if (minor) {
-    c(
-      paste0("axis.minor.ticks.length.", axis, ".", position),
-      paste0("axis.minor.ticks.length.", axis),
-      "axis.minor.ticks.length",
-      paste0("axis.ticks.length.", axis, ".", position),
-      paste0("axis.ticks.length.", axis),
-      "axis.ticks.length"
-    )
+    c(paste0("axis.minor.ticks.length.", axis, ".", position), paste0("axis.minor.ticks.length.", axis),
+      "axis.minor.ticks.length", paste0("axis.ticks.length.", axis, ".", position),
+      paste0("axis.ticks.length.", axis), "axis.ticks.length")
   } else {
-    c(
-      paste0("axis.ticks.length.", axis, ".", position),
-      paste0("axis.ticks.length.", axis),
-      "axis.ticks.length"
-    )
+    c(paste0("axis.ticks.length.", axis, ".", position), paste0("axis.ticks.length.", axis), "axis.ticks.length")
   }
 
   resolved_length_element <- NULL
@@ -291,8 +246,7 @@ annotate_axis_ticks <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length_element <- el; break }
   }
 
-  # 5. Resolve Visual Properties ----------------------------------------------
-  tick_colour    <- colour   %||% resolved_tick_element$colour    %||% "black"
+  tick_colour    <- colour %||% resolved_tick_element$colour %||% "black"
   tick_linewidth <- if (is.null(linewidth)) {
     resolved_tick_element$linewidth %||% 0.5
   } else if (inherits(linewidth, "rel")) {
@@ -306,14 +260,11 @@ annotate_axis_ticks <- function(
     if (is.null(tl)) {
       return(grid::unit((if (minor) 0.375 else 0.5) * (current_theme$text$size %||% 11), "pt"))
     } else if (inherits(tl, "rel")) {
-      spacing_pts <- as.numeric(grid::convertUnit(
-        current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"
-      ))
+      spacing_pts <- as.numeric(grid::convertUnit(current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
       return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
     } else if (!inherits(tl, "unit")) {
       return(grid::unit(
-        if (is.numeric(tl)) tl else (if (minor) 0.375 else 0.5) * (current_theme$text$size %||% 11),
-        "pt"
+        if (is.numeric(tl)) tl else (if (minor) 0.375 else 0.5) * (current_theme$text$size %||% 11), "pt"
       ))
     } else {
       return(tl)
@@ -324,13 +275,13 @@ annotate_axis_ticks <- function(
   if (is.null(tick_length)) {
     tick_length <- calculate_default_length()
   } else if (inherits(tick_length, "rel")) {
-    rel_value   <- as.numeric(tick_length)
-    default_pts <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
-    tick_length  <- grid::unit(abs(rel_value) * default_pts, "pt")
+    rel_value      <- as.numeric(tick_length)
+    default_pts    <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
+    tick_length    <- grid::unit(abs(rel_value) * default_pts, "pt")
     flip_direction <- rel_value < 0
   } else if (inherits(tick_length, "unit")) {
-    tick_pts    <- as.numeric(grid::convertUnit(tick_length, "pt"))
-    tick_length  <- grid::unit(abs(tick_pts), "pt")
+    tick_pts       <- as.numeric(grid::convertUnit(tick_length, "pt"))
+    tick_length    <- grid::unit(abs(tick_pts), "pt")
     flip_direction <- tick_pts < 0
   } else if (is.numeric(tick_length)) {
     flip_direction <- tick_length < 0
@@ -339,12 +290,8 @@ annotate_axis_ticks <- function(
     tick_length <- calculate_default_length()
   }
 
-  # 6. Calculate Coordinates & Extent -----------------------------------------
-  intercept <- .resolve_intercept(axis, position, xintercept, yintercept)
-
   stamp <- list()
 
-  # 7. Suppress Original Theme Elements ---------------------------------------
   if (elements_to != "keep") {
     theme_name <- if (minor) {
       paste0("axis.minor.ticks.", axis, ".", position)
@@ -360,7 +307,6 @@ annotate_axis_ticks <- function(
     stamp <- c(stamp, list(rlang::exec(ggplot2::theme, !!!theme_mod)))
   }
 
-  # 8. Build Tick Grobs & Annotations -----------------------------------------
   gp <- ggplot2::gg_par(col = tick_colour, stroke = tick_linewidth, lineend = "butt")
 
   tick_annotations <- lapply(breaks, \(break_val) {
@@ -369,7 +315,7 @@ annotate_axis_ticks <- function(
         x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
         y0 = grid::unit(0, "npc"),
         y1 = if (flip_direction) grid::unit(0, "npc") + tick_length
-        else                     grid::unit(0, "npc") - tick_length,
+        else                grid::unit(0, "npc") - tick_length,
         gp = gp
       )
     } else if (position == "top") {
@@ -377,14 +323,14 @@ annotate_axis_ticks <- function(
         x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
         y0 = grid::unit(1, "npc"),
         y1 = if (flip_direction) grid::unit(1, "npc") - tick_length
-        else                     grid::unit(1, "npc") + tick_length,
+        else                grid::unit(1, "npc") + tick_length,
         gp = gp
       )
     } else if (position == "left") {
       grid::segmentsGrob(
         x0 = grid::unit(0, "npc"),
         x1 = if (flip_direction) grid::unit(0, "npc") + tick_length
-        else                     grid::unit(0, "npc") - tick_length,
+        else                grid::unit(0, "npc") - tick_length,
         y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
         gp = gp
       )
@@ -392,7 +338,7 @@ annotate_axis_ticks <- function(
       grid::segmentsGrob(
         x0 = grid::unit(1, "npc"),
         x1 = if (flip_direction) grid::unit(1, "npc") - tick_length
-        else                     grid::unit(1, "npc") + tick_length,
+        else                grid::unit(1, "npc") + tick_length,
         y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
         gp = gp
       )
@@ -410,6 +356,7 @@ annotate_axis_ticks <- function(
   c(stamp, tick_annotations)
 }
 
+
 # annotate_axis_text ----------------------------------------------------------
 
 #' Annotate axis text
@@ -418,26 +365,27 @@ annotate_axis_ticks <- function(
 #' defaults taken from the `axis.text` element of the set theme. Requires
 #' `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Not used. Allows trailing commas and named-argument style calls.
-#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+#' @param ... Not used. Forces named arguments.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
+#'   from `xintercept` or `yintercept` if not provided.
+#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
+#'   position in data coordinates instead of the panel edge.
+#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
+#'   position in data coordinates instead of the panel edge.
 #' @param breaks A numeric vector of break positions.
 #' @param labels One of:
-#'    - `NULL` (default) to auto-format break values
-#'    - A character vector the same length as `breaks`
-#'    - A function taking break values and returning labels
+#'   - `NULL` (default) to auto-format break values
+#'   - A character vector the same length as `breaks`
+#'   - A function taking break values and returning labels
 #' @param colour Inherits from `axis.text` in the set theme.
 #' @param size Inherits from `axis.text` in the set theme.
 #' @param family Inherits from `axis.text` in the set theme.
-#' @param tick_length Offset from the axis edge including tick length and
-#'    margin. Supports `rel()`. Negative values place labels inside the panel.
 #' @param hjust,vjust Justification. Auto-calculated from `position` if `NULL`.
 #' @param angle Text rotation angle. Defaults to `0`.
+#' @param tick_length Offset from the axis edge including tick length and margin.
+#'   Supports `rel()`. Negative values place labels inside the panel.
 #' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
-#'    whether native theme axis text is suppressed. Defaults to `"transparent"`.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
-#'    position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
-#'    position in data coordinates instead of the panel edge.
+#'   whether native theme axis text is suppressed. Defaults to `"transparent"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
 #' @seealso [annotate_axis_line()], [annotate_axis_ticks()], [annotate_axis_bracket()], [annotate_reference_line()]
@@ -445,46 +393,32 @@ annotate_axis_ticks <- function(
 annotate_axis_text <- function(
     ...,
     position    = NULL,
+    xintercept  = NULL,
+    yintercept  = NULL,
     breaks,
     labels      = NULL,
     colour      = NULL,
     size        = NULL,
     family      = NULL,
-    tick_length = NULL,
     hjust       = NULL,
     vjust       = NULL,
     angle       = 0,
-    xintercept  = NULL,
-    yintercept  = NULL,
+    tick_length = NULL,
     elements_to = "transparent"
 ) {
   rlang::check_dots_empty()
 
-  # 1. Infer Position & Axis --------------------------------------------------
-  if (is.null(position)) {
-    if (!is.null(xintercept)) {
-      position <- "left"
-    } else if (!is.null(yintercept)) {
-      position <- "bottom"
-    } else {
-      rlang::abort(
-        "Must specify `position`, or supply `xintercept` (implies left/right) or `yintercept` (implies top/bottom)."
-      )
-    }
-  } else {
-    position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
-  }
-
-  axis <- if (position %in% c("top", "bottom")) "x" else "y"
+  position    <- .infer_position(position, xintercept, yintercept)
+  axis        <- if (position %in% c("top", "bottom")) "x" else "y"
   elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   .validate_intercept(axis, position, xintercept, yintercept)
 
   if (length(breaks) == 0) return(list())
 
+  intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
-  # 2. Resolve Text Element Inheritance ---------------------------------------
   text_hierarchy <- c(
     paste0("axis.text.", axis, ".", position),
     paste0("axis.text.", axis),
@@ -504,7 +438,6 @@ annotate_axis_text <- function(
   text_size   <- size   %||% resolved_text_element$size   %||% 11
   text_family <- family %||% resolved_text_element$family %||% ""
 
-  # 3. Resolve Labels ---------------------------------------------------------
   if (is.null(labels)) {
     labels <- if (inherits(breaks, "Date")) {
       format(breaks, "%d-%m-%Y")
@@ -523,7 +456,6 @@ annotate_axis_text <- function(
     rlang::abort("Length of `labels` must match length of `breaks`.")
   }
 
-  # 4. Resolve Tick & Margin Offsets ------------------------------------------
   length_hierarchy <- c(
     paste0("axis.ticks.length.", axis, ".", position),
     paste0("axis.ticks.length.", axis),
@@ -540,9 +472,7 @@ annotate_axis_text <- function(
     if (is.null(tl)) {
       return(grid::unit(0.5 * (current_theme$text$size %||% 11), "pt"))
     } else if (inherits(tl, "rel")) {
-      spacing_pts <- as.numeric(grid::convertUnit(
-        current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"
-      ))
+      spacing_pts <- as.numeric(grid::convertUnit(current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
       return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
     } else if (!inherits(tl, "unit")) {
       return(grid::unit(if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11), "pt"))
@@ -555,13 +485,13 @@ annotate_axis_text <- function(
   if (is.null(tick_length)) {
     tick_length <- calculate_default_tick_length()
   } else if (inherits(tick_length, "rel")) {
-    rel_value   <- as.numeric(tick_length)
-    default_pts <- as.numeric(grid::convertUnit(calculate_default_tick_length(), "pt"))
-    tick_length  <- grid::unit(abs(rel_value) * default_pts, "pt")
+    rel_value      <- as.numeric(tick_length)
+    default_pts    <- as.numeric(grid::convertUnit(calculate_default_tick_length(), "pt"))
+    tick_length    <- grid::unit(abs(rel_value) * default_pts, "pt")
     flip_direction <- rel_value < 0
   } else if (inherits(tick_length, "unit")) {
-    tick_pts    <- as.numeric(grid::convertUnit(tick_length, "pt"))
-    tick_length  <- grid::unit(abs(tick_pts), "pt")
+    tick_pts       <- as.numeric(grid::convertUnit(tick_length, "pt"))
+    tick_length    <- grid::unit(abs(tick_pts), "pt")
     flip_direction <- tick_pts < 0
   } else if (is.numeric(tick_length)) {
     flip_direction <- tick_length < 0
@@ -580,7 +510,6 @@ annotate_axis_text <- function(
   }
   total_length <- tick_length + margin_unit
 
-  # 5. Resolve Justification --------------------------------------------------
   if (is.null(hjust)) {
     hjust <- if (position %in% c("top", "bottom")) 0.5
     else if (position == "left") { if (flip_direction) 0 else 1 }
@@ -592,11 +521,8 @@ annotate_axis_text <- function(
     else 0.5
   }
 
-  intercept <- .resolve_intercept(axis, position, xintercept, yintercept)
-
   stamp <- list()
 
-  # 6. Suppress Original Theme Elements ---------------------------------------
   if (elements_to != "keep") {
     theme_name <- paste0("axis.text.", axis, ".", position)
     theme_mod  <- list()
@@ -608,7 +534,6 @@ annotate_axis_text <- function(
     stamp <- c(stamp, list(rlang::exec(ggplot2::theme, !!!theme_mod)))
   }
 
-  # 7. Build Text Grobs & Annotations -----------------------------------------
   make_gpar <- function() {
     grid::gpar(col = text_colour, fontsize = text_size, fontfamily = text_family)
   }
@@ -621,7 +546,7 @@ annotate_axis_text <- function(
         labels[i],
         x    = grid::unit(0.5, "npc"),
         y    = if (flip_direction) grid::unit(0, "npc") + total_length
-        else                 grid::unit(0, "npc") - total_length,
+        else                grid::unit(0, "npc") - total_length,
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
       )
     } else if (position == "top") {
@@ -629,14 +554,14 @@ annotate_axis_text <- function(
         labels[i],
         x    = grid::unit(0.5, "npc"),
         y    = if (flip_direction) grid::unit(1, "npc") - total_length
-        else                 grid::unit(1, "npc") + total_length,
+        else                grid::unit(1, "npc") + total_length,
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
       )
     } else if (position == "left") {
       grid::textGrob(
         labels[i],
         x    = if (flip_direction) grid::unit(0, "npc") + total_length
-        else                 grid::unit(0, "npc") - total_length,
+        else                grid::unit(0, "npc") - total_length,
         y    = grid::unit(0.5, "npc"),
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
       )
@@ -644,7 +569,7 @@ annotate_axis_text <- function(
       grid::textGrob(
         labels[i],
         x    = if (flip_direction) grid::unit(1, "npc") - total_length
-        else                 grid::unit(1, "npc") + total_length,
+        else                grid::unit(1, "npc") + total_length,
         y    = grid::unit(0.5, "npc"),
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
       )
@@ -662,34 +587,31 @@ annotate_axis_text <- function(
   c(stamp, text_annotations)
 }
 
+
 # annotate_axis_bracket -------------------------------------------------------
 
 #' Annotate an axis bracket
 #'
-#' Draws a bracket spanning `min(breaks)` to `max(breaks)` along an axis edge,
-#' with an optional centered label. Style defaults are taken from the `axis.line`
-#' and `axis.text` elements of the set theme. Requires
-#' `coord_cartesian(clip = "off")`.
+#' Draws a bracket spanning `min(breaks)` to `max(breaks)` along an axis edge.
+#' Style defaults are taken from the `axis.line` element of the set theme.
+#' Requires `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Not used. Allows trailing commas and named-argument style calls.
-#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`.
+#' @param ... Not used. Forces named arguments.
+#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
+#'   from `xintercept` or `yintercept` if not provided.
+#' @param xintercept For `"left"`/`"right"` axes: float the bracket to this x
+#'   position in data coordinates instead of the panel edge.
+#' @param yintercept For `"top"`/`"bottom"` axes: float the bracket to this y
+#'   position in data coordinates instead of the panel edge.
 #' @param breaks A numeric vector of length >= 2. The bracket spans
 #'   `min(breaks)` to `max(breaks)`.
-#' @param labels An optional label string (or function returning one) centered
-#'   over the bracket. Defaults to `NULL` (no label).
 #' @param colour Inherits from `axis.line` in the set theme.
-#' @param size Label text size. Inherits from `axis.text` in the set theme.
-#' @param family Label font family. Inherits from `axis.text` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
 #' @param linetype Inherits from `axis.line` in the set theme.
 #' @param tick_length Length of the bracket end caps as a grid unit. Supports
 #'   `rel()`. Defaults to the theme tick length.
 #' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
 #'   whether native theme ticks are suppressed. Defaults to `"transparent"`.
-#' @param xintercept For `"left"`/`"right"` axes: float the bracket to this x
-#'   position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the bracket to this y
-#'   position in data coordinates instead of the panel edge.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
 #' @seealso [annotate_axis_line()], [annotate_axis_ticks()], [annotate_axis_text()], [annotate_reference_line()]
@@ -697,36 +619,19 @@ annotate_axis_text <- function(
 annotate_axis_bracket <- function(
     ...,
     position    = NULL,
+    xintercept  = NULL,
+    yintercept  = NULL,
     breaks,
-    labels      = NULL,
     colour      = NULL,
-    size        = NULL,
-    family      = NULL,
     linewidth   = NULL,
     linetype    = NULL,
     tick_length = NULL,
-    xintercept  = NULL,
-    yintercept  = NULL,
     elements_to = "transparent"
 ) {
   rlang::check_dots_empty()
 
-  # 1. Infer Position & Axis --------------------------------------------------
-  if (is.null(position)) {
-    if (!is.null(xintercept)) {
-      position <- "left"
-    } else if (!is.null(yintercept)) {
-      position <- "bottom"
-    } else {
-      rlang::abort(
-        "Must specify `position`, or supply `xintercept` (implies left/right) or `yintercept` (implies top/bottom)."
-      )
-    }
-  } else {
-    position <- rlang::arg_match(position, c("top", "bottom", "left", "right"))
-  }
-
-  axis <- if (position %in% c("top", "bottom")) "x" else "y"
+  position    <- .infer_position(position, xintercept, yintercept)
+  axis        <- if (position %in% c("top", "bottom")) "x" else "y"
   elements_to <- rlang::arg_match(elements_to, c("keep", "transparent", "blank"))
 
   .validate_intercept(axis, position, xintercept, yintercept)
@@ -735,12 +640,11 @@ annotate_axis_bracket <- function(
     rlang::abort("`breaks` must have at least 2 values to define the bracket span.")
   }
 
-  bracket_from <- min(breaks)
-  bracket_to   <- max(breaks)
-
+  bracket_from  <- min(breaks)
+  bracket_to    <- max(breaks)
+  intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
-  # 2. Resolve Line Element Inheritance ---------------------------------------
   line_hierarchy <- c(
     paste0("axis.line.", axis, ".", position),
     paste0("axis.line.", axis),
@@ -755,8 +659,7 @@ annotate_axis_bracket <- function(
     resolved_line_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  # 3. Resolve Visual Properties ----------------------------------------------
-  line_colour    <- colour   %||% resolved_line_element$colour    %||% "black"
+  line_colour    <- colour %||% resolved_line_element$colour %||% "black"
   line_linewidth <- if (is.null(linewidth)) {
     resolved_line_element$linewidth %||% 0.5
   } else if (inherits(linewidth, "rel")) {
@@ -766,7 +669,6 @@ annotate_axis_bracket <- function(
   }
   line_linetype <- linetype %||% resolved_line_element$linetype %||% 1
 
-  # 4. Resolve End Cap Length -------------------------------------------------
   length_hierarchy <- c(
     paste0("axis.ticks.length.", axis, ".", position),
     paste0("axis.ticks.length.", axis),
@@ -783,9 +685,7 @@ annotate_axis_bracket <- function(
     if (is.null(tl)) {
       return(grid::unit(0.5 * (current_theme$text$size %||% 11), "pt"))
     } else if (inherits(tl, "rel")) {
-      spacing_pts <- as.numeric(grid::convertUnit(
-        current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"
-      ))
+      spacing_pts <- as.numeric(grid::convertUnit(current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
       return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
     } else if (!inherits(tl, "unit")) {
       return(grid::unit(if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11), "pt"))
@@ -797,18 +697,12 @@ annotate_axis_bracket <- function(
   cap_length <- if (is.null(tick_length)) {
     calculate_default_length()
   } else if (inherits(tick_length, "rel")) {
-    default_pts <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
-    grid::unit(as.numeric(tick_length) * default_pts, "pt")
+    grid::unit(as.numeric(tick_length) * as.numeric(grid::convertUnit(calculate_default_length(), "pt")), "pt")
   } else if (inherits(tick_length, "unit")) {
     tick_length
-  } else if (is.numeric(tick_length)) {
-    grid::unit(abs(tick_length), "pt")
   } else {
-    calculate_default_length()
+    grid::unit(abs(tick_length), "pt")
   }
-
-  # 5. Calculate Coordinates & Extent -----------------------------------------
-  intercept <- .resolve_intercept(axis, position, xintercept, yintercept)
 
   gp_line <- ggplot2::gg_par(
     col = line_colour, stroke = line_linewidth, lty = line_linetype, lineend = "butt"
@@ -822,41 +716,33 @@ annotate_axis_bracket <- function(
 
   stamp <- list()
 
-  # 6. Suppress Original Theme Elements ---------------------------------------
   if (elements_to != "keep") {
-    theme_mod <- list()
+    theme_mod   <- list()
     el_suppress <- if (elements_to == "transparent") {
       ggplot2::element_line(colour = "transparent")
     } else {
       ggplot2::element_blank()
     }
-
-    # Hide both the line and the ticks for this axis/position
     theme_mod[[paste0("axis.line.", axis, ".", position)]]  <- el_suppress
     theme_mod[[paste0("axis.ticks.", axis, ".", position)]] <- el_suppress
-
     stamp <- c(stamp, list(rlang::exec(ggplot2::theme, !!!theme_mod)))
   }
 
-  # 7. Build Bracket Bar Grob -------------------------------------------------
   bar_grob <- if (axis == "x") {
     grid::linesGrob(
       x  = grid::unit(c(0, 1), "npc"),
-      y  = if (position == "bottom") grid::unit(c(0, 0), "npc")
-      else                           grid::unit(c(1, 1), "npc"),
+      y  = if (position == "bottom") grid::unit(c(0, 0), "npc") else grid::unit(c(1, 1), "npc"),
       gp = gp_line
     )
   } else {
     grid::linesGrob(
-      x  = if (position == "left") grid::unit(c(0, 0), "npc")
-      else                         grid::unit(c(1, 1), "npc"),
+      x  = if (position == "left") grid::unit(c(0, 0), "npc") else grid::unit(c(1, 1), "npc"),
       y  = grid::unit(c(0, 1), "npc"),
       gp = gp_line
     )
   }
   stamp <- c(stamp, list(rlang::exec(ggplot2::annotation_custom, grob = bar_grob, !!!bracket_pos)))
 
-  # 8. Build Bracket End Caps -------------------------------------------------
   make_cap <- function(at_start) {
     npc_pos <- if (at_start) 0 else 1
     if (axis == "x") {
@@ -887,22 +773,23 @@ annotate_axis_bracket <- function(
   return(stamp)
 }
 
-# annotate_reference_line ----------------------------------------------------------
+
+# annotate_reference_line -----------------------------------------------------
 
 #' Annotate a reference line
 #'
-#' Draws a reference line within the inside of the panel, with style defaults taken from the
-#' `axis.line` element of the set theme (apart from linetype, which defaults to "dashed").
-#' Requires `coord_cartesian(clip = "off")`.
+#' Draws a reference line within the panel, with style defaults taken from the
+#' `axis.line` element of the set theme. Requires `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Not used. Allows trailing commas and named-argument style calls.
+#' @param ... Not used. Forces named arguments.
 #' @param xintercept Draw a vertical reference line at this x position.
 #' @param yintercept Draw a horizontal reference line at this y position.
 #' @param colour Inherits from `axis.line` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
-#' @param linetype Inherits from `axis.line` in the set theme.
+#' @param linetype Defaults to `"dashed"`.
 #'
 #' @return A list of ggplot2 annotation layers.
+#' @seealso [annotate_axis_line()], [annotate_axis_ticks()], [annotate_axis_text()], [annotate_axis_bracket()]
 #' @export
 annotate_reference_line <- function(
     ...,
@@ -914,22 +801,17 @@ annotate_reference_line <- function(
 ) {
   rlang::check_dots_empty()
 
-  # 1. Fixed Internal Configurations ------------------------------------------
-  elements_to <- "keep"
-
-  # 2. Infer Logic from Intercepts --------------------------------------------
-  # Instead of a 'position' arg, we just determine if it's vertical or horizontal.
   if (!is.null(xintercept)) {
-    position <- "left"   # Vertical lines inherit from left axis properties
-    axis     <- "y"      # (In your helper logic, xintercept maps to axis "y")
+    position <- "left"
+    axis     <- "y"
   } else if (!is.null(yintercept)) {
-    position <- "bottom" # Horizontal lines inherit from bottom axis properties
+    position <- "bottom"
     axis     <- "x"
   } else {
     rlang::abort("Must supply either `xintercept` or `yintercept`.")
   }
 
-  # 3. Theme Inheritance ------------------------------------------------------
+  intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
   element_hierarchy <- c(
@@ -943,7 +825,6 @@ annotate_reference_line <- function(
     el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
     if (!is.null(el)) { theme_element_blank <- el; break }
   }
-
   axis_line_intentionally_blank <- is.null(theme_element_blank) ||
     inherits(theme_element_blank, "element_blank")
 
@@ -951,19 +832,14 @@ annotate_reference_line <- function(
   if (!axis_line_intentionally_blank) {
     for (nm in element_hierarchy) {
       el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
-      if (!is.null(el) && !inherits(el, "element_blank")) {
-        resolved_element <- el
-        break
-      }
+      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_element <- el; break }
     }
   }
-
-  # Fallback Defaults
   if (is.null(resolved_element)) {
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  line_colour <- colour %||% resolved_element$colour %||% "black"
+  line_colour    <- colour %||% resolved_element$colour %||% "black"
   line_linewidth <- if (is.null(linewidth)) {
     resolved_element$linewidth %||% 0.5
   } else if (inherits(linewidth, "rel")) {
@@ -973,26 +849,14 @@ annotate_reference_line <- function(
   }
   line_linetype <- linetype %||% resolved_element$linetype %||% 1
 
-  # 4. Coordinates & Extent ---------------------------------------------------
-  intercept   <- .resolve_intercept(axis, position, xintercept, yintercept)
-  extent_from <- -Inf
-  extent_to   <- Inf
-
-  # 5. Build Layer ------------------------------------------------------------
   if (axis == "x") {
-    # Horizontal line
     layer <- ggplot2::annotate(
-      "segment",
-      x = extent_from, xend = extent_to,
-      y = intercept,   yend = intercept,
+      "segment", x = -Inf, xend = Inf, y = intercept, yend = intercept,
       colour = line_colour, linewidth = line_linewidth, linetype = line_linetype
     )
   } else {
-    # Vertical line
     layer <- ggplot2::annotate(
-      "segment",
-      x = intercept,   xend = intercept,
-      y = extent_from, yend = extent_to,
+      "segment", x = intercept, xend = intercept, y = -Inf, yend = Inf,
       colour = line_colour, linewidth = line_linewidth, linetype = line_linetype
     )
   }

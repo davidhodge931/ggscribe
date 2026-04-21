@@ -7,20 +7,27 @@
 annotate_axis_ticks(
   ...,
   position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
   tick_length = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   elements_to = "transparent"
 )
 }
 \arguments{
-\item{...}{Not used. Allows trailing commas and named-argument style calls.}
+\item{...}{Not used. Forces named arguments.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}.}
+\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
+from \code{xintercept} or \code{yintercept} if not provided.}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
+position in data coordinates instead of the panel edge.}
 
 \item{breaks}{A numeric vector of break positions.}
 
@@ -33,12 +40,6 @@ annotate_axis_ticks(
 
 \item{tick_length}{Total tick length as a grid unit. Supports \code{rel()} to
 scale relative to the theme default. Negative values flip the tick direction.}
-
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
 
 \item{elements_to}{One of \code{"keep"}, \code{"transparent"}, or \code{"blank"}. Controls
 whether native theme ticks are suppressed. Defaults to \code{"transparent"}.}
