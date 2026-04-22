@@ -7,10 +7,10 @@ Theme axis annotate
 ``` r
 theme_axis_annotate(
   axis = NULL,
-  elements_to_ticks = "transparent",
-  elements_to_line = "transparent",
-  elements_to_text = "keep",
-  elements_to_title = "keep"
+  axis_ticks_to = "transparent",
+  axis_line_to = "transparent",
+  axis_text_to = "keep",
+  axis_title_to = "keep"
 )
 ```
 
@@ -20,19 +20,19 @@ theme_axis_annotate(
 
   Character. "x", "y", or NULL (defaults to both).
 
-- elements_to_ticks:
+- axis_ticks_to:
 
   Action for ticks: "transparent", "blank", or "keep".
 
-- elements_to_line:
+- axis_line_to:
 
   Action for lines: "transparent", "blank", or "keep".
 
-- elements_to_text:
+- axis_text_to:
 
   Action for text: "transparent", "blank", or "keep".
 
-- elements_to_title:
+- axis_title_to:
 
   Action for titles: "transparent", "blank", or "keep".
 
