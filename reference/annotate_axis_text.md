@@ -20,8 +20,8 @@ annotate_axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  tick_length = NULL,
-  elements_to = "transparent"
+  ticks_length = ggplot2::rel(1),
+  elements_to = "keep"
 )
 ```
 
@@ -80,7 +80,7 @@ annotate_axis_text(
 
   Text rotation angle. Defaults to `0`.
 
-- tick_length:
+- ticks_length:
 
   Offset from the axis edge including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
@@ -89,7 +89,7 @@ annotate_axis_text(
 - elements_to:
 
   One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme axis text is suppressed. Defaults to `"transparent"`.
+  native theme axis text is suppressed. Defaults to `"keep"`.
 
 ## Value
 

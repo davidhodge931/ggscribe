@@ -1,8 +1,12 @@
 # Annotate an axis bracket
 
 Draws a bracket spanning `min(breaks)` to `max(breaks)` along an axis
-edge. Style defaults are taken from the `axis.line` element of the set
-theme. Requires `coord_cartesian(clip = "off")`.
+edge or at a floating data position. The bar uses the same rendering
+path as
+[`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md);
+the caps use the same path as
+[`annotate_axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_ticks.md).
+Requires `coord_cartesian(clip = "off")`.
 
 ## Usage
 
@@ -16,8 +20,8 @@ annotate_axis_bracket(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  tick_length = NULL,
-  elements_to = "transparent"
+  ticks_length = ggplot2::rel(1),
+  elements_to = "keep"
 )
 ```
 
@@ -44,32 +48,35 @@ annotate_axis_bracket(
 
 - breaks:
 
-  A numeric vector of length \>= 2. The bracket spans `min(breaks)` to
-  `max(breaks)`.
+  A numeric vector of length \>= 2. The bar spans `min(breaks)` to
+  `max(breaks)`; caps are drawn at every break value.
 
 - colour:
 
-  Inherits from `axis.line` in the set theme.
+  Inherits from `axis.ticks` in the set theme (falling back through
+  `axis.line` and `line`).
 
 - linewidth:
 
-  Inherits from `axis.line` in the set theme. Supports
+  Inherits from `axis.ticks` in the set theme. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
 
 - linetype:
 
-  Inherits from `axis.line` in the set theme.
+  Inherits from `axis.ticks` in the set theme.
 
-- tick_length:
+- ticks_length:
 
-  Length of the bracket end caps as a grid unit. Supports
+  Length of the bracket caps as a grid unit. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Defaults to the theme tick length.
+  Negative values flip the cap direction. Panel-edge defaults:
+  `"bottom"` → `rel(1)` (outward); `"top"`, `"left"`, `"right"` →
+  `rel(-1)` (inward). Floating axes require explicit specification.
 
 - elements_to:
 
   One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme ticks are suppressed. Defaults to `"transparent"`.
+  native theme axis line and ticks are suppressed. Defaults to `"keep"`.
 
 ## Value
 

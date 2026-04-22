@@ -15,7 +15,7 @@ annotate_axis_line(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  elements_to = "transparent"
+  elements_to = "keep"
 )
 ```
 
@@ -56,7 +56,7 @@ annotate_axis_line(
 - elements_to:
 
   One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether the
-  native theme axis line is suppressed. Defaults to `"transparent"`.
+  native theme axis line is suppressed. Defaults to `"keep"`.
 
 ## Value
 

@@ -16,8 +16,8 @@ annotate_axis_ticks(
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
-  tick_length = NULL,
-  elements_to = "transparent"
+  ticks_length = ggplot2::rel(1),
+  elements_to = "keep"
 )
 ```
 
@@ -60,17 +60,18 @@ annotate_axis_ticks(
   Inherits from `axis.ticks` in the set theme. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
 
-- tick_length:
+- ticks_length:
 
   Total tick length as a grid unit. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html) to
-  scale relative to the theme default. Negative values flip the tick
-  direction.
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  Negative values flip the tick direction. Panel-edge defaults:
+  `"bottom"` → `rel(1)` (outward); `"top"`, `"left"`, `"right"` →
+  `rel(-1)` (inward). Floating axes require explicit specification.
 
 - elements_to:
 
   One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme ticks are suppressed. Defaults to `"transparent"`.
+  native theme ticks are suppressed. Defaults to `"keep"`.
 
 ## Value
 
