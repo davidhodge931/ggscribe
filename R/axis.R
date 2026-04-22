@@ -56,7 +56,9 @@
 #'   whether the native theme axis line is suppressed. Defaults to `"keep"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
-#' @seealso [annotate_axis_ticks()], [annotate_axis_text()], [annotate_axis_bracket()], [annotate_reference_line()]
+#' @seealso [annotate_axis_ticks()], [annotate_axis_text()],
+#' [annotate_axis_bracket()], [annotate_reference_line()],
+#' [annotate_panel_shade()], [sec_axis_annotate()]
 #' @export
 annotate_axis_line <- function(
     ...,
@@ -178,7 +180,9 @@ annotate_axis_line <- function(
 #'   whether native theme ticks are suppressed. Defaults to `"keep"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
-#' @seealso [annotate_axis_line()], [annotate_axis_text()], [annotate_axis_bracket()], [annotate_reference_line()]
+#' @seealso [annotate_axis_line()], [annotate_axis_text()],
+#' [annotate_axis_bracket()], [annotate_reference_line()],
+#' [annotate_panel_shade()], [sec_axis_annotate()]
 #' @export
 annotate_axis_ticks <- function(
     ...,
@@ -385,7 +389,9 @@ annotate_axis_ticks <- function(
 #'   whether native theme axis text is suppressed. Defaults to `"keep"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
-#' @seealso [annotate_axis_line()], [annotate_axis_ticks()], [annotate_axis_bracket()], [annotate_reference_line()]
+#' @seealso [annotate_axis_line()], [annotate_axis_ticks()],
+#'   [annotate_axis_bracket()], [annotate_reference_line()],
+#'   [annotate_panel_shade()], [sec_axis_annotate()]
 #' @export
 annotate_axis_text <- function(
     ...,
@@ -616,7 +622,9 @@ annotate_axis_text <- function(
 #'   `"keep"`.
 #'
 #' @return A list of ggplot2 annotation layers and theme elements.
-#' @seealso [annotate_axis_line()], [annotate_axis_ticks()], [annotate_axis_text()], [annotate_reference_line()]
+#' @seealso [annotate_axis_line()], [annotate_axis_ticks()],
+#' [annotate_axis_text()], [annotate_reference_line()],
+#' [annotate_panel_shade()], [sec_axis_annotate()]
 #' @export
 annotate_axis_bracket <- function(
     ...,
@@ -829,7 +837,9 @@ annotate_axis_bracket <- function(
 #' @param linetype Defaults to `"dashed"`.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [annotate_axis_line()], [annotate_axis_ticks()], [annotate_axis_text()], [annotate_axis_bracket()]
+#' @seealso [annotate_axis_line()], [annotate_axis_ticks()],
+#' [annotate_axis_text()], [annotate_axis_bracket()], [annotate_panel_shade()],
+#' [sec_axis_annotate()]
 #' @export
 annotate_reference_line <- function(
     ...,

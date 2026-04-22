@@ -59,70 +59,6 @@ sec_axis_annotate <- function(
   )
 }
 
-#' Theme axis annotate
-#'
-#' @param axis Character. "x", "y", or NULL (defaults to both).
-#' @param elements_to_ticks Action for ticks: "transparent", "blank", or "keep".
-#' @param elements_to_line Action for lines: "transparent", "blank", or "keep".
-#' @param elements_to_text Action for text: "transparent", "blank", or "keep".
-#' @param elements_to_title Action for titles: "transparent", "blank", or "keep".
-#'
-#' @returns A ggplot2 theme object.
-#' @export
-theme_axis_annotate <- function(
-    axis = NULL,
-    elements_to_ticks = "transparent",
-    elements_to_line = "transparent",
-    elements_to_text = "keep",
-    elements_to_title = "keep"
-) {
-
-  # Define which sides of the plot to target based on the axis argument
-  if (is.null(axis)) {
-    targets <- c("x.top", "x.bottom", "y.left", "y.right")
-  } else if (axis == "x") {
-    targets <- c("x.top", "x.bottom")
-  } else if (axis == "y") {
-    targets <- c("y.left", "y.right")
-  } else {
-    stop("Invalid axis argument. Use 'x', 'y', or NULL.")
-  }
-
-  # Helper function to return the correct ggplot2 element
-  get_element <- function(action) {
-    if (action == "keep") return(NULL)
-    if (action == "blank") return(ggplot2::element_blank())
-    if (action == "transparent") return(element_line_transparent())
-    return(NULL)
-  }
-
-  # Initialize an empty list to store theme arguments
-  theme_args <- list()
-
-  # Loop through targets and assign the specified elements
-  for (side in targets) {
-
-    # Ticks logic
-    tick_val <- get_element(elements_to_ticks)
-    if (!is.null(tick_val)) theme_args[[paste0("axis.ticks.", side)]] <- tick_val
-
-    # Line logic
-    line_val <- get_element(elements_to_line)
-    if (!is.null(line_val)) theme_args[[paste0("axis.line.", side)]] <- line_val
-
-    # Text logic
-    text_val <- get_element(elements_to_text)
-    if (!is.null(text_val)) theme_args[[paste0("axis.text.", side)]] <- text_val
-
-    # Title logic
-    title_val <- get_element(elements_to_title)
-    if (!is.null(title_val)) theme_args[[paste0("axis.title.", side)]] <- title_val
-  }
-
-  # Return the combined theme
-  do.call(ggplot2::theme, theme_args)
-}
-
 #' Axis guide with annotation-friendly defaults
 #'
 #' A wrapper around [ggplot2::guide_axis()] that defaults to using
@@ -168,3 +104,68 @@ guide_axis_annotate <- function(..., theme = theme_axis_annotate()) {
     ...
   )
 }
+
+#' Theme axis annotate
+#'
+#' @param axis Character. "x", "y", or NULL (defaults to both).
+#' @param axis_ticks_to Action for ticks: "transparent", "blank", or "keep".
+#' @param axis_line_to Action for lines: "transparent", "blank", or "keep".
+#' @param axis_text_to Action for text: "transparent", "blank", or "keep".
+#' @param axis_title_to Action for titles: "transparent", "blank", or "keep".
+#'
+#' @returns A ggplot2 theme object.
+#' @export
+theme_axis_annotate <- function(
+    axis = NULL,
+    axis_ticks_to = "transparent",
+    axis_line_to = "transparent",
+    axis_text_to = "keep",
+    axis_title_to = "keep"
+) {
+
+  # Define which sides of the plot to target based on the axis argument
+  if (is.null(axis)) {
+    targets <- c("x.top", "x.bottom", "y.left", "y.right")
+  } else if (axis == "x") {
+    targets <- c("x.top", "x.bottom")
+  } else if (axis == "y") {
+    targets <- c("y.left", "y.right")
+  } else {
+    stop("Invalid axis argument. Use 'x', 'y', or NULL.")
+  }
+
+  # Helper function to return the correct ggplot2 element
+  get_element <- function(action) {
+    if (action == "keep") return(NULL)
+    if (action == "blank") return(ggplot2::element_blank())
+    if (action == "transparent") return(element_line_transparent())
+    return(NULL)
+  }
+
+  # Initialize an empty list to store theme arguments
+  theme_args <- list()
+
+  # Loop through targets and assign the specified elements
+  for (side in targets) {
+
+    # Ticks logic
+    tick_val <- get_element(axis_ticks_to)
+    if (!is.null(tick_val)) theme_args[[paste0("axis.ticks.", side)]] <- tick_val
+
+    # Line logic
+    line_val <- get_element(axis_line_to)
+    if (!is.null(line_val)) theme_args[[paste0("axis.line.", side)]] <- line_val
+
+    # Text logic
+    text_val <- get_element(axis_text_to)
+    if (!is.null(text_val)) theme_args[[paste0("axis.text.", side)]] <- text_val
+
+    # Title logic
+    title_val <- get_element(axis_title_to)
+    if (!is.null(title_val)) theme_args[[paste0("axis.title.", side)]] <- title_val
+  }
+
+  # Return the combined theme
+  do.call(ggplot2::theme, theme_args)
+}
+

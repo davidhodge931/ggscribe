@@ -55,5 +55,7 @@ the \code{axis.ticks} element of the set theme. Requires
 \code{coord_cartesian(clip = "off")}.
 }
 \seealso{
-\code{\link[=annotate_axis_line]{annotate_axis_line()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}}, \code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}}
+\code{\link[=annotate_axis_line]{annotate_axis_line()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}},
+\code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}},
+\code{\link[=annotate_panel_shade]{annotate_panel_shade()}}, \code{\link[=sec_axis_annotate]{sec_axis_annotate()}}
 }

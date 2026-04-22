@@ -38,7 +38,7 @@ pak::pak("davidhodge931/ggscribe")
 
 ## Example
 
-```{r, warning=FALSE, message=FALSE, echo=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
 
@@ -53,13 +53,12 @@ mtcars |>
   ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
   coord_cartesian(clip = "off") +
   ggscribe::annotate_reference_line(xintercept = 2.4) +
-  ggscribe::annotate_reference_line(yintercept = 32)  +
   ggscribe::annotate_reference_line(yintercept = 15)  +
   geom_point() +
   scale_x_continuous(
     sec.axis = ggscribe::sec_axis_annotate(
       breaks = c(mean(c(4, 5))),
-      labels = c("Blah"),
+      labels = c("Threshold"),
       guide = ggscribe::guide_axis_annotate(
         angle = 90,
       )
@@ -93,6 +92,7 @@ mtcars |>
     position = "bottom",
     breaks = 4.5,
     elements_to = "keep",
-  )
+  ) +
+  theme(plot.background = element_rect(colour = "grey92")) 
 ```
 

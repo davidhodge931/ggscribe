@@ -39,4 +39,62 @@ pak::pak("davidhodge931/ggscribe")
 
 ## Example
 
+``` r
+library(ggplot2)
+library(dplyr)
+
+set_theme(
+  ggrefine::theme_grey(
+    panel_heights = rep(unit(50, "mm"), 100),
+    panel_widths = rep(unit(75, "mm"), 100),
+  )
+)
+
+mtcars |>
+  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
+  coord_cartesian(clip = "off") +
+  ggscribe::annotate_reference_line(xintercept = 2.4) +
+  ggscribe::annotate_reference_line(yintercept = 15)  +
+  geom_point() +
+  scale_x_continuous(
+    sec.axis = ggscribe::sec_axis_annotate(
+      breaks = c(mean(c(4, 5))),
+      labels = c("Threshold"),
+      guide = ggscribe::guide_axis_annotate(
+        angle = 90,
+      )
+    )
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "top",
+    breaks = c(2.4),
+    labels = c("A"),
+  ) +
+  ggscribe::annotate_axis_text(
+      position = "right",
+      breaks = 15,
+      labels = "C",
+  ) +
+  ggscribe::annotate_axis_bracket(
+    position = "top",
+    breaks = c(4, 5),
+  ) +
+  ggscribe::annotate_panel_shade(
+    xmin = 4,
+    xmax = 5,
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "bottom",
+    breaks = 4.5,
+    labels = "D",
+    elements_to = "keep",
+  ) +
+  ggscribe::annotate_axis_ticks(
+    position = "bottom",
+    breaks = 4.5,
+    elements_to = "keep",
+  ) +
+  theme(plot.background = element_rect(colour = "grey92")) 
+```
+
 <img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="100%" />

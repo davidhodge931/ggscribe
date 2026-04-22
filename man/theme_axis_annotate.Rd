@@ -6,22 +6,22 @@
 \usage{
 theme_axis_annotate(
   axis = NULL,
-  elements_to_ticks = "transparent",
-  elements_to_line = "transparent",
-  elements_to_text = "keep",
-  elements_to_title = "keep"
+  axis_ticks_to = "transparent",
+  axis_line_to = "transparent",
+  axis_text_to = "keep",
+  axis_title_to = "keep"
 )
 }
 \arguments{
 \item{axis}{Character. "x", "y", or NULL (defaults to both).}
 
-\item{elements_to_ticks}{Action for ticks: "transparent", "blank", or "keep".}
+\item{axis_ticks_to}{Action for ticks: "transparent", "blank", or "keep".}
 
-\item{elements_to_line}{Action for lines: "transparent", "blank", or "keep".}
+\item{axis_line_to}{Action for lines: "transparent", "blank", or "keep".}
 
-\item{elements_to_text}{Action for text: "transparent", "blank", or "keep".}
+\item{axis_text_to}{Action for text: "transparent", "blank", or "keep".}
 
-\item{elements_to_title}{Action for titles: "transparent", "blank", or "keep".}
+\item{axis_title_to}{Action for titles: "transparent", "blank", or "keep".}
 }
 \value{
 A ggplot2 theme object.

@@ -44,5 +44,7 @@ Draws a line along an axis edge, with style defaults taken from the
 \code{axis.line} element of the set theme. Requires \code{coord_cartesian(clip = "off")}.
 }
 \seealso{
-\code{\link[=annotate_axis_ticks]{annotate_axis_ticks()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}}, \code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}}
+\code{\link[=annotate_axis_ticks]{annotate_axis_ticks()}}, \code{\link[=annotate_axis_text]{annotate_axis_text()}},
+\code{\link[=annotate_axis_bracket]{annotate_axis_bracket()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}},
+\code{\link[=annotate_panel_shade]{annotate_panel_shade()}}, \code{\link[=sec_axis_annotate]{sec_axis_annotate()}}
 }
