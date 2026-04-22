@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Annotation helpers for 'ggplot2' visualisations, with style defaults inherited from the active theme. This includes annotation functions that cover axis lines, ticks, text, panel grid lines, and shaded regions. This makes it straightforward to annotate plots in a way that stays consistent with the set theme.
+Annotation helpers for 'ggplot2' visualisations. These functions make it straightforward to annotate plots in a way that stays consistent with the set theme.
 }
 \seealso{
 Useful links:

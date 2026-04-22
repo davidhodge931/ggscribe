@@ -12,13 +12,16 @@
 #'    - A numeric vector of break positions
 #'    - A function that takes the scale limits as input and returns break
 #'      positions (e.g. `\(x) mean(c(x[2], 32))`)
+#' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
+#'    derive the name from the primary axis, or `NULL` (default) for no name.
+#' @param guide A guide object used to render the axis. Defaults to
+#'    [guide_axis_annotate()], which uses [theme_axis_annotate()] to
+#'    make transparent ticks and lines by default.
 #' @param labels One of:
 #'    - [ggplot2::derive()] (default) to derive labels from `breaks`
 #'    - A character vector of labels, the same length as `breaks`
 #'    - A function that takes break positions as input and returns labels
 #' @param ... Additional arguments passed to [ggplot2::dup_axis()].
-#' @param elements_to One of `"keep"`, `"transparent"`, or `"blank"`. Controls
-#'    whether native theme ticks are suppressed. Defaults to `"keep"`.
 #'
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
 #'    `scale_x_continuous()` or `scale_y_continuous()`.
@@ -55,119 +58,6 @@ sec_axis_annotate <- function(
     guide = guide
   )
 }
-
-#' #' Title
-#' #'
-#' #' @param ticks_to
-#' #'
-#' #' @returns
-#' #' @export
-#' #'
-#' #' @examples
-#' theme_axis_annotate <- function(
-#'     axis = NULL, #defaults to both
-#'     ticks_to = "transparent",
-#'     line_to = "transparent",
-#'     text_to = "keep",
-#'     title_to = "keep",
-#'   ) {
-#'
-#'   if (is.null(axis)) {
-#'     if (ticks_to == "transparent") {
-#'       theme <- ggplot2::theme(
-#'         axis.ticks.x.top    = element_line_transparent(),
-#'         axis.ticks.x.bottom = element_line_transparent(),
-#'         axis.ticks.y.left   = element_line_transparent(),
-#'         axis.ticks.y.right  = element_line_transparent(),
-#'       )
-#'     }
-#'     else if (ticks_to == "blank") {
-#'       theme <- ggplot2::theme(
-#'         axis.ticks.x.top    = element_blank(),
-#'         axis.ticks.x.bottom = element_blank(),
-#'         axis.ticks.y.left   = element_blank(),
-#'         axis.ticks.y.right  = element_blank(),
-#'       )
-#'     }
-#'     else if (ticks_to == "keep") {
-#'       theme <- ggplot2::theme()
-#'     }
-#'
-#'     if (line_to == "transparent") {
-#'       theme <- ggplot2::theme(
-#'         axis.line.x.top    = element_line_transparent(),
-#'         axis.line.x.bottom = element_line_transparent(),
-#'         axis.line.y.left   = element_line_transparent(),
-#'         axis.line.y.right  = element_line_transparent(),
-#'       )
-#'     }
-#'     else if (line_to == "blank") {
-#'       theme <- ggplot2::theme(
-#'         axis.line.x.top    = element_blank(),
-#'         axis.line.x.bottom = element_blank(),
-#'         axis.line.y.left   = element_blank(),
-#'         axis.line.y.right  = element_blank(),
-#'       )
-#'     }
-#'     else if (line_to == "keep") {
-#'       theme <- ggplot2::theme()
-#'     }
-#'
-#'     if (text_to == "transparent") {
-#'       theme <- ggplot2::theme(
-#'         axis.text.x.top    = element_line_transparent(),
-#'         axis.text.x.bottom = element_line_transparent(),
-#'         axis.text.y.left   = element_line_transparent(),
-#'         axis.text.y.right  = element_line_transparent(),
-#'       )
-#'     }
-#'     else if (text_to == "blank") {
-#'       theme <- ggplot2::theme(
-#'         axis.text.x.top    = element_blank(),
-#'         axis.text.x.bottom = element_blank(),
-#'         axis.text.y.left   = element_blank(),
-#'         axis.text.y.right  = element_blank(),
-#'       )
-#'     }
-#'     else if (text_to == "keep") {
-#'       theme <- ggplot2::theme()
-#'     }
-#'
-#'     if (title_to == "transparent") {
-#'       theme <- ggplot2::theme(
-#'         axis.title.x.top    = element_line_transparent(),
-#'         axis.title.x.bottom = element_line_transparent(),
-#'         axis.title.y.left   = element_line_transparent(),
-#'         axis.title.y.right  = element_line_transparent(),
-#'       )
-#'     }
-#'     else if (title_to == "blank") {
-#'       theme <- ggplot2::theme(
-#'         axis.title.x.top    = element_blank(),
-#'         axis.title.x.bottom = element_blank(),
-#'         axis.title.y.left   = element_blank(),
-#'         axis.title.y.right  = element_blank(),
-#'       )
-#'     }
-#'     else if (title_to == "keep") {
-#'       theme <- ggplot2::theme()
-#'     }
-#'
-#'
-#'   }
-#'   else if (axis == "x") {
-#'   }
-#'   else if (axis == "y") {
-#'   }
-#'
-#'   theme +
-#'     ggplot2::theme(
-#'       axis.line.x.top    = ggplot2::element_blank(),
-#'       axis.line.x.bottom = ggplot2::element_blank(),
-#'       axis.line.y.left   = ggplot2::element_blank(),
-#'       axis.line.y.right  = ggplot2::element_blank(),
-#'     )
-#' }
 
 #' Theme axis annotate
 #'
@@ -233,15 +123,45 @@ theme_axis_annotate <- function(
   do.call(ggplot2::theme, theme_args)
 }
 
-#' Title
+#' Axis guide with annotation-friendly defaults
 #'
-#' @param ...
-#' @param theme
+#' A wrapper around [ggplot2::guide_axis()] that defaults to using
+#' [theme_axis_annotate()]. This guide is designed to strip away standard axis
+#' furniture (like lines and ticks) while preserving text, making it ideal for
+#' secondary axes used as margin labels.
 #'
-#' @returns
+#' @param ... Additional arguments passed to [ggplot2::guide_axis()], such as
+#'   `title`, `check.overlap`, or `angle`.
+#' @param theme A `theme` object to style the guide. Defaults to
+#'   `theme_axis_annotate()`, which suppresses ticks and lines.
+#'
+#' @returns A `guide` object to be used in a scale's `guide` argument or within
+#'   [sec_axis_annotate()].
+#'
+#' @seealso [theme_axis_annotate()], [sec_axis_annotate()]
+#'
 #' @export
 #'
 #' @examples
+#' library(ggplot2)
+#'
+#' # Using the guide directly in a scale
+#' ggplot(mpg, aes(displ, hwy)) +
+#'   geom_point() +
+#'   scale_x_continuous(
+#'     guide = guide_axis_annotate(title = "Displacement Label Only")
+#'   )
+#'
+#' # The guide is also used internally by sec_axis_annotate()
+#' ggplot(mpg, aes(displ, hwy)) +
+#'   geom_point() +
+#'   scale_y_continuous(
+#'     sec.axis = sec_axis_annotate(
+#'       breaks = 20,
+#'       labels = "Reference point",
+#'       guide = guide_axis_annotate(angle = 90)
+#'     )
+#'   )
 guide_axis_annotate <- function(..., theme = theme_axis_annotate()) {
   ggplot2::guide_axis(
     theme = theme,

@@ -10,7 +10,22 @@ status](https://www.r-pkg.org/badges/version/ggscribe)](https://CRAN.R-project.o
 <!-- badges: end -->
 
 The objective of ggscribe is to provide helpers to annotate ‘ggplot2’
-Visualisation
+Visualisation.
+
+Note:
+
+- `sec_axis_annotate` adjusts space in the plot, whereas `annotate_*`
+  functions do not.
+- `annotate_axis_ticks`, `annotate_axis_text` and
+  `annotate_axis_bracket` require (1) a globally set theme with explicit
+  panel dimensions and (2) `coord_cartesian(clip = "off")`
+- `annotate_panel_shade` must be before geoms.
+- `annotate_reference_line` should be before geoms.
+- Where you require annotation text along a axis with different angles
+  etc, use a combination of `sec_axis_annotate` and `annotate_*`
+  functions. The `sec_axis_annotate` function should include the
+  annotation that requires the maximum space that you want the plot to
+  adjust to.
 
 ## Installation
 
@@ -23,7 +38,5 @@ pak::pak("davidhodge931/ggscribe")
 ```
 
 ## Example
-
-ggscribe provides annotations like those here:
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="100%" />

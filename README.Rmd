@@ -18,7 +18,15 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/ggscribe)](https://CRAN.R-project.org/package=ggscribe)
 <!-- badges: end -->
 
-The objective of ggscribe is to provide helpers to annotate 'ggplot2' Visualisation
+The objective of ggscribe is to provide helpers to annotate 'ggplot2' Visualisation.
+
+Note: 
+
+* `sec_axis_annotate` adjusts space in the plot, whereas `annotate_*` functions do not.
+* `annotate_axis_ticks`, `annotate_axis_text` and `annotate_axis_bracket` require (1) a globally set theme with explicit panel dimensions and (2) `coord_cartesian(clip = "off")`
+* `annotate_panel_shade` must be before geoms.
+* `annotate_reference_line` should be before geoms.
+* Where you require annotation text along a axis with different angles etc, use a combination of `sec_axis_annotate` and `annotate_*` functions. The `sec_axis_annotate` function should include the annotation that requires the maximum space that you want the plot to adjust to. 
 
 ## Installation
 
@@ -29,8 +37,6 @@ pak::pak("davidhodge931/ggscribe")
 ```
 
 ## Example
-
-ggscribe provides annotations like those here:
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 library(ggplot2)
@@ -43,31 +49,50 @@ set_theme(
   )
 )
 
-ggplot2::mpg |>
-  mutate(drv = case_when(
-    drv == "4" ~ "4-wheel",
-    drv == "f" ~ "Front",
-    drv == "r" ~ "Rear",
-  )) |>
-  ggplot(aes(x = displ, y = hwy)) +
+mtcars |>
+  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
   coord_cartesian(clip = "off") +
-  scale_fill_discrete(palette = jumble::jumble) +
-  scale_colour_discrete(palette = blends::multiply(ggplot2::get_theme()$palette.fill.discrete)) +
-  labs(title = "Highway fuel economy", subtitle = "By displacement\n") +
   ggscribe::annotate_reference_line(xintercept = 2.4) +
   ggscribe::annotate_reference_line(yintercept = 32)  +
-  geom_point(aes(colour = drv, fill = drv)) +
+  ggscribe::annotate_reference_line(yintercept = 15)  +
+  geom_point() +
   scale_x_continuous(
-    sec.axis = ggscribe::dup_axis_text(
-      breaks = 2.4,
-      labels = "Threshold",
+    sec.axis = ggscribe::sec_axis_annotate(
+      breaks = c(mean(c(4, 5))),
+      labels = c("Blah"),
+      guide = ggscribe::guide_axis_annotate(
+        angle = 90,
+      )
     )
   ) +
-  scale_y_continuous(
-    sec.axis = ggscribe::dup_axis_text(
-      breaks = 32, 
-      labels = "Threshold",
-    ) 
-  ) 
+  ggscribe::annotate_axis_text(
+    position = "top",
+    breaks = c(2.4),
+    labels = c("A"),
+  ) +
+  ggscribe::annotate_axis_text(
+      position = "right",
+      breaks = 15,
+      labels = "C",
+  ) +
+  ggscribe::annotate_axis_bracket(
+    position = "top",
+    breaks = c(4, 5),
+  ) +
+  ggscribe::annotate_panel_shade(
+    xmin = 4,
+    xmax = 5,
+  ) +
+  ggscribe::annotate_axis_text(
+    position = "bottom",
+    breaks = 4.5,
+    labels = "D",
+    elements_to = "keep",
+  ) +
+  ggscribe::annotate_axis_ticks(
+    position = "bottom",
+    breaks = 4.5,
+    elements_to = "keep",
+  )
 ```
 
