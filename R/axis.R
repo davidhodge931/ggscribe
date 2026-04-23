@@ -442,15 +442,7 @@ annotate_axis_text <- function(
   text_family <- family %||% resolved_text_element$family %||% ""
 
   if (is.null(labels)) {
-    labels <- if (inherits(breaks, "Date")) {
-      format(breaks, "%d-%m-%Y")
-    } else if (inherits(breaks, c("POSIXct", "POSIXlt"))) {
-      format(breaks, "%d-%m-%Y %H:%M:%S")
-    } else if (is.numeric(breaks)) {
-      scales::comma(breaks)
-    } else {
-      as.character(breaks)
-    }
+    labels <- as.character(breaks)
   } else if (is.function(labels)) {
     labels <- labels(breaks)
   }

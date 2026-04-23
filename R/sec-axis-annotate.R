@@ -26,7 +26,7 @@
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
 #'    `scale_x_continuous()` or `scale_y_continuous()`.
 #'
-#' @seealso [ggplot2::dup_axis()], [annotate_panel_shade()]
+#' @seealso [guide_axis_annotate()], [theme_axis_annotate()], [annotate_axis_text]
 #'
 #' @export
 #'
@@ -74,7 +74,7 @@ sec_axis_annotate <- function(
 #' @returns A `guide` object to be used in a scale's `guide` argument or within
 #'   [sec_axis_annotate()].
 #'
-#' @seealso [theme_axis_annotate()], [sec_axis_annotate()]
+#' @seealso [sec_axis_annotate()], [theme_axis_annotate()]
 #'
 #' @export
 #'
@@ -115,6 +115,12 @@ guide_axis_annotate <- function(..., theme = theme_axis_annotate()) {
 #'
 #' @returns A ggplot2 theme object.
 #' @export
+#'
+#' @seealso [sec_axis_annotate()], [guide_axis_annotate()]
+#'
+#' @seealso [annotate_axis_ticks()], [annotate_axis_line()],
+#' [annotate_axis_text()], [annotate_reference_line()]
+#'
 theme_axis_annotate <- function(
     axis = NULL,
     axis_ticks_to = "transparent",
