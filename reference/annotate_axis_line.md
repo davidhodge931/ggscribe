@@ -14,8 +14,7 @@ annotate_axis_line(
   yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
-  linetype = NULL,
-  elements_to = "keep"
+  linetype = NULL
 )
 ```
 
@@ -53,14 +52,9 @@ annotate_axis_line(
 
   Inherits from `axis.line` in the set theme.
 
-- elements_to:
-
-  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether the
-  native theme axis line is suppressed. Defaults to `"keep"`.
-
 ## Value
 
-A list of ggplot2 annotation layers and theme elements.
+A list of ggplot2 annotation layers.
 
 ## See also
 

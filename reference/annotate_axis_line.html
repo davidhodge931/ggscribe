@@ -36,7 +36,7 @@ axis.line element of the set theme. Requires coord_cartesian(clip = "off").'><me
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Annotate an axis line</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis.R" class="external-link"><code>R/axis.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/annotate-axis.R" class="external-link"><code>R/annotate-axis.R</code></a></small>
       <div class="d-none name"><code>annotate_axis_line.Rd</code></div>
     </div>
 
@@ -54,8 +54,7 @@ axis.line element of the set theme. Requires coord_cartesian(clip = "off").'><me
 <span>  yintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linewidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  elements_to <span class="op">=</span> <span class="st">"keep"</span></span>
+<span>  linetype <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,15 +92,10 @@ position in data coordinates instead of the panel edge.</p></dd>
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
 <dd><p>Inherits from <code>axis.line</code> in the set theme.</p></dd>
 
-
-<dt id="arg-elements-to">elements_to<a class="anchor" aria-label="anchor" href="#arg-elements-to"></a></dt>
-<dd><p>One of <code>"keep"</code>, <code>"transparent"</code>, or <code>"blank"</code>. Controls
-whether the native theme axis line is suppressed. Defaults to <code>"keep"</code>.</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of ggplot2 annotation layers and theme elements.</p>
+    <p>A list of ggplot2 annotation layers.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

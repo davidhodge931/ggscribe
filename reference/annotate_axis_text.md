@@ -20,8 +20,7 @@ annotate_axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  ticks_length = ggplot2::rel(1),
-  elements_to = "keep"
+  ticks_length = ggplot2::rel(1)
 )
 ```
 
@@ -54,7 +53,7 @@ annotate_axis_text(
 
   One of:
 
-  - `NULL` (default) to auto-format break values
+  - `NULL` (default) to use break values as labels
 
   - A character vector the same length as `breaks`
 
@@ -84,16 +83,12 @@ annotate_axis_text(
 
   Offset from the axis edge including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values place labels inside the panel.
-
-- elements_to:
-
-  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme axis text is suppressed. Defaults to `"keep"`.
+  Negative values place labels inside the panel. Defaults to `rel(1)`
+  (theme tick length + text margin).
 
 ## Value
 
-A list of ggplot2 annotation layers and theme elements.
+A list of ggplot2 annotation layers.
 
 ## See also
 

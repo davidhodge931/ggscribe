@@ -45,7 +45,7 @@ mtcars |>
   ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
   coord_cartesian(clip = "off") +
   ggscribe::annotate_reference_line(xintercept = 2.4) +
-  ggscribe::annotate_reference_line(yintercept = 15)  +
+  ggscribe::annotate_reference_line(yintercept = 16)  +
   geom_point() +
   scale_x_continuous(
     sec.axis = ggscribe::sec_axis_annotate(
@@ -63,7 +63,7 @@ mtcars |>
   ) +
   ggscribe::annotate_axis_text(
       position = "right",
-      breaks = 15,
+      breaks = 16,
       labels = "C",
   ) +
   ggscribe::annotate_axis_bracket(
@@ -76,14 +76,12 @@ mtcars |>
   ) +
   ggscribe::annotate_axis_text(
     position = "bottom",
-    breaks = 4.5,
+    breaks = 4.25,
     labels = "D",
-    elements_to = "keep",
   ) +
   ggscribe::annotate_axis_ticks(
     position = "bottom",
-    breaks = 4.5,
-    elements_to = "keep",
+    breaks = 4.25,
   ) +
   theme(plot.background = element_rect(colour = "grey92")) 
 ```

@@ -35,8 +35,8 @@ A `guide` object to be used in a scale's `guide` argument or within
 
 ## See also
 
-[`theme_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis_annotate.md),
-[`sec_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_annotate.md)
+[`sec_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_annotate.md),
+[`theme_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis_annotate.md)
 
 ## Examples
 

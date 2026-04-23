@@ -39,3 +39,13 @@ theme_axis_annotate(
 ## Value
 
 A ggplot2 theme object.
+
+## See also
+
+[`sec_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_annotate.md),
+[`guide_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis_annotate.md)
+
+[`annotate_axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_ticks.md),
+[`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md),
+[`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md),
+[`annotate_reference_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_reference_line.md)

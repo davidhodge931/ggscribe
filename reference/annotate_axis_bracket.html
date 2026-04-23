@@ -40,7 +40,7 @@ Requires coord_cartesian(clip = "off").'><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Annotate an axis bracket</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis.R" class="external-link"><code>R/axis.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/annotate-axis.R" class="external-link"><code>R/annotate-axis.R</code></a></small>
       <div class="d-none name"><code>annotate_axis_bracket.Rd</code></div>
     </div>
 
@@ -62,8 +62,7 @@ Requires <code>coord_cartesian(clip = "off")</code>.</p>
 <span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linewidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ticks_length <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>  elements_to <span class="op">=</span> <span class="st">"keep"</span></span>
+<span>  ticks_length <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -110,20 +109,13 @@ through <code>axis.line</code> and <code>line</code>).</p></dd>
 
 <dt id="arg-ticks-length">ticks_length<a class="anchor" aria-label="anchor" href="#arg-ticks-length"></a></dt>
 <dd><p>Length of the bracket caps as a grid unit. Supports
-<code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the cap direction. Panel-edge defaults:
-<code>"bottom"</code> → <code>rel(1)</code> (outward); <code>"top"</code>, <code>"left"</code>, <code>"right"</code> → <code>rel(-1)</code>
-(inward). Floating axes require explicit specification.</p></dd>
-
-
-<dt id="arg-elements-to">elements_to<a class="anchor" aria-label="anchor" href="#arg-elements-to"></a></dt>
-<dd><p>One of <code>"keep"</code>, <code>"transparent"</code>, or <code>"blank"</code>. Controls
-whether native theme axis line and ticks are suppressed. Defaults to
-<code>"keep"</code>.</p></dd>
+<code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the cap direction. Defaults to <code>rel(1)</code>
+(outward at theme tick length).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of ggplot2 annotation layers and theme elements.</p>
+    <p>A list of ggplot2 annotation layers.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -74,8 +74,9 @@ or
 
 ## See also
 
-[`ggplot2::dup_axis()`](https://ggplot2.tidyverse.org/reference/sec_axis.html),
-[`annotate_panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_shade.md)
+[`guide_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis_annotate.md),
+[`theme_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis_annotate.md),
+[annotate_axis_text](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md)
 
 ## Examples
 

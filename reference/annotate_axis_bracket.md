@@ -20,8 +20,7 @@ annotate_axis_bracket(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  ticks_length = ggplot2::rel(1),
-  elements_to = "keep"
+  ticks_length = ggplot2::rel(1)
 )
 ```
 
@@ -69,18 +68,12 @@ annotate_axis_bracket(
 
   Length of the bracket caps as a grid unit. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the cap direction. Panel-edge defaults:
-  `"bottom"` → `rel(1)` (outward); `"top"`, `"left"`, `"right"` →
-  `rel(-1)` (inward). Floating axes require explicit specification.
-
-- elements_to:
-
-  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme axis line and ticks are suppressed. Defaults to `"keep"`.
+  Negative values flip the cap direction. Defaults to `rel(1)` (outward
+  at theme tick length).
 
 ## Value
 
-A list of ggplot2 annotation layers and theme elements.
+A list of ggplot2 annotation layers.
 
 ## See also
 

@@ -38,7 +38,7 @@ coord_cartesian(clip = "off").'><meta property="og:image" content="https://david
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Annotate axis text</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis.R" class="external-link"><code>R/axis.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/annotate-axis.R" class="external-link"><code>R/annotate-axis.R</code></a></small>
       <div class="d-none name"><code>annotate_axis_text.Rd</code></div>
     </div>
 
@@ -63,8 +63,7 @@ defaults taken from the <code>axis.text</code> element of the set theme. Require
 <span>  hjust <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vjust <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  ticks_length <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>  elements_to <span class="op">=</span> <span class="st">"keep"</span></span>
+<span>  ticks_length <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,7 +95,7 @@ position in data coordinates instead of the panel edge.</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
-<dd><p>One of:</p><ul><li><p><code>NULL</code> (default) to auto-format break values</p></li>
+<dd><p>One of:</p><ul><li><p><code>NULL</code> (default) to use break values as labels</p></li>
 <li><p>A character vector the same length as <code>breaks</code></p></li>
 <li><p>A function taking break values and returning labels</p></li>
 </ul></dd>
@@ -124,17 +123,13 @@ position in data coordinates instead of the panel edge.</p></dd>
 
 <dt id="arg-ticks-length">ticks_length<a class="anchor" aria-label="anchor" href="#arg-ticks-length"></a></dt>
 <dd><p>Offset from the axis edge including tick length and margin.
-Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values place labels inside the panel.</p></dd>
-
-
-<dt id="arg-elements-to">elements_to<a class="anchor" aria-label="anchor" href="#arg-elements-to"></a></dt>
-<dd><p>One of <code>"keep"</code>, <code>"transparent"</code>, or <code>"blank"</code>. Controls
-whether native theme axis text is suppressed. Defaults to <code>"keep"</code>.</p></dd>
+Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values place labels inside the panel. Defaults
+to <code>rel(1)</code> (theme tick length + text margin).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of ggplot2 annotation layers and theme elements.</p>
+    <p>A list of ggplot2 annotation layers.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
