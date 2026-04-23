@@ -29,3 +29,9 @@ A ggplot2 theme object.
 \description{
 Theme axis annotate
 }
+\seealso{
+\code{\link[=sec_axis_annotate]{sec_axis_annotate()}}, \code{\link[=guide_axis_annotate]{guide_axis_annotate()}}
+
+\code{\link[=annotate_axis_ticks]{annotate_axis_ticks()}}, \code{\link[=annotate_axis_line]{annotate_axis_line()}},
+\code{\link[=annotate_axis_text]{annotate_axis_text()}}, \code{\link[=annotate_reference_line]{annotate_reference_line()}}
+}

@@ -45,5 +45,5 @@ ggplot(mpg, aes(displ, hwy)) +
   )
 }
 \seealso{
-\code{\link[=theme_axis_annotate]{theme_axis_annotate()}}, \code{\link[=sec_axis_annotate]{sec_axis_annotate()}}
+\code{\link[=sec_axis_annotate]{sec_axis_annotate()}}, \code{\link[=theme_axis_annotate]{theme_axis_annotate()}}
 }

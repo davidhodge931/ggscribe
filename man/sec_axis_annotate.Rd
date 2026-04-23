@@ -61,5 +61,5 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
    )
 }
 \seealso{
-\code{\link[ggplot2:sec_axis]{ggplot2::dup_axis()}}, \code{\link[=annotate_panel_shade]{annotate_panel_shade()}}
+\code{\link[=guide_axis_annotate]{guide_axis_annotate()}}, \code{\link[=theme_axis_annotate]{theme_axis_annotate()}}, \link{annotate_axis_text}
 }
