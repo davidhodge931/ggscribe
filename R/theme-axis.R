@@ -39,7 +39,7 @@ theme_axis <- function(
   get_element <- function(action) {
     if (action == "keep") return(NULL)
     if (action == "blank") return(ggplot2::element_blank())
-    if (action == "transparent") return(element_line_transparent())
+    if (action == "transparent") return(ggplot2::element_line(colour = "transparent"))
     return(NULL)
   }
 

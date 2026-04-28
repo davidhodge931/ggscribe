@@ -53,7 +53,7 @@
 #'     show.legend = FALSE,
 #'   ) +
 #'   scale_y_continuous(expand = expansion(c(0, 0.05))) +
-#'   ggrefine::refine_modern(x_type = "discrete")
+#'   ggrefine::modern(x_type = "discrete")
 #'
 #' mtcars |>
 #'   count(cyl, am) |>
@@ -80,7 +80,7 @@
 #'     show.legend = FALSE,
 #'   ) +
 #'   scale_x_continuous(expand = expansion(c(0, 0.05))) +
-#'   ggrefine::refine_modern(y_type = "discrete")
+#'   ggrefine::modern(y_type = "discrete")
 #'
 aes_contrast <- function(..., dark = NULL, light = NULL, aesthetic = "colour") {
   # Only get theme if we need it
