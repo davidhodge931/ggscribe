@@ -8,7 +8,7 @@ sec_axis(
   breaks = ggplot2::waiver(),
   labels = ggplot2::derive(),
   name = NULL,
-  guide = ggplot2::guide_axis(theme = theme_axis()),
+  guide = ggplot2::guide_axis(theme = theme_sec_axis()),
   ...
 )
 }
@@ -33,7 +33,7 @@ positions (e.g. \verb{\\(x) mean(c(x[2], 32))})
 derive the name from the primary axis, or \code{NULL} (default) for no name.}
 
 \item{guide}{A guide object used to render the axis. Defaults to
-\code{\link[=guide_axis]{guide_axis()}}, which uses \code{\link[=theme_axis]{theme_axis()}} to
+\code{\link[=guide_sec_axis]{guide_sec_axis()}}, which uses \code{\link[=theme_sec_axis]{theme_sec_axis()}} to
 make transparent ticks and lines by default.}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:sec_axis]{ggplot2::dup_axis()}}.}
@@ -61,5 +61,5 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
    )
 }
 \seealso{
-\code{\link[=guide_axis]{guide_axis()}}, \code{\link[=theme_axis]{theme_axis()}}, \code{\link[=axis_text]{axis_text()}}
+\code{\link[=guide_sec_axis]{guide_sec_axis()}}, \code{\link[=theme_sec_axis]{theme_sec_axis()}}, \code{\link[=axis_text]{axis_text()}}
 }

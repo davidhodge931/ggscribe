@@ -55,39 +55,44 @@ set_theme(
 
 mtcars |>
   ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
-  coord_cartesian(clip = "off") +
   scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
+  #clip = "off" is required for axis_text, axis_ticks and axis_bracket 
+  coord_cartesian(clip = "off") +
+  #reference lines and shade
   ggscribe::reference_line(xintercept = 2.4) +
   ggscribe::reference_line(yintercept = 12)  +
-  geom_point() +
+  ggscribe::panel_shade(
+    xmin = 4,
+    xmax = 5,
+  ) +
+  #top axis
   scale_x_continuous(
     sec.axis = ggscribe::sec_axis(
       breaks = c(mean(c(4, 5))),
       labels = c("Range"),
-      guide = ggscribe::guide_axis(
+      guide = ggscribe::guide_sec_axis(
         angle = 90,
       )
     )
+  ) +
+  ggscribe::axis_bracket(
+    position = "top",
+    breaks = c(4, 5),
   ) +
   ggscribe::axis_text(
     position = "top",
     breaks = c(2.4),
     labels = c("Threshold"),
   ) +
+  #right axis
   ggscribe::axis_text(
-      position = "right",
-      breaks = 12,
-      labels = "Threshold",
+    position = "right",
+    breaks = 12,
+    labels = "Threshold",
   ) +
-  ggscribe::axis_bracket(
-    position = "top",
-    breaks = c(4, 5),
-  ) +
-  ggscribe::panel_shade(
-    xmin = 4,
-    xmax = 5,
-  ) +
-  ggrefine::hybrid() +
+  #geom
+  geom_point() +
+  #annotations fit plot
   theme(plot.background = element_rect(colour = "grey92"))
 ```
 

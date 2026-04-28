@@ -15,7 +15,7 @@
 #' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
 #'    derive the name from the primary axis, or `NULL` (default) for no name.
 #' @param guide A guide object used to render the axis. Defaults to
-#'    [guide_axis()], which uses [theme_axis()] to
+#'    [guide_sec_axis()], which uses [theme_sec_axis()] to
 #'    make transparent ticks and lines by default.
 #' @param labels One of:
 #'    - [ggplot2::derive()] (default) to derive labels from `breaks`
@@ -26,7 +26,7 @@
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
 #'    `scale_x_continuous()` or `scale_y_continuous()`.
 #'
-#' @seealso [guide_axis()], [theme_axis()], [axis_text()]
+#' @seealso [guide_sec_axis()], [theme_sec_axis()], [axis_text()]
 #'
 #' @export
 #'
@@ -46,7 +46,7 @@ sec_axis <- function(
     breaks = ggplot2::waiver(),
     labels = ggplot2::derive(),
     name = NULL,
-    guide = ggplot2::guide_axis(theme = theme_axis()),
+    guide = ggplot2::guide_axis(theme = theme_sec_axis()),
     ...
 ) {
 
