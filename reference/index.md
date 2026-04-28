@@ -12,8 +12,6 @@
   : Annotate axis text
 - [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md)
   : Annotate axis ticks
-- [`element_line_transparent()`](https://davidhodge931.github.io/ggscribe/reference/element_line_transparent.md)
-  : Element line that is transparent
 - [`guide_axis()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis.md)
   : Axis guide with annotation-friendly defaults
 - [`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
