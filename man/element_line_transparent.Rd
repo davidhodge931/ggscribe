@@ -28,5 +28,5 @@ ggplot(mpg, aes(displ, hwy)) +
   theme(panel.grid.major = element_line_transparent())
 }
 \seealso{
-\code{\link[=theme_axis_annotate]{theme_axis_annotate()}}, \code{\link[=guide_axis_annotate]{guide_axis_annotate()}}
+\code{\link[=theme_axis]{theme_axis()}}, \code{\link[=guide_axis]{guide_axis()}}
 }

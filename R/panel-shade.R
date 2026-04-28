@@ -1,4 +1,4 @@
-# annotate_panel_shade --------------------------------------------------------
+# panel_shade -----------------------------------------------------------------
 
 #' Annotate a shaded panel region
 #'
@@ -35,17 +35,17 @@
 #'   geom_point()
 #'
 #' # Shade the full panel
-#' p + annotate_panel_shade()
+#' p + panel_shade()
 #'
 #' # Shade a specific data range
-#' p + annotate_panel_shade(xmin = 3, xmax = 4)
+#' p + panel_shade(xmin = 3, xmax = 4)
 #'
 #' # Shade using normalized coordinates
-#' p + annotate_panel_shade(xmin = I(0.25), xmax = I(0.75))
+#' p + panel_shade(xmin = I(0.25), xmax = I(0.75))
 #'
 #' # Custom fill and opacity
-#' p + annotate_panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
-annotate_panel_shade <- function(
+#' p + panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
+panel_shade <- function(
     ...,
     xmin = -Inf,
     xmax = Inf,

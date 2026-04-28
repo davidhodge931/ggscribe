@@ -10,7 +10,7 @@
 #'
 #' @returns An `element_line` object.
 #'
-#' @seealso [theme_axis_annotate()], [guide_axis_annotate()]
+#' @seealso [theme_axis()], [guide_axis()]
 #'
 #' @export
 #'
