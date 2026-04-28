@@ -1,68 +1,42 @@
-# Annotate a shaded panel region
+# Guide optimised for secondary axis text annotations
 
-Draws a filled rectangle over the panel with colour defaults taken from
-the set theme. Defaults to a subtle overlay across the full panel, with
-the fill automatically adapting to light or dark panel backgrounds.
+A wrapper around
+[`ggplot2::guide_axis()`](https://ggplot2.tidyverse.org/reference/guide_axis.html)
+that defaults to using
+[`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md).
+This guide is designed to strip away standard axis furniture (like lines
+and ticks) while preserving text, making it ideal for secondary axes
+used as margin labels.
 
 ## Usage
 
 ``` r
-panel_shade(
-  ...,
-  xmin = -Inf,
-  xmax = Inf,
-  ymin = -Inf,
-  ymax = Inf,
-  fill = "#878580",
-  alpha = 0.25,
-  colour = "transparent",
-  linewidth = NULL,
-  linetype = NULL
-)
+guide_sec_axis_text(..., theme = theme_sec_axis_text())
 ```
 
 ## Arguments
 
 - ...:
 
-  Not used. Allows trailing commas and named-argument style calls.
+  Additional arguments passed to
+  [`ggplot2::guide_axis()`](https://ggplot2.tidyverse.org/reference/guide_axis.html),
+  such as `title`, `check.overlap`, or `angle`.
 
-- xmin, xmax:
+- theme:
 
-  Left and right edges of the rectangle. Defaults to `-Inf` and `Inf`.
-  Use [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized
-  coordinates (0-1).
-
-- ymin, ymax:
-
-  Bottom and top edges of the rectangle. Defaults to `-Inf` and `Inf`.
-  Use [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized
-  coordinates (0-1).
-
-- fill:
-
-  Fill colour. Defaults to a neutral grey.
-
-- alpha:
-
-  Opacity of the rectangle. Defaults to `0.25`.
-
-- colour:
-
-  Border colour. Defaults to `"transparent"`.
-
-- linewidth:
-
-  Inherits from `panel.border` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-
-- linetype:
-
-  Border linetype. Defaults to `1`.
+  A `theme` object to style the guide. Defaults to
+  [`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md),
+  which suppresses ticks and lines.
 
 ## Value
 
-A list containing an annotation layer.
+A `guide` object to be used in a scale's `guide` argument or within
+[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md).
+
+## See also
+
+[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md),
+[`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md)
 
 ## Examples
 

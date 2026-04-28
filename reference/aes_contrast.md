@@ -45,11 +45,6 @@ A ggplot2 aesthetic in
 
 ``` r
 library(ggplot2)
-#> 
-#> Attaching package: ‘ggplot2’
-#> The following object is masked from ‘package:ggscribe’:
-#> 
-#>     sec_axis
 library(dplyr)
 #> 
 #> Attaching package: ‘dplyr’

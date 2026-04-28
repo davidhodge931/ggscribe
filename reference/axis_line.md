@@ -63,4 +63,4 @@ A list of ggplot2 annotation layers.
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
 [`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md),
-[`sec_axis()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis.md)
+[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)

@@ -7,17 +7,18 @@ Note:
 
 - To avoid namespace collisions, it is recommended to not load the
   package, but instead refer to each function with the package name
-  (e.g. [`ggscribe::sec_axis()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis.md).
-- `sec_axis` adjusts space in the plot, whereas `*` functions do not.
+  (e.g. [`ggscribe::sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md).
+- `sec_axis_text` adjusts space in the plot, whereas `*` functions do
+  not.
 - `axis_ticks`, `axis_text` and `axis_bracket` require (1) a globally
   set theme with explicit panel dimensions and (2)
   `coord_cartesian(clip = "off")`
 - `panel_shade` must be before geoms.
 - `reference_line` should be before geoms.
 - Where you require annotation text along a axis with different angles
-  etc, use a combination of `sec_axis` and `axis_*` functions. The
-  `sec_axis` function should include the annotation that requires the
-  maximum space that you want the plot to adjust to.
+  etc, use a combination of `sec_axis_text` and `axis_*` functions. The
+  `sec_axis_text` function should include the annotation that requires
+  the maximum space that you want the plot to adjust to.
 
 ## Installation
 
@@ -47,7 +48,7 @@ set_theme(
 mtcars |>
   ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
   scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
-  #clip = "off" is required for axis_text, axis_ticks and axis_bracket 
+  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
   coord_cartesian(clip = "off") +
   #reference lines and shade
   ggscribe::reference_line(xintercept = 2.4) +
@@ -58,10 +59,10 @@ mtcars |>
   ) +
   #top axis
   scale_x_continuous(
-    sec.axis = ggscribe::sec_axis(
+    sec.axis = ggscribe::sec_axis_text(
       breaks = c(mean(c(4, 5))),
       labels = c("Range"),
-      guide = ggscribe::guide_sec_axis(
+      guide = ggscribe::guide_sec_axis_text(
         angle = 90,
       )
     )
