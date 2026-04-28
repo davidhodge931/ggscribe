@@ -6,7 +6,7 @@ Authors@R:
            email = "davidhodge931@gmail.com", 
            role = c("aut", "cre", "cph"), 
            comment = c(ORCID = "0000-0002-3868-7501"))
-Description: Annotation helpers for 'ggplot2' visualisations.
+Description: Annotation helper functions for publication-quality visualisation. 
     These functions make it straightforward to annotate plots in a way
     that stays consistent with the set theme.
 License: MIT + file LICENSE
@@ -35,6 +35,7 @@ Suggests:
     jumble,
     knitr,
     rmarkdown,
+    spelling,
     stringr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

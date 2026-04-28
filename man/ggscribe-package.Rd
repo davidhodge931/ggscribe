@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Annotation helpers for 'ggplot2' visualisations. These functions make it straightforward to annotate plots in a way that stays consistent with the set theme.
+Annotation helper functions for publication-quality visualisation. These functions make it straightforward to annotate plots in a way that stays consistent with the set theme.
 }
 \seealso{
 Useful links:
