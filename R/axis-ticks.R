@@ -18,14 +18,14 @@
 #'   `FALSE`.
 #' @param colour Inherits from `axis.ticks` in the set theme.
 #' @param linewidth Inherits from `axis.ticks` in the set theme. Supports `rel()`.
-#' @param ticks_length Total tick length as a grid unit. Supports `rel()`.
+#' @param length Total tick length as a grid unit. Supports `rel()`.
 #'   Negative values flip the tick direction (inward). Defaults to `rel(1)`
 #'   (outward at theme tick length).
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_text()],
 #'   [axis_bracket()], [reference_line()],
-#'   [panel_shade()], [sec_axis()]
+#'   [panel_shade()], [sec_axis_text()]
 #' @export
 axis_ticks <- function(
     ...,
@@ -36,7 +36,7 @@ axis_ticks <- function(
     minor        = FALSE,
     colour       = NULL,
     linewidth    = NULL,
-    ticks_length = ggplot2::rel(1)
+    length = ggplot2::rel(1)
 ) {
   rlang::check_dots_empty()
 
@@ -118,18 +118,18 @@ axis_ticks <- function(
   }
 
   flip_direction <- FALSE
-  if (inherits(ticks_length, "rel")) {
-    rel_value      <- as.numeric(ticks_length)
+  if (inherits(length, "rel")) {
+    rel_value      <- as.numeric(length)
     default_pts    <- as.numeric(grid::convertUnit(calculate_theme_length(), "pt"))
-    ticks_length   <- grid::unit(abs(rel_value) * default_pts, "pt")
+    length   <- grid::unit(abs(rel_value) * default_pts, "pt")
     flip_direction <- rel_value < 0
-  } else if (inherits(ticks_length, "unit")) {
-    tick_pts       <- as.numeric(grid::convertUnit(ticks_length, "pt"))
-    ticks_length   <- grid::unit(abs(tick_pts), "pt")
+  } else if (inherits(length, "unit")) {
+    tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
+    length   <- grid::unit(abs(tick_pts), "pt")
     flip_direction <- tick_pts < 0
-  } else if (is.numeric(ticks_length)) {
-    flip_direction <- ticks_length < 0
-    ticks_length   <- grid::unit(abs(ticks_length), "pt")
+  } else if (is.numeric(length)) {
+    flip_direction <- length < 0
+    length   <- grid::unit(abs(length), "pt")
   }
 
   gp <- ggplot2::gg_par(col = tick_colour, stroke = tick_linewidth, lineend = "butt")
@@ -139,31 +139,31 @@ axis_ticks <- function(
       grid::segmentsGrob(
         x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
         y0 = grid::unit(0, "npc"),
-        y1 = if (flip_direction) grid::unit(0, "npc") + ticks_length
-        else                grid::unit(0, "npc") - ticks_length,
+        y1 = if (flip_direction) grid::unit(0, "npc") + length
+        else                grid::unit(0, "npc") - length,
         gp = gp
       )
     } else if (position == "top") {
       grid::segmentsGrob(
         x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
         y0 = grid::unit(1, "npc"),
-        y1 = if (flip_direction) grid::unit(1, "npc") - ticks_length
-        else                grid::unit(1, "npc") + ticks_length,
+        y1 = if (flip_direction) grid::unit(1, "npc") - length
+        else                grid::unit(1, "npc") + length,
         gp = gp
       )
     } else if (position == "left") {
       grid::segmentsGrob(
         x0 = grid::unit(0, "npc"),
-        x1 = if (flip_direction) grid::unit(0, "npc") + ticks_length
-        else                grid::unit(0, "npc") - ticks_length,
+        x1 = if (flip_direction) grid::unit(0, "npc") + length
+        else                grid::unit(0, "npc") - length,
         y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
         gp = gp
       )
     } else {
       grid::segmentsGrob(
         x0 = grid::unit(1, "npc"),
-        x1 = if (flip_direction) grid::unit(1, "npc") - ticks_length
-        else                grid::unit(1, "npc") + ticks_length,
+        x1 = if (flip_direction) grid::unit(1, "npc") - length
+        else                grid::unit(1, "npc") + length,
         y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
         gp = gp
       )

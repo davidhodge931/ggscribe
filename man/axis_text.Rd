@@ -17,7 +17,7 @@ axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  ticks_length = ggplot2::rel(1)
+  length = ggplot2::rel(1)
 )
 }
 \arguments{
@@ -51,7 +51,7 @@ position in data coordinates instead of the panel edge.}
 
 \item{angle}{Text rotation angle. Defaults to \code{0}.}
 
-\item{ticks_length}{Offset from the axis edge including tick length and margin.
+\item{length}{Offset from the axis edge including tick length and margin.
 Supports \code{rel()}. Negative values place labels inside the panel. Defaults
 to \code{rel(1)} (theme tick length + text margin).}
 }
@@ -63,8 +63,62 @@ Draws text labels at specified break positions along an axis, with style
 defaults taken from the \code{axis.text} element of the set theme. Requires
 \code{coord_cartesian(clip = "off")}.
 }
+\examples{
+library(ggplot2)
+library(dplyr)
+
+set_theme(
+  ggrefine::theme_grey(
+    panel_heights = rep(unit(50, "mm"), 100),
+    panel_widths = rep(unit(75, "mm"), 100),
+  )
+)
+
+mtcars |>
+  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
+  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
+  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
+  coord_cartesian(clip = "off") +
+  #reference lines and shade
+  ggscribe::reference_line(xintercept = 2.4) +
+  ggscribe::reference_line(yintercept = 12)  +
+  ggscribe::panel_shade(
+    xmin = 4,
+    xmax = 5,
+  ) +
+  #top axis
+  scale_x_continuous(
+    sec.axis = ggscribe::sec_axis_text(
+      breaks = c(mean(c(4, 5))),
+      labels = c("Range"),
+      guide = ggscribe::guide_sec_axis_text(
+        angle = 90,
+      )
+    )
+  ) +
+  ggscribe::axis_bracket(
+    position = "top",
+    breaks = c(4, 5),
+  ) +
+  ggscribe::axis_text(
+    position = "top",
+    breaks = c(2.4),
+    labels = c("Threshold"),
+  ) +
+  #right axis
+  ggscribe::axis_text(
+    position = "right",
+    breaks = 12,
+    labels = "Threshold",
+  ) +
+  #'geom
+  geom_point() +
+  #annotations fit plot
+  theme(plot.background = element_rect(colour = "grey92"))
+
+}
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
 \code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis]{sec_axis()}}
+\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
 }

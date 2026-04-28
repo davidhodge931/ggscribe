@@ -19,7 +19,7 @@
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_ticks()], [axis_text()],
 #'   [axis_bracket()], [reference_line()],
-#'   [panel_shade()], [sec_axis()]
+#'   [panel_shade()], [sec_axis_text()]
 #' @export
 axis_line <- function(
     ...,

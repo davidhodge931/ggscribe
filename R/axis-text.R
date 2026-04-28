@@ -23,15 +23,18 @@
 #' @param family Inherits from `axis.text` in the set theme.
 #' @param hjust,vjust Justification. Auto-calculated from `position` if `NULL`.
 #' @param angle Text rotation angle. Defaults to `0`.
-#' @param ticks_length Offset from the axis edge including tick length and margin.
+#' @param length Offset from the axis edge including tick length and margin.
 #'   Supports `rel()`. Negative values place labels inside the panel. Defaults
 #'   to `rel(1)` (theme tick length + text margin).
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_ticks()],
 #'   [axis_bracket()], [reference_line()],
-#'   [panel_shade()], [sec_axis()]
+#'   [panel_shade()], [sec_axis_text()]
 #' @export
+#'
+#' @inherit sec_axis_text examples
+#'
 axis_text <- function(
     ...,
     position     = NULL,
@@ -45,7 +48,7 @@ axis_text <- function(
     hjust        = NULL,
     vjust        = NULL,
     angle        = 0,
-    ticks_length = ggplot2::rel(1)
+    length = ggplot2::rel(1)
 ) {
   rlang::check_dots_empty()
 
@@ -99,7 +102,7 @@ axis_text <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length <- el; break }
   }
 
-  calculate_default_ticks_length <- function() {
+  calculate_default_length <- function() {
     tl <- resolved_length
     if (is.null(tl)) {
       return(grid::unit(0.5 * (current_theme$text$size %||% 11), "pt"))
@@ -114,18 +117,18 @@ axis_text <- function(
   }
 
   flip_direction <- FALSE
-  if (inherits(ticks_length, "rel")) {
-    rel_value      <- as.numeric(ticks_length)
-    default_pts    <- as.numeric(grid::convertUnit(calculate_default_ticks_length(), "pt"))
-    ticks_length   <- grid::unit(abs(rel_value) * default_pts, "pt")
+  if (inherits(length, "rel")) {
+    rel_value      <- as.numeric(length)
+    default_pts    <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
+    length   <- grid::unit(abs(rel_value) * default_pts, "pt")
     flip_direction <- rel_value < 0
-  } else if (inherits(ticks_length, "unit")) {
-    tick_pts       <- as.numeric(grid::convertUnit(ticks_length, "pt"))
-    ticks_length   <- grid::unit(abs(tick_pts), "pt")
+  } else if (inherits(length, "unit")) {
+    tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
+    length   <- grid::unit(abs(tick_pts), "pt")
     flip_direction <- tick_pts < 0
-  } else if (is.numeric(ticks_length)) {
-    flip_direction <- ticks_length < 0
-    ticks_length   <- grid::unit(abs(ticks_length), "pt")
+  } else if (is.numeric(length)) {
+    flip_direction <- length < 0
+    length   <- grid::unit(abs(length), "pt")
   }
 
   text_margin  <- resolved_text_element$margin
@@ -136,7 +139,7 @@ axis_text <- function(
       margin_unit <- text_margin[margin_index]
     }
   }
-  total_length <- ticks_length + margin_unit
+  total_length <- length + margin_unit
 
   if (is.null(hjust)) {
     hjust <- if (position %in% c("top", "bottom")) 0.5

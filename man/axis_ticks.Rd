@@ -13,7 +13,7 @@ axis_ticks(
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
-  ticks_length = ggplot2::rel(1)
+  length = ggplot2::rel(1)
 )
 }
 \arguments{
@@ -37,7 +37,7 @@ position in data coordinates instead of the panel edge.}
 
 \item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports \code{rel()}.}
 
-\item{ticks_length}{Total tick length as a grid unit. Supports \code{rel()}.
+\item{length}{Total tick length as a grid unit. Supports \code{rel()}.
 Negative values flip the tick direction (inward). Defaults to \code{rel(1)}
 (outward at theme tick length).}
 }
@@ -52,5 +52,5 @@ the \code{axis.ticks} element of the set theme. Requires
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_text]{axis_text()}},
 \code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis]{sec_axis()}}
+\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
 }

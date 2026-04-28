@@ -47,26 +47,55 @@ automatically adapting to light or dark panel backgrounds.
 }
 \examples{
 library(ggplot2)
+library(dplyr)
 
 set_theme(
   ggrefine::theme_grey(
     panel_heights = rep(unit(50, "mm"), 100),
     panel_widths = rep(unit(75, "mm"), 100),
-   )
- )
+  )
+)
 
-p <- ggplot(mtcars, aes(wt, mpg)) +
-  geom_point()
+mtcars |>
+  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
+  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
+  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
+  coord_cartesian(clip = "off") +
+  #reference lines and shade
+  ggscribe::reference_line(xintercept = 2.4) +
+  ggscribe::reference_line(yintercept = 12)  +
+  ggscribe::panel_shade(
+    xmin = 4,
+    xmax = 5,
+  ) +
+  #top axis
+  scale_x_continuous(
+    sec.axis = ggscribe::sec_axis_text(
+      breaks = c(mean(c(4, 5))),
+      labels = c("Range"),
+      guide = ggscribe::guide_sec_axis_text(
+        angle = 90,
+      )
+    )
+  ) +
+  ggscribe::axis_bracket(
+    position = "top",
+    breaks = c(4, 5),
+  ) +
+  ggscribe::axis_text(
+    position = "top",
+    breaks = c(2.4),
+    labels = c("Threshold"),
+  ) +
+  #right axis
+  ggscribe::axis_text(
+    position = "right",
+    breaks = 12,
+    labels = "Threshold",
+  ) +
+  #'geom
+  geom_point() +
+  #annotations fit plot
+  theme(plot.background = element_rect(colour = "grey92"))
 
-# Shade the full panel
-p + panel_shade()
-
-# Shade a specific data range
-p + panel_shade(xmin = 3, xmax = 4)
-
-# Shade using normalized coordinates
-p + panel_shade(xmin = I(0.25), xmax = I(0.75))
-
-# Custom fill and opacity
-p + panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
 }

@@ -21,30 +21,8 @@
 #' @return A list containing an annotation layer.
 #' @export
 #'
-#' @examples
-#' library(ggplot2)
+#' @inherit sec_axis_text examples
 #'
-#' set_theme(
-#'   ggrefine::theme_grey(
-#'     panel_heights = rep(unit(50, "mm"), 100),
-#'     panel_widths = rep(unit(75, "mm"), 100),
-#'    )
-#'  )
-#'
-#' p <- ggplot(mtcars, aes(wt, mpg)) +
-#'   geom_point()
-#'
-#' # Shade the full panel
-#' p + panel_shade()
-#'
-#' # Shade a specific data range
-#' p + panel_shade(xmin = 3, xmax = 4)
-#'
-#' # Shade using normalized coordinates
-#' p + panel_shade(xmin = I(0.25), xmax = I(0.75))
-#'
-#' # Custom fill and opacity
-#' p + panel_shade(ymin = 20, ymax = 30, fill = "steelblue", alpha = 0.15)
 panel_shade <- function(
     ...,
     xmin = -Inf,

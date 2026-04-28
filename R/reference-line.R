@@ -1,9 +1,3 @@
-
-
-
-
-
-
 # reference_line --------------------------------------------------------------
 
 #' Annotate a reference line
@@ -21,8 +15,11 @@
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_ticks()],
 #'   [axis_text()], [axis_bracket()], [panel_shade()],
-#'   [sec_axis()]
+#'   [sec_axis_text()]
 #' @export
+#'
+#' @inherit sec_axis_text examples
+#'
 reference_line <- function(
     ...,
     xintercept = NULL,

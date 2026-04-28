@@ -1,6 +1,6 @@
-# theme_sec_axis ------------------------------------------------------------------
+# theme_sec_axis_text ------------------------------------------------------------------
 
-#' Theme modifications for secondary axis annotation
+#' Theme adjustments optimised for secondary axis text annotations
 #'
 #' @param axis Character. "x", "y", or NULL (defaults to both).
 #' @param axis_ticks_to Action for ticks: "transparent", "blank", or "keep".
@@ -11,12 +11,12 @@
 #' @returns A ggplot2 theme object.
 #' @export
 #'
-#' @seealso [sec_axis()], [guide_sec_axis()]
+#' @seealso [sec_axis_text()], [guide_sec_axis_text()]
 #'
 #' @seealso [axis_ticks()], [axis_line()],
 #' [axis_text()], [reference_line()]
 #'
-theme_sec_axis <- function(
+theme_sec_axis_text <- function(
     axis = NULL,
     axis_ticks_to = "transparent",
     axis_line_to = "transparent",

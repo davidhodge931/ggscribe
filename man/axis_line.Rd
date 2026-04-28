@@ -42,5 +42,5 @@ Draws a line along an axis edge, with style defaults taken from the
 \seealso{
 \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_text]{axis_text()}},
 \code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis]{sec_axis()}}
+\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
 }
