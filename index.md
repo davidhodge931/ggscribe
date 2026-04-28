@@ -5,18 +5,17 @@ Visualisation.
 
 Note:
 
-- `sec_axis_annotate` adjusts space in the plot, whereas `annotate_*`
-  functions do not.
-- `annotate_axis_ticks`, `annotate_axis_text` and
-  `annotate_axis_bracket` require (1) a globally set theme with explicit
-  panel dimensions and (2) `coord_cartesian(clip = "off")`
-- `annotate_panel_shade` must be before geoms.
-- `annotate_reference_line` should be before geoms.
+- `sec_axis_annotate` adjusts space in the plot, whereas `*` functions
+  do not.
+- `axis_ticks`, `axis_text` and `axis_bracket` require (1) a globally
+  set theme with explicit panel dimensions and (2)
+  `coord_cartesian(clip = "off")`
+- `panel_shade` must be before geoms.
+- `reference_line` should be before geoms.
 - Where you require annotation text along a axis with different angles
-  etc, use a combination of `sec_axis_annotate` and `annotate_*`
-  functions. The `sec_axis_annotate` function should include the
-  annotation that requires the maximum space that you want the plot to
-  adjust to.
+  etc, use a combination of `sec_axis_annotate` and `*` functions. The
+  `sec_axis_annotate` function should include the annotation that
+  requires the maximum space that you want the plot to adjust to.
 
 ## Installation
 
@@ -44,42 +43,42 @@ set_theme(
 mtcars |>
   ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
   coord_cartesian(clip = "off") +
-  ggscribe::annotate_reference_line(xintercept = 2.4) +
-  ggscribe::annotate_reference_line(yintercept = 12)  +
+  ggscribe::reference_line(xintercept = 2.4) +
+  ggscribe::reference_line(yintercept = 12)  +
   geom_point() +
   scale_x_continuous(
-    sec.axis = ggscribe::sec_axis_annotate(
+    sec.axis = ggscribe::sec_axis(
       breaks = c(mean(c(4, 5))),
       labels = c("Threshold"),
-      guide = ggscribe::guide_axis_annotate(
+      guide = ggscribe::guide_axis(
         angle = 90,
       )
     )
   ) +
-  ggscribe::annotate_axis_text(
+  ggscribe::axis_text(
     position = "top",
     breaks = c(2.4),
     labels = c("A"),
   ) +
-  ggscribe::annotate_axis_text(
+  ggscribe::axis_text(
       position = "right",
       breaks = 12,
       labels = "C",
   ) +
-  ggscribe::annotate_axis_bracket(
+  ggscribe::axis_bracket(
     position = "top",
     breaks = c(4, 5),
   ) +
-  ggscribe::annotate_panel_shade(
+  ggscribe::panel_shade(
     xmin = 4,
     xmax = 5,
   ) +
-  ggscribe::annotate_axis_text(
+  ggscribe::axis_text(
     position = "bottom",
     breaks = 4.25,
     labels = "D",
   ) +
-  ggscribe::annotate_axis_ticks(
+  ggscribe::axis_ticks(
     position = "bottom",
     breaks = 4.25,
   ) +

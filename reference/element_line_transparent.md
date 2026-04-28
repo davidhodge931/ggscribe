@@ -26,8 +26,8 @@ An `element_line` object.
 
 ## See also
 
-[`theme_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis_annotate.md),
-[`guide_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis_annotate.md)
+[`theme_axis()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis.md),
+[`guide_axis()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis.md)
 
 ## Examples
 
