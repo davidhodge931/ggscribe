@@ -13,7 +13,7 @@ sec_axis(
   breaks = ggplot2::waiver(),
   labels = ggplot2::derive(),
   name = NULL,
-  guide = ggplot2::guide_axis(theme = theme_axis()),
+  guide = ggplot2::guide_axis(theme = theme_sec_axis()),
   ...
 )
 ```
@@ -55,9 +55,9 @@ sec_axis(
 - guide:
 
   A guide object used to render the axis. Defaults to
-  [`guide_axis()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis.md),
+  [`guide_sec_axis()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis.md),
   which uses
-  [`theme_axis()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis.md)
+  [`theme_sec_axis()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis.md)
   to make transparent ticks and lines by default.
 
 - ...:
@@ -74,8 +74,8 @@ or
 
 ## See also
 
-[`guide_axis()`](https://davidhodge931.github.io/ggscribe/reference/guide_axis.md),
-[`theme_axis()`](https://davidhodge931.github.io/ggscribe/reference/theme_axis.md),
+[`guide_sec_axis()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis.md),
+[`theme_sec_axis()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis.md),
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md)
 
 ## Examples
