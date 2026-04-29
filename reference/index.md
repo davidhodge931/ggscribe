@@ -1,6 +1,6 @@
 # Package index
 
-## Secondary axis text
+## Secondary axis
 
 - [`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)
   : Secondary axis optimised for text annotations
@@ -9,7 +9,7 @@
 - [`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md)
   : Theme adjustments optimised for secondary axis text annotations
 
-## Other annotations
+## Annotation
 
 - [`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md)
   : Annotate an axis line
@@ -24,7 +24,7 @@
 - [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md)
   : Annotate a reference line
 
-## Contrast aesthetic
+## Aesthetics
 
 - [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
   : A mapped aesthetic for text colour on fill
