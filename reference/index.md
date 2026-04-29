@@ -24,7 +24,7 @@
 - [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md)
   : Annotate a reference line
 
-## Aesthetics
+## Aesthetic
 
 - [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
   : A mapped aesthetic for text colour on fill
