@@ -1,8 +1,8 @@
-# ggscribe: Annotate 'ggplot2' Visualisation
+# ggscribe: Publication-Quality 'ggplot2' Annotation
 
-Annotation helper functions for publication-quality visualisation. These
-functions make it straightforward to annotate plots in a way that stays
-consistent with the set theme.
+Annotation helper functions for publication-quality 'ggplot2'
+visualisation. These functions make it easier to annotate plots in a way
+that stays consistent with the set theme.
 
 ## See also
 
