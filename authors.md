@@ -10,11 +10,11 @@
 Source:
 [`DESCRIPTION`](https://github.com/davidhodge931/ggscribe/blob/main/DESCRIPTION)
 
-Hodge D (2026). *ggscribe: Annotate 'ggplot2' Visualisation*. R package
-version 0.1.0, <https://github.com/davidhodge931/ggscribe>.
+Hodge D (2026). *ggscribe: Publication-Quality 'ggplot2' Annotation*. R
+package version 0.1.0, <https://github.com/davidhodge931/ggscribe>.
 
     @Manual{,
-      title = {ggscribe: Annotate 'ggplot2' Visualisation},
+      title = {ggscribe: Publication-Quality 'ggplot2' Annotation},
       author = {David Hodge},
       year = {2026},
       note = {R package version 0.1.0},
