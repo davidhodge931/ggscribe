@@ -1,14 +1,14 @@
 Package: ggscribe
-Title: Annotate 'ggplot2' Visualisation
+Title: Publication-Quality 'ggplot2' Annotation
 Version: 0.1.0
 Authors@R: 
     person(given = "David", family = "Hodge", 
            email = "davidhodge931@gmail.com", 
            role = c("aut", "cre", "cph"), 
            comment = c(ORCID = "0000-0002-3868-7501"))
-Description: Annotation helper functions for publication-quality visualisation. 
-    These functions make it straightforward to annotate plots in a way
-    that stays consistent with the set theme.
+Description: Annotation helper functions for publication-quality 'ggplot2' 
+    visualisation. These functions make it easier to annotate plots in 
+    a way that stays consistent with the set theme.
 License: MIT + file LICENSE
 URL: https://github.com/davidhodge931/ggscribe,
     https://davidhodge931.github.io/ggscribe/
