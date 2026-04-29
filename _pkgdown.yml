@@ -3,12 +3,12 @@ template:
   bootstrap: 5
   light-switch: yes
 reference:
-- title: Secondary axis text
+- title: Secondary axis
 - contents:
   - sec_axis_text
   - guide_sec_axis_text
   - theme_sec_axis_text
-- title: Other annotations
+- title: Annotation
 - contents:
   - axis_line
   - axis_ticks
@@ -16,6 +16,6 @@ reference:
   - axis_text
   - panel_shade
   - reference_line
-- title: Contrast aesthetic
+- title: Aesthetics
 - contents:
   - aes_contrast
