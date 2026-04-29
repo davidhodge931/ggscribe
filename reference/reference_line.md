@@ -1,8 +1,7 @@
 # Annotate a reference line
 
 Draws a reference line within the panel, with style defaults taken from
-the `axis.line` element of the set theme. Requires
-`coord_cartesian(clip = "off")`.
+the `axis.line` element of the set theme.
 
 ## Usage
 

@@ -1,20 +1,19 @@
 # ggscribe
 
-The objective of ggscribe is to provide helpers to annotate ‘ggplot2’
-Visualisation.
+The objective of ggscribe is to provide annotation helper functions for
+publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
 - To avoid namespace collisions, it is recommended to not load the
   package, but instead refer to each function with the package name
   (e.g. [`ggscribe::sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md).
-- `sec_axis_text` adjusts space in the plot, whereas `*` functions do
-  not.
+- `sec_axis_text` adjusts space in the plot, whereas `axis_*` functions
+  do not.
 - `axis_ticks`, `axis_text` and `axis_bracket` require (1) a globally
   set theme with explicit panel dimensions and (2)
   `coord_cartesian(clip = "off")`
 - `panel_shade` must be before geoms.
-- `reference_line` should be before geoms.
 - Where you require annotation text along a axis with different angles
   etc, use a combination of `sec_axis_text` and `axis_*` functions. The
   `sec_axis_text` function should include the annotation that requires

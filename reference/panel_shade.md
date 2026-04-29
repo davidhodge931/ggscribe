@@ -3,6 +3,7 @@
 Draws a filled rectangle over the panel with colour defaults taken from
 the set theme. Defaults to a subtle overlay across the full panel, with
 the fill automatically adapting to light or dark panel backgrounds.
+Should be placed before geom layers.
 
 ## Usage
 

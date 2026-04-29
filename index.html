@@ -68,19 +68,17 @@
 </div>
 <!-- badges: start -->
 
-<p>The objective of ggscribe is to provide helpers to annotate ‘ggplot2’ Visualisation.</p>
+<p>The objective of ggscribe is to provide annotation helper functions for publication-quality ‘ggplot2’ visualisation.</p>
 <p>Note:</p>
 <ul>
 <li>To avoid namespace collisions, it is recommended to not load the package, but instead refer to each function with the package name (e.g. <code><a href="reference/sec_axis_text.html">ggscribe::sec_axis_text()</a></code>.</li>
 <li>
-<code>sec_axis_text</code> adjusts space in the plot, whereas <code>*</code> functions do not.</li>
+<code>sec_axis_text</code> adjusts space in the plot, whereas <code>axis_*</code> functions do not.</li>
 <li>
 <code>axis_ticks</code>, <code>axis_text</code> and <code>axis_bracket</code> require (1) a globally set theme with explicit panel dimensions and (2) <code>coord_cartesian(clip = "off")</code>
 </li>
 <li>
 <code>panel_shade</code> must be before geoms.</li>
-<li>
-<code>reference_line</code> should be before geoms.</li>
 <li>Where you require annotation text along a axis with different angles etc, use a combination of <code>sec_axis_text</code> and <code>axis_*</code> functions. The <code>sec_axis_text</code> function should include the annotation that requires the maximum space that you want the plot to adjust to.</li>
 </ul>
 <div class="section level2">
