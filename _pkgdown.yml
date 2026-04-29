@@ -16,6 +16,6 @@ reference:
   - axis_text
   - panel_shade
   - reference_line
-- title: Aesthetics
+- title: Aesthetic
 - contents:
   - aes_contrast
