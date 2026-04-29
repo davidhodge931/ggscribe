@@ -31,7 +31,7 @@ A list of ggplot2 annotation layers.
 }
 \description{
 Draws a reference line within the panel, with style defaults taken from the
-\code{axis.line} element of the set theme. Requires \code{coord_cartesian(clip = "off")}.
+\code{axis.line} element of the set theme.
 }
 \examples{
 library(ggplot2)

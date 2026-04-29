@@ -3,7 +3,7 @@
 #' Annotate a reference line
 #'
 #' Draws a reference line within the panel, with style defaults taken from the
-#' `axis.line` element of the set theme. Requires `coord_cartesian(clip = "off")`.
+#' `axis.line` element of the set theme.
 #'
 #' @param ... Not used. Forces named arguments.
 #' @param xintercept Draw a vertical reference line at this x position.
