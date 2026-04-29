@@ -4,11 +4,11 @@
 \name{ggscribe-package}
 \alias{ggscribe}
 \alias{ggscribe-package}
-\title{ggscribe: Annotate 'ggplot2' Visualisation}
+\title{ggscribe: Publication-Quality 'ggplot2' Annotation}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Annotation helper functions for publication-quality visualisation. These functions make it straightforward to annotate plots in a way that stays consistent with the set theme.
+Annotation helper functions for publication-quality 'ggplot2' visualisation. These functions make it easier to annotate plots in a way that stays consistent with the set theme.
 }
 \seealso{
 Useful links:

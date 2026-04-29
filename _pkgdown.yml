@@ -2,3 +2,20 @@ url: https://davidhodge931.github.io/ggscribe/
 template:
   bootstrap: 5
   light-switch: yes
+reference:
+- title: Secondary axis text
+- contents:
+  - sec_axis_text
+  - guide_sec_axis_text
+  - theme_sec_axis_text
+- title: Other annotations
+- contents:
+  - axis_line
+  - axis_ticks
+  - axis_bracket
+  - axis_text
+  - panel_shade
+  - reference_line
+- title: Contrast aesthetic
+- contents:
+  - aes_contrast
