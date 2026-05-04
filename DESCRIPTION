@@ -1,6 +1,6 @@
 Package: ggscribe
 Title: Publication-Quality 'ggplot2' Annotation
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "David", family = "Hodge", 
            email = "davidhodge931@gmail.com", 
