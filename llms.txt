@@ -25,6 +25,7 @@ Install from CRAN, or the development version from
 [GitHub](https://github.com/davidhodge931/ggscribe).
 
 ``` r
+
 install.packages("ggscribe")
 pak::pak("davidhodge931/ggscribe")
 ```
@@ -34,6 +35,7 @@ pak::pak("davidhodge931/ggscribe")
 ggscribe provides various axis and panel annotation helper functions.
 
 ``` r
+
 library(ggplot2)
 library(dplyr)
 
@@ -93,6 +95,7 @@ And a function to ensure text is easily coloured for contrast on a fill
 aesthetic.
 
 ``` r
+
 ggwidth::set_equiwidth(equiwidth = 1.75)
 
 mtcars |>
@@ -118,10 +121,19 @@ mtcars |>
     show.legend = FALSE,
   ) +
   scale_y_continuous(expand = expansion(c(0, 0.05))) +
-  ggrefine::hybrid(x_type = "discrete")
+  ggrefine::modern(x_type = "discrete")
 ```
 
 ![](reference/figures/README-unnamed-chunk-3-1.png)
+
+## Other packages
+
+This package is part of a group of related packages built to extend
+[ggplot2](https://ggplot2.tidyverse.org).
+
+|  |  |  |  |  |  |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| [![ggblanket](https://raw.githubusercontent.com/davidhodge931/ggblanket/main/man/figures/logo.svg)](https://davidhodge931.github.io/ggblanket/) | [![ggrefine](https://raw.githubusercontent.com/davidhodge931/ggrefine/main/man/figures/logo.svg)](https://davidhodge931.github.io/ggrefine/) | [![ggscribe](https://raw.githubusercontent.com/davidhodge931/ggscribe/main/man/figures/logo.svg)](https://davidhodge931.github.io/ggscribe/) | [![ggwidth](https://raw.githubusercontent.com/davidhodge931/ggwidth/main/man/figures/logo.svg)](https://davidhodge931.github.io/ggwidth/) | [![blends](https://raw.githubusercontent.com/davidhodge931/blends/main/man/figures/logo.svg)](https://davidhodge931.github.io/blends/) | [![jumble](https://raw.githubusercontent.com/davidhodge931/jumble/main/man/figures/logo.svg)](https://davidhodge931.github.io/jumble/) |
 
 # Package index
 

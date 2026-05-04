@@ -89,7 +89,7 @@ mtcars |>
   ) +
   scale_y_continuous(expand = expansion(c(0, 0.05))) +
   ggrefine::modern(x_type = "discrete")
-#> Error: 'modern' is not an exported object from 'namespace:ggrefine'
+
 
 mtcars |>
   count(cyl, am) |>
@@ -117,5 +117,5 @@ mtcars |>
   ) +
   scale_x_continuous(expand = expansion(c(0, 0.05))) +
   ggrefine::modern(y_type = "discrete")
-#> Error: 'modern' is not an exported object from 'namespace:ggrefine'
+
 ```
