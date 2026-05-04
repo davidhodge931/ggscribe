@@ -2,6 +2,8 @@
 
 ## ggscribe 0.1.1
 
+CRAN release: 2026-05-04
+
 - Updated Readme.
 
 ## ggscribe 0.1.0

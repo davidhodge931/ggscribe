@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/davidhodge931/ggscribe/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/davidhodge931/ggscribe/blob/0.1.1/DESCRIPTION)
 
 Hodge D (2026). *ggscribe: Publication-Quality 'ggplot2' Annotation*. R
 package version 0.1.1, <https://github.com/davidhodge931/ggscribe>.
