@@ -1,6 +1,7 @@
 # ggscribe (development)
 
 * Improved ticks and bracket linewidth.
+* Removed `theme_sec_axis_text`.
 
 # ggscribe 0.1.1
 

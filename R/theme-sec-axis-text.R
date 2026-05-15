@@ -9,7 +9,7 @@
 #' @param axis_title_to Action for titles: "transparent", "blank", or "keep".
 #'
 #' @returns A ggplot2 theme object.
-#' @export
+#' @noRd
 #'
 #' @seealso [sec_axis_text()], [guide_sec_axis_text()]
 #'

@@ -11,8 +11,7 @@
 #' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
 #'    derive the name from the primary axis, or `NULL` (default) for no name.
 #' @param guide A guide object used to render the axis. Defaults to
-#'    [guide_sec_axis_text()], which uses [theme_sec_axis_text()] to
-#'    make transparent ticks and lines by default.
+#'    [guide_sec_axis_text()], which makes transparent ticks and lines.
 #' @param labels One of:
 #'    - A character vector of labels, the same length as `breaks`
 #'    - A function that takes break positions as input and returns labels
@@ -21,8 +20,7 @@
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
 #'    `scale_x_continuous()` or `scale_y_continuous()`.
 #'
-#' @seealso [guide_sec_axis_text()], [theme_sec_axis_text()], [axis_text()]
-#'
+#' @seealso [guide_sec_axis_text()], [axis_text()], [axis_ticks()], [axis_bracket()]#'
 #' @export
 #'
 #' @examples

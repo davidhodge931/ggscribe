@@ -4,24 +4,21 @@
 \alias{guide_sec_axis_text}
 \title{Guide optimised for secondary axis text annotations}
 \usage{
-guide_sec_axis_text(..., theme = theme_sec_axis_text())
+guide_sec_axis_text(..., theme = NULL)
 }
 \arguments{
 \item{...}{Additional arguments passed to \code{\link[ggplot2:guide_axis]{ggplot2::guide_axis()}}, such as
 \code{title}, \code{check.overlap}, or \code{angle}.}
 
-\item{theme}{A \code{theme} object to style the guide. Defaults to
-\code{\link[=theme_sec_axis_text]{theme_sec_axis_text()}}, which suppresses ticks and lines.}
+\item{theme}{A \code{theme} object to adjust the style of the guide.}
 }
 \value{
 A \code{guide} object to be used in a scale's \code{guide} argument or within
 \code{\link[=sec_axis_text]{sec_axis_text()}}.
 }
 \description{
-A wrapper around \code{\link[ggplot2:guide_axis]{ggplot2::guide_axis()}} that defaults to using
-\code{\link[=theme_sec_axis_text]{theme_sec_axis_text()}}. This guide is designed to strip away standard axis
-furniture (like lines and ticks) while preserving text, making it ideal for
-secondary axes used as margin labels.
+A wrapper around \code{\link[ggplot2:guide_axis]{ggplot2::guide_axis()}} that defaults to making transparent
+ticks and lines while preserving text, making it ideal for annotation labels.
 }
 \examples{
 library(ggplot2)
@@ -78,5 +75,5 @@ mtcars |>
 
 }
 \seealso{
-\code{\link[=sec_axis_text]{sec_axis_text()}}, \code{\link[=theme_sec_axis_text]{theme_sec_axis_text()}}
+\code{\link[=sec_axis_text]{sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}
 }

@@ -32,8 +32,7 @@ positions (e.g. \verb{\\(x) mean(c(x[2], 32))})
 derive the name from the primary axis, or \code{NULL} (default) for no name.}
 
 \item{guide}{A guide object used to render the axis. Defaults to
-\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, which uses \code{\link[=theme_sec_axis_text]{theme_sec_axis_text()}} to
-make transparent ticks and lines by default.}
+\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, which makes transparent ticks and lines.}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:dup_axis]{ggplot2::dup_axis()}}.}
 }
@@ -99,5 +98,5 @@ mtcars |>
 
 }
 \seealso{
-\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, \code{\link[=theme_sec_axis_text]{theme_sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}
+\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}#'
 }
