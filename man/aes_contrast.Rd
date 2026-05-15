@@ -21,7 +21,7 @@ A ggplot2 aesthetic in \link[ggplot2:aes]{ggplot2::aes}.
 \description{
 Modifies a mapped colour (or fill) aesthetic for contrast against the fill (or colour) aesthetic.
 
-Function can be spliced into \link[ggplot2:aes]{ggplot2::aes} with \link[rlang:splice-operator]{rlang::!!!}.
+Function can be spliced into \link[ggplot2:aes]{ggplot2::aes} with \link[rlang:!!!]{rlang::!!!}.
 }
 \examples{
 library(ggplot2)

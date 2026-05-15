@@ -9,11 +9,11 @@
 #' @param ... Not used. Forces named arguments.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
 #'   from `xintercept` or `yintercept` if not provided.
+#' @param breaks A numeric vector of break positions.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
 #'   position in data coordinates instead of the panel edge.
-#' @param breaks A numeric vector of break positions.
 #' @param labels One of:
 #'   - `NULL` (default) to use break values as labels
 #'   - A character vector the same length as `breaks`
@@ -38,9 +38,9 @@
 axis_text <- function(
     ...,
     position     = NULL,
+    breaks,
     xintercept   = NULL,
     yintercept   = NULL,
-    breaks,
     labels       = NULL,
     colour       = NULL,
     size         = NULL,

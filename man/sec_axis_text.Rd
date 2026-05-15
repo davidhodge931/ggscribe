@@ -6,9 +6,9 @@
 \usage{
 sec_axis_text(
   breaks = ggplot2::waiver(),
-  labels = ggplot2::derive(),
+  labels = NULL,
   name = NULL,
-  guide = ggplot2::guide_axis(theme = theme_sec_axis_text()),
+  guide = guide_sec_axis_text(),
   ...
 )
 }
@@ -24,7 +24,6 @@ positions (e.g. \verb{\\(x) mean(c(x[2], 32))})
 
 \item{labels}{One of:
 \itemize{
-\item \code{\link[ggplot2:sec_axis]{ggplot2::derive()}} (default) to derive labels from \code{breaks}
 \item A character vector of labels, the same length as \code{breaks}
 \item A function that takes break positions as input and returns labels
 }}
@@ -36,7 +35,7 @@ derive the name from the primary axis, or \code{NULL} (default) for no name.}
 \code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, which uses \code{\link[=theme_sec_axis_text]{theme_sec_axis_text()}} to
 make transparent ticks and lines by default.}
 
-\item{...}{Additional arguments passed to \code{\link[ggplot2:sec_axis]{ggplot2::dup_axis()}}.}
+\item{...}{Additional arguments passed to \code{\link[ggplot2:dup_axis]{ggplot2::dup_axis()}}.}
 }
 \value{
 A \code{AxisSecondary} object for use in the \code{sec.axis} argument of

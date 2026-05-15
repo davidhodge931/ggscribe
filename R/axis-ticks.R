@@ -9,11 +9,11 @@
 #' @param ... Not used. Forces named arguments.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
 #'   from `xintercept` or `yintercept` if not provided.
+#' @param breaks A numeric vector of break positions.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
 #'   position in data coordinates instead of the panel edge.
-#' @param breaks A numeric vector of break positions.
 #' @param minor Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
 #'   `FALSE`.
 #' @param colour Inherits from `axis.ticks` in the set theme.
@@ -30,9 +30,9 @@
 axis_ticks <- function(
     ...,
     position     = NULL,
+    breaks,
     xintercept   = NULL,
     yintercept   = NULL,
-    breaks,
     minor        = FALSE,
     colour       = NULL,
     linewidth    = NULL,
@@ -132,7 +132,12 @@ axis_ticks <- function(
     length   <- grid::unit(abs(length), "pt")
   }
 
-  gp <- ggplot2::gg_par(col = tick_colour, stroke = tick_linewidth, lineend = "butt")
+  # gp <- ggplot2::gg_par(col = tick_colour, stroke = tick_linewidth, lineend = "butt")
+  gp <- grid::gpar(
+    col     = tick_colour,
+    lwd     = tick_linewidth * ggplot2::.pt,
+    lineend = "butt"
+  )
 
   lapply(breaks, \(break_val) {
     tick_grob <- if (position == "bottom") {

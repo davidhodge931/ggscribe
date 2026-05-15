@@ -155,8 +155,15 @@ axis_bracket <- function(
   # annotation_custom + segmentsGrob pinned to each break — same rendering
   # path as axis_ticks(). Cap drawn at every break value.
 
-  gp_cap <- ggplot2::gg_par(
-    col = line_colour, stroke = line_linewidth, lty = line_linetype, lineend = "butt"
+  # gp_cap <- ggplot2::gg_par(
+  #   col = line_colour, stroke = line_linewidth, lty = line_linetype, lineend = "butt"
+  # )
+
+  gp_cap <- grid::gpar(
+    col     = line_colour,
+    lwd     = line_linewidth * ggplot2::.pt,
+    lty     = line_linetype,
+    lineend = "butt"
   )
 
   cap_grob <- if (position == "bottom") {

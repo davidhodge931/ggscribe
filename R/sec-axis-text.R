@@ -14,7 +14,6 @@
 #'    [guide_sec_axis_text()], which uses [theme_sec_axis_text()] to
 #'    make transparent ticks and lines by default.
 #' @param labels One of:
-#'    - [ggplot2::derive()] (default) to derive labels from `breaks`
 #'    - A character vector of labels, the same length as `breaks`
 #'    - A function that takes break positions as input and returns labels
 #' @param ... Additional arguments passed to [ggplot2::dup_axis()].
@@ -81,11 +80,17 @@
 #'
 sec_axis_text <- function(
     breaks = ggplot2::waiver(),
-    labels = ggplot2::derive(),
+    labels = NULL,
     name = NULL,
-    guide = ggplot2::guide_axis(theme = theme_sec_axis_text()),
+    guide = guide_sec_axis_text(),
     ...
 ) {
+
+  if (is.null(labels)) {
+    labels <- as.character(breaks)
+  } else if (is.function(labels)) {
+    labels <- labels(breaks)
+  }
 
   ggplot2::sec_axis(
     transform = "identity",

@@ -1,6 +1,6 @@
 Package: ggscribe
 Title: Publication-Quality 'ggplot2' Annotation
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: 
     person(given = "David", family = "Hodge", 
            email = "davidhodge931@gmail.com", 
@@ -25,7 +25,6 @@ Imports:
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Suggests: 
     blends,
     dplyr,
@@ -38,3 +37,4 @@ Suggests:
     spelling,
     stringr
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

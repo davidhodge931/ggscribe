@@ -7,9 +7,9 @@
 axis_ticks(
   ...,
   position = NULL,
+  breaks,
   xintercept = NULL,
   yintercept = NULL,
-  breaks,
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
@@ -22,13 +22,13 @@ axis_ticks(
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
 from \code{xintercept} or \code{yintercept} if not provided.}
 
+\item{breaks}{A numeric vector of break positions.}
+
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
 position in data coordinates instead of the panel edge.}
 
 \item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
 position in data coordinates instead of the panel edge.}
-
-\item{breaks}{A numeric vector of break positions.}
 
 \item{minor}{Logical. If \code{TRUE}, uses minor tick theme defaults. Defaults to
 \code{FALSE}.}

@@ -14,9 +14,6 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- To avoid namespace collisions, it is recommended to not load the
-  package, but instead refer to each function with the package name
-  (e.g. `ggscribe::sec_axis_text()`.
 - `sec_axis_text` adjusts space in the plot, whereas `axis_*` functions
   do not.
 - `axis_ticks`, `axis_text` and `axis_bracket` require (1) a globally
@@ -90,6 +87,19 @@ mtcars |>
     breaks = 12,
     labels = "Threshold",
   ) +
+  #bottom axis
+  ggscribe::axis_ticks(
+    position = "bottom",
+    breaks = 3.8,
+    length = rel(4.33),
+  ) +
+  ggscribe::axis_text(
+    position = "bottom",
+    breaks = 3.8,
+    labels = "Threshold",
+    length = rel(4.33),
+  ) +
+  labs(x = "\nWeight") +
   #geom
   geom_point() +
   #annotations fit plot
