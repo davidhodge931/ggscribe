@@ -163,7 +163,7 @@ axis_bracket <- function(
     col     = line_colour,
     lwd     = line_linewidth * ggplot2::.pt,
     lty     = line_linetype,
-    lineend = "butt"
+    lineend = "square"
   )
 
   cap_grob <- if (position == "bottom") {
