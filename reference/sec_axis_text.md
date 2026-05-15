@@ -7,9 +7,9 @@ Secondary axis optimised for text annotations
 ``` r
 sec_axis_text(
   breaks = ggplot2::waiver(),
-  labels = ggplot2::derive(),
+  labels = NULL,
   name = NULL,
-  guide = ggplot2::guide_axis(theme = theme_sec_axis_text()),
+  guide = guide_sec_axis_text(),
   ...
 )
 ```
@@ -33,9 +33,6 @@ sec_axis_text(
 - labels:
 
   One of:
-
-  - [`ggplot2::derive()`](https://ggplot2.tidyverse.org/reference/sec_axis.html)
-    (default) to derive labels from `breaks`
 
   - A character vector of labels, the same length as `breaks`
 

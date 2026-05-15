@@ -11,7 +11,7 @@ coord_cartesian(clip = "off").'><meta property="og:image" content="https://david
 
     <a class="navbar-brand me-2" href="../index.html">ggscribe</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ coord_cartesian(clip = "off").'><meta property="og:image" content="https://david
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Annotate axis text</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/0.1.1/R/axis-text.R" class="external-link"><code>R/axis-text.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis-text.R" class="external-link"><code>R/axis-text.R</code></a></small>
       <div class="d-none name"><code>axis_text.Rd</code></div>
     </div>
 
@@ -53,9 +53,9 @@ defaults taken from the <code>axis.text</code> element of the set theme. Require
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">axis_text</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  position <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">breaks</span>,</span>
 <span>  xintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  yintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">breaks</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -80,6 +80,10 @@ defaults taken from the <code>axis.text</code> element of the set theme. Require
 from <code>xintercept</code> or <code>yintercept</code> if not provided.</p></dd>
 
 
+<dt id="arg-breaks">breaks<a class="anchor" aria-label="anchor" href="#arg-breaks"></a></dt>
+<dd><p>A numeric vector of break positions.</p></dd>
+
+
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>
 <dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the axis to this x
 position in data coordinates instead of the panel edge.</p></dd>
@@ -88,10 +92,6 @@ position in data coordinates instead of the panel edge.</p></dd>
 <dt id="arg-yintercept">yintercept<a class="anchor" aria-label="anchor" href="#arg-yintercept"></a></dt>
 <dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the axis to this y
 position in data coordinates instead of the panel edge.</p></dd>
-
-
-<dt id="arg-breaks">breaks<a class="anchor" aria-label="anchor" href="#arg-breaks"></a></dt>
-<dd><p>A numeric vector of break positions.</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>

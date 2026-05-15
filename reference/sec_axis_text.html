@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ggscribe</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Secondary axis optimised for text annotations</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/0.1.1/R/sec-axis-text.R" class="external-link"><code>R/sec-axis-text.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/sec-axis-text.R" class="external-link"><code>R/sec-axis-text.R</code></a></small>
       <div class="d-none name"><code>sec_axis_text.Rd</code></div>
     </div>
 
@@ -46,9 +46,9 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sec_axis_text</span><span class="op">(</span></span>
 <span>  breaks <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/waiver.html" class="external-link">waiver</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  labels <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/sec_axis.html" class="external-link">derive</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  guide <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_axis.html" class="external-link">guide_axis</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="fu"><a href="theme_sec_axis_text.html">theme_sec_axis_text</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  guide <span class="op">=</span> <span class="fu"><a href="guide_sec_axis_text.html">guide_sec_axis_text</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -67,8 +67,7 @@ positions (e.g. <code>\(x) mean(c(x[2], 32))</code>)</p></li>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
-<dd><p>One of:</p><ul><li><p><code><a href="https://ggplot2.tidyverse.org/reference/sec_axis.html" class="external-link">ggplot2::derive()</a></code> (default) to derive labels from <code>breaks</code></p></li>
-<li><p>A character vector of labels, the same length as <code>breaks</code></p></li>
+<dd><p>One of:</p><ul><li><p>A character vector of labels, the same length as <code>breaks</code></p></li>
 <li><p>A function that takes break positions as input and returns labels</p></li>
 </ul></dd>
 

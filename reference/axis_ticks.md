@@ -10,9 +10,9 @@ from the `axis.ticks` element of the set theme. Requires
 axis_ticks(
   ...,
   position = NULL,
+  breaks,
   xintercept = NULL,
   yintercept = NULL,
-  breaks,
   minor = FALSE,
   colour = NULL,
   linewidth = NULL,
@@ -31,6 +31,10 @@ axis_ticks(
   One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
   `xintercept` or `yintercept` if not provided.
 
+- breaks:
+
+  A numeric vector of break positions.
+
 - xintercept:
 
   For `"left"`/`"right"` axes: float the axis to this x position in data
@@ -40,10 +44,6 @@ axis_ticks(
 
   For `"top"`/`"bottom"` axes: float the axis to this y position in data
   coordinates instead of the panel edge.
-
-- breaks:
-
-  A numeric vector of break positions.
 
 - minor:
 

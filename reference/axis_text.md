@@ -10,9 +10,9 @@ defaults taken from the `axis.text` element of the set theme. Requires
 axis_text(
   ...,
   position = NULL,
+  breaks,
   xintercept = NULL,
   yintercept = NULL,
-  breaks,
   labels = NULL,
   colour = NULL,
   size = NULL,
@@ -35,6 +35,10 @@ axis_text(
   One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
   `xintercept` or `yintercept` if not provided.
 
+- breaks:
+
+  A numeric vector of break positions.
+
 - xintercept:
 
   For `"left"`/`"right"` axes: float the axis to this x position in data
@@ -44,10 +48,6 @@ axis_text(
 
   For `"top"`/`"bottom"` axes: float the axis to this y position in data
   coordinates instead of the panel edge.
-
-- breaks:
-
-  A numeric vector of break positions.
 
 - labels:
 
