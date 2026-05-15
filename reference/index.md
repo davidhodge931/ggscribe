@@ -6,8 +6,6 @@
   : Secondary axis optimised for text annotations
 - [`guide_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_text.md)
   : Guide optimised for secondary axis text annotations
-- [`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md)
-  : Theme adjustments optimised for secondary axis text annotations
 
 ## Annotation
 

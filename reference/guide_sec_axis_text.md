@@ -2,16 +2,13 @@
 
 A wrapper around
 [`ggplot2::guide_axis()`](https://ggplot2.tidyverse.org/reference/guide_axis.html)
-that defaults to using
-[`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md).
-This guide is designed to strip away standard axis furniture (like lines
-and ticks) while preserving text, making it ideal for secondary axes
-used as margin labels.
+that defaults to making transparent ticks and lines while preserving
+text, making it ideal for annotation labels.
 
 ## Usage
 
 ``` r
-guide_sec_axis_text(..., theme = theme_sec_axis_text())
+guide_sec_axis_text(..., theme = NULL)
 ```
 
 ## Arguments
@@ -24,9 +21,7 @@ guide_sec_axis_text(..., theme = theme_sec_axis_text())
 
 - theme:
 
-  A `theme` object to style the guide. Defaults to
-  [`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md),
-  which suppresses ticks and lines.
+  A `theme` object to adjust the style of the guide.
 
 ## Value
 
@@ -36,7 +31,9 @@ A `guide` object to be used in a scale's `guide` argument or within
 ## See also
 
 [`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md),
-[`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md)
+[`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
+[`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
+[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)
 
 ## Examples
 

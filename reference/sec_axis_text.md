@@ -49,9 +49,7 @@ sec_axis_text(
 
   A guide object used to render the axis. Defaults to
   [`guide_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_text.md),
-  which uses
-  [`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md)
-  to make transparent ticks and lines by default.
+  which makes transparent ticks and lines.
 
 - ...:
 
@@ -68,8 +66,9 @@ or
 ## See also
 
 [`guide_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_text.md),
-[`theme_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/theme_sec_axis_text.md),
-[`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md)
+[`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
+[`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
+[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)\#'
 
 ## Examples
 
