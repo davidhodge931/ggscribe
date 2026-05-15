@@ -7,7 +7,6 @@ reference:
 - contents:
   - sec_axis_text
   - guide_sec_axis_text
-  - theme_sec_axis_text
 - title: Annotation
 - contents:
   - axis_line
