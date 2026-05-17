@@ -14,16 +14,12 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- `sec_axis_text` adjusts space in the plot, whereas `axis_*` functions
-  do not.
+- A secondary axis such as `sec_axis_text` adjusts space whereas other
+  functions do not.
 - `axis_ticks`, `axis_text` and `axis_bracket` require (1) a globally
   set theme with explicit panel dimensions and (2)
   `coord_cartesian(clip = "off")`
-- `panel_shade` must be before geoms.
-- Where you require annotation text along a axis with different angles
-  etc, use a combination of `sec_axis_text` and `axis_*` functions. The
-  `sec_axis_text` function should include the annotation that requires
-  the maximum space that you want the plot to adjust to.
+- `panel_shade` should be before geoms.
 
 ## Installation
 

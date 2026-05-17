@@ -9,11 +9,9 @@
 #' @param ... Not used. Forces named arguments.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
 #'   from `xintercept` or `yintercept` if not provided.
-#' @param breaks A numeric vector of break positions.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
-#'   position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
-#'   position in data coordinates instead of the panel edge.
+#' @param breaks A numeric vector of break positions in data coordinates, or
+#'   wrapped in [I()] for normalised panel coordinates (npc), where `I(0)`
+#'   is the left/bottom edge and `I(1)` is the right/top edge of the panel.
 #' @param minor Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
 #'   `FALSE`.
 #' @param colour Inherits from `axis.ticks` in the set theme.
@@ -21,6 +19,10 @@
 #' @param length Total tick length as a grid unit. Supports `rel()`.
 #'   Negative values flip the tick direction (inward). Defaults to `rel(1)`
 #'   (outward at theme tick length).
+#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
+#'   position in data coordinates instead of the panel edge.
+#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
+#'   position in data coordinates instead of the panel edge.
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_text()],
@@ -31,12 +33,12 @@ axis_ticks <- function(
     ...,
     position     = NULL,
     breaks,
-    xintercept   = NULL,
-    yintercept   = NULL,
     minor        = FALSE,
     colour       = NULL,
     linewidth    = NULL,
-    length = ggplot2::rel(1)
+    length       = ggplot2::rel(1),
+    xintercept   = NULL,
+    yintercept   = NULL
 ) {
   rlang::check_dots_empty()
 
@@ -46,6 +48,10 @@ axis_ticks <- function(
   .validate_intercept(axis, position, xintercept, yintercept)
 
   if (length(breaks) == 0) return(list())
+
+  # Check once whether breaks are in npc (I()) or data coordinates
+  npc_breaks <- inherits(breaks, "AsIs")
+  breaks     <- as.numeric(breaks)
 
   intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
@@ -57,7 +63,7 @@ axis_ticks <- function(
     c(paste0("axis.ticks.", axis, ".", position), paste0("axis.ticks.", axis), "axis.ticks")
   }
 
-  resolved_tick_element <- NULL
+  resolved_tick_element    <- NULL
   tick_intentionally_blank <- FALSE
   for (nm in tick_hierarchy) {
     el_raw <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
@@ -121,18 +127,17 @@ axis_ticks <- function(
   if (inherits(length, "rel")) {
     rel_value      <- as.numeric(length)
     default_pts    <- as.numeric(grid::convertUnit(calculate_theme_length(), "pt"))
-    length   <- grid::unit(abs(rel_value) * default_pts, "pt")
+    length         <- grid::unit(abs(rel_value) * default_pts, "pt")
     flip_direction <- rel_value < 0
   } else if (inherits(length, "unit")) {
     tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
-    length   <- grid::unit(abs(tick_pts), "pt")
+    length         <- grid::unit(abs(tick_pts), "pt")
     flip_direction <- tick_pts < 0
   } else if (is.numeric(length)) {
     flip_direction <- length < 0
-    length   <- grid::unit(abs(length), "pt")
+    length         <- grid::unit(abs(length), "pt")
   }
 
-  # gp <- ggplot2::gg_par(col = tick_colour, stroke = tick_linewidth, lineend = "butt")
   gp <- grid::gpar(
     col     = tick_colour,
     lwd     = tick_linewidth * ggplot2::.pt,
@@ -140,9 +145,19 @@ axis_ticks <- function(
   )
 
   lapply(breaks, \(break_val) {
+
+    # Resolve the along-axis coordinate of the grob:
+    # - data coords: pinned to 0.5 npc (annotation_custom handles the mapping)
+    # - npc coords:  directly placed via unit(break_val, "npc")
+    grob_along <- if (npc_breaks) {
+      grid::unit(break_val, "npc")
+    } else {
+      grid::unit(0.5, "npc")
+    }
+
     tick_grob <- if (position == "bottom") {
       grid::segmentsGrob(
-        x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
+        x0 = grob_along, x1 = grob_along,
         y0 = grid::unit(0, "npc"),
         y1 = if (flip_direction) grid::unit(0, "npc") + length
         else                grid::unit(0, "npc") - length,
@@ -150,7 +165,7 @@ axis_ticks <- function(
       )
     } else if (position == "top") {
       grid::segmentsGrob(
-        x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
+        x0 = grob_along, x1 = grob_along,
         y0 = grid::unit(1, "npc"),
         y1 = if (flip_direction) grid::unit(1, "npc") - length
         else                grid::unit(1, "npc") + length,
@@ -161,7 +176,7 @@ axis_ticks <- function(
         x0 = grid::unit(0, "npc"),
         x1 = if (flip_direction) grid::unit(0, "npc") + length
         else                grid::unit(0, "npc") - length,
-        y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
+        y0 = grob_along, y1 = grob_along,
         gp = gp
       )
     } else {
@@ -169,12 +184,21 @@ axis_ticks <- function(
         x0 = grid::unit(1, "npc"),
         x1 = if (flip_direction) grid::unit(1, "npc") - length
         else                grid::unit(1, "npc") + length,
-        y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
+        y0 = grob_along, y1 = grob_along,
         gp = gp
       )
     }
 
-    annotation_position <- if (axis == "x") {
+    # For npc breaks, span the full panel in the along-axis direction so the
+    # grob's internal npc coordinate handles positioning. The intercept is
+    # preserved in the perpendicular direction so yintercept/xintercept
+    # floating still works correctly.
+    # For data breaks, pin to the break value as before.
+    annotation_position <- if (npc_breaks && axis == "x") {
+      list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
+    } else if (npc_breaks && axis == "y") {
+      list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
+    } else if (axis == "x") {
       list(xmin = break_val, xmax = break_val, ymin = intercept, ymax = intercept)
     } else {
       list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)

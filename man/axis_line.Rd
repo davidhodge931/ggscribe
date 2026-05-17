@@ -7,11 +7,11 @@
 axis_line(
   ...,
   position = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
-  linetype = NULL
+  linetype = NULL,
+  xintercept = NULL,
+  yintercept = NULL
 )
 }
 \arguments{
@@ -20,24 +20,25 @@ axis_line(
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
 from \code{xintercept} or \code{yintercept} if not provided.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
-
 \item{colour}{Inherits from \code{axis.line} in the set theme.}
 
 \item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
 
 \item{linetype}{Inherits from \code{axis.line} in the set theme.}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
+position in data coordinates instead of the panel edge.}
 }
 \value{
 A list of ggplot2 annotation layers.
 }
 \description{
 Draws a line along an axis edge, with style defaults taken from the
-\code{axis.line} element of the set theme. Requires \code{coord_cartesian(clip = "off")}.
+\code{axis.line} element of the set theme. Requires
+\code{coord_cartesian(clip = "off")}.
 }
 \seealso{
 \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_text]{axis_text()}},

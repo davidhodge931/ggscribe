@@ -6,8 +6,13 @@
 #' `axis.line` element of the set theme.
 #'
 #' @param ... Not used. Forces named arguments.
-#' @param xintercept Draw a vertical reference line at this x position.
-#' @param yintercept Draw a horizontal reference line at this y position.
+#' @param xintercept Draw a vertical reference line at this x position in data
+#'   coordinates, or wrapped in [I()] for a normalised panel coordinate (npc),
+#'   where `I(0)` is the left edge and `I(1)` is the right edge of the panel.
+#' @param yintercept Draw a horizontal reference line at this y position in
+#'   data coordinates, or wrapped in [I()] for a normalised panel coordinate
+#'   (npc), where `I(0)` is the bottom edge and `I(1)` is the top edge of the
+#'   panel.
 #' @param colour Inherits from `axis.line` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
 #' @param linetype Defaults to `"dashed"`.
@@ -31,11 +36,15 @@ reference_line <- function(
   rlang::check_dots_empty()
 
   if (!is.null(xintercept)) {
-    position <- "left"
-    axis     <- "y"
+    npc_intercept <- inherits(xintercept, "AsIs")
+    xintercept    <- as.numeric(xintercept)
+    position      <- "left"
+    axis          <- "y"
   } else if (!is.null(yintercept)) {
-    position <- "bottom"
-    axis     <- "x"
+    npc_intercept <- inherits(yintercept, "AsIs")
+    yintercept    <- as.numeric(yintercept)
+    position      <- "bottom"
+    axis          <- "x"
   } else {
     rlang::abort("Must supply either `xintercept` or `yintercept`.")
   }
@@ -48,7 +57,6 @@ reference_line <- function(
     paste0("axis.line.", axis),
     "axis.line"
   )
-
   theme_element_blank <- NULL
   for (nm in element_hierarchy) {
     el <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
@@ -78,15 +86,58 @@ reference_line <- function(
   }
   line_linetype <- linetype %||% resolved_element$linetype %||% 1
 
+  gp <- grid::gpar(
+    col     = line_colour,
+    lwd     = line_linewidth * ggplot2::.pt,
+    lty     = line_linetype,
+    lineend = "butt"
+  )
+
+  # For npc intercepts, the intercept value goes directly into the grob as
+  # unit(val, "npc") and the annotation spans the full panel.
+  # For data intercepts, the grob spans the full panel in npc and
+  # annotation_custom pins it at the intercept in data coordinates —
+  # consistent with the rendering path used by axis_ticks, axis_text, and
+  # axis_bracket.
   if (axis == "x") {
-    list(ggplot2::annotate(
-      "segment", x = -Inf, xend = Inf, y = intercept, yend = intercept,
-      colour = line_colour, linewidth = line_linewidth, linetype = line_linetype
-    ))
+    line_grob <- if (npc_intercept) {
+      grid::segmentsGrob(
+        x0 = grid::unit(0, "npc"),   x1 = grid::unit(1, "npc"),
+        y0 = grid::unit(intercept, "npc"), y1 = grid::unit(intercept, "npc"),
+        gp = gp
+      )
+    } else {
+      grid::segmentsGrob(
+        x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
+        y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
+        gp = gp
+      )
+    }
+    anno_pos <- if (npc_intercept) {
+      list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+    } else {
+      list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
+    }
   } else {
-    list(ggplot2::annotate(
-      "segment", x = intercept, xend = intercept, y = -Inf, yend = Inf,
-      colour = line_colour, linewidth = line_linewidth, linetype = line_linetype
-    ))
+    line_grob <- if (npc_intercept) {
+      grid::segmentsGrob(
+        x0 = grid::unit(intercept, "npc"), x1 = grid::unit(intercept, "npc"),
+        y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
+        gp = gp
+      )
+    } else {
+      grid::segmentsGrob(
+        x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
+        y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
+        gp = gp
+      )
+    }
+    anno_pos <- if (npc_intercept) {
+      list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+    } else {
+      list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
+    }
   }
+
+  list(rlang::exec(ggplot2::annotation_custom, grob = line_grob, !!!anno_pos))
 }

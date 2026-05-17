@@ -108,7 +108,7 @@ panel_shade <- function(
     0.5
   }
 
-  alpha <- alpha %||% 1
+  alpha     <- alpha %||% 1
   linewidth <- if (is.null(linewidth)) {
     base_linewidth
   } else if (inherits(linewidth, "rel")) {
@@ -116,7 +116,7 @@ panel_shade <- function(
   } else {
     linewidth
   }
-  linetype <- linetype %||% 1
+  linetype  <- linetype %||% 1
 
   if (use_grob) {
     x_left <- if (xmin_is_normalized) {
@@ -141,16 +141,16 @@ panel_shade <- function(
     }
 
     rect_grob <- grid::rectGrob(
-      x = x_left,
-      y = y_bottom,
-      width = x_right - x_left,
+      x      = x_left,
+      y      = y_bottom,
+      width  = x_right - x_left,
       height = y_top - y_bottom,
-      just = c("left", "bottom"),
-      gp = ggplot2::gg_par(
+      just   = c("left", "bottom"),
+      gp     = grid::gpar(
         fill = scales::alpha(fill, alpha),
-        col = colour,
-        stroke = linewidth,
-        lty = linetype
+        col  = colour,
+        lwd  = linewidth * ggplot2::.pt,
+        lty  = linetype
       )
     )
 
@@ -164,15 +164,15 @@ panel_shade <- function(
   } else {
     list(ggplot2::annotate(
       "rect",
-      xmin = xmin,
-      xmax = xmax,
-      ymin = ymin,
-      ymax = ymax,
-      fill = fill,
-      colour = colour,
+      xmin      = xmin,
+      xmax      = xmax,
+      ymin      = ymin,
+      ymax      = ymax,
+      fill      = fill,
+      colour    = colour,
       linewidth = linewidth,
-      linetype = linetype,
-      alpha = alpha
+      linetype  = linetype,
+      alpha     = alpha
     ))
   }
 }

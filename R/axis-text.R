@@ -9,11 +9,9 @@
 #' @param ... Not used. Forces named arguments.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
 #'   from `xintercept` or `yintercept` if not provided.
-#' @param breaks A numeric vector of break positions.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
-#'   position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
-#'   position in data coordinates instead of the panel edge.
+#' @param breaks A numeric vector of break positions in data coordinates, or
+#'   wrapped in [I()] for normalised panel coordinates (npc), where `I(0)`
+#'   is the left/bottom edge and `I(1)` is the right/top edge of the panel.
 #' @param labels One of:
 #'   - `NULL` (default) to use break values as labels
 #'   - A character vector the same length as `breaks`
@@ -23,6 +21,10 @@
 #' @param family Inherits from `axis.text` in the set theme.
 #' @param hjust,vjust Justification. Auto-calculated from `position` if `NULL`.
 #' @param angle Text rotation angle. Defaults to `0`.
+#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
+#'   position in data coordinates instead of the panel edge.
+#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
+#'   position in data coordinates instead of the panel edge.
 #' @param length Offset from the axis edge including tick length and margin.
 #'   Supports `rel()`. Negative values place labels inside the panel. Defaults
 #'   to `rel(1)` (theme tick length + text margin).
@@ -39,8 +41,6 @@ axis_text <- function(
     ...,
     position     = NULL,
     breaks,
-    xintercept   = NULL,
-    yintercept   = NULL,
     labels       = NULL,
     colour       = NULL,
     size         = NULL,
@@ -48,7 +48,9 @@ axis_text <- function(
     hjust        = NULL,
     vjust        = NULL,
     angle        = 0,
-    length = ggplot2::rel(1)
+    length       = ggplot2::rel(1),
+    xintercept   = NULL,
+    yintercept   = NULL
 ) {
   rlang::check_dots_empty()
 
@@ -58,6 +60,10 @@ axis_text <- function(
   .validate_intercept(axis, position, xintercept, yintercept)
 
   if (length(breaks) == 0) return(list())
+
+  # Check once whether breaks are in npc (I()) or data coordinates
+  npc_breaks <- inherits(breaks, "AsIs")
+  breaks     <- as.numeric(breaks)
 
   intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
@@ -159,10 +165,19 @@ axis_text <- function(
   lapply(seq_along(breaks), \(i) {
     break_val <- breaks[[i]]
 
+    # Resolve the along-axis coordinate of the grob:
+    # - data coords: pinned to 0.5 npc (annotation_custom handles the mapping)
+    # - npc coords:  directly placed via unit(break_val, "npc")
+    grob_along <- if (npc_breaks) {
+      grid::unit(break_val, "npc")
+    } else {
+      grid::unit(0.5, "npc")
+    }
+
     text_grob <- if (position == "bottom") {
       grid::textGrob(
         labels[i],
-        x    = grid::unit(0.5, "npc"),
+        x    = grob_along,
         y    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
@@ -170,7 +185,7 @@ axis_text <- function(
     } else if (position == "top") {
       grid::textGrob(
         labels[i],
-        x    = grid::unit(0.5, "npc"),
+        x    = grob_along,
         y    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
@@ -180,7 +195,7 @@ axis_text <- function(
         labels[i],
         x    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
-        y    = grid::unit(0.5, "npc"),
+        y    = grob_along,
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
       )
     } else {
@@ -188,12 +203,21 @@ axis_text <- function(
         labels[i],
         x    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
-        y    = grid::unit(0.5, "npc"),
+        y    = grob_along,
         just = c(hjust, vjust), rot = angle, gp = make_gpar()
       )
     }
 
-    annotation_position <- if (axis == "x") {
+    # For npc breaks, span the full panel in the along-axis direction so the
+    # grob's internal npc coordinate handles positioning. The intercept is
+    # preserved in the perpendicular direction so yintercept/xintercept
+    # floating still works correctly.
+    # For data breaks, pin to the break value as before.
+    annotation_position <- if (npc_breaks && axis == "x") {
+      list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
+    } else if (npc_breaks && axis == "y") {
+      list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
+    } else if (axis == "x") {
       list(xmin = break_val, xmax = break_val, ymin = intercept, ymax = intercept)
     } else {
       list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)

@@ -7,13 +7,13 @@
 axis_bracket(
   ...,
   position = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   breaks,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  length = ggplot2::rel(1)
+  length = ggplot2::rel(1),
+  xintercept = NULL,
+  yintercept = NULL
 )
 }
 \arguments{
@@ -22,14 +22,11 @@ axis_bracket(
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
 from \code{xintercept} or \code{yintercept} if not provided.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to this x
-position in data coordinates instead of the panel edge.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to this y
-position in data coordinates instead of the panel edge.}
-
-\item{breaks}{A numeric vector of length >= 2. The bar spans \code{min(breaks)}
-to \code{max(breaks)}; caps are drawn at every break value.}
+\item{breaks}{A numeric vector of length >= 2 in data coordinates, or
+wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
+is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.
+The bar spans \code{min(breaks)} to \code{max(breaks)}; caps are drawn at every
+break value.}
 
 \item{colour}{Inherits from \code{axis.ticks} in the set theme (falling back
 through \code{axis.line} and \code{line}).}
@@ -41,6 +38,12 @@ through \code{axis.line} and \code{line}).}
 \item{length}{Length of the bracket caps as a grid unit. Supports
 \code{rel()}. Negative values flip the cap direction. Defaults to \code{rel(1)}
 (outward at theme tick length).}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to this y
+position in data coordinates instead of the panel edge.}
 }
 \value{
 A list of ggplot2 annotation layers.

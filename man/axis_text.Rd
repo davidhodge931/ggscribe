@@ -8,8 +8,6 @@ axis_text(
   ...,
   position = NULL,
   breaks,
-  xintercept = NULL,
-  yintercept = NULL,
   labels = NULL,
   colour = NULL,
   size = NULL,
@@ -17,7 +15,9 @@ axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  length = ggplot2::rel(1)
+  length = ggplot2::rel(1),
+  xintercept = NULL,
+  yintercept = NULL
 )
 }
 \arguments{
@@ -26,13 +26,9 @@ axis_text(
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
 from \code{xintercept} or \code{yintercept} if not provided.}
 
-\item{breaks}{A numeric vector of break positions.}
-
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
+\item{breaks}{A numeric vector of break positions in data coordinates, or
+wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
+is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.}
 
 \item{labels}{One of:
 \itemize{
@@ -54,6 +50,12 @@ position in data coordinates instead of the panel edge.}
 \item{length}{Offset from the axis edge including tick length and margin.
 Supports \code{rel()}. Negative values place labels inside the panel. Defaults
 to \code{rel(1)} (theme tick length + text margin).}
+
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
+position in data coordinates instead of the panel edge.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
+position in data coordinates instead of the panel edge.}
 }
 \value{
 A list of ggplot2 annotation layers.
