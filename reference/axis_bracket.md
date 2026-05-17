@@ -14,13 +14,13 @@ Requires `coord_cartesian(clip = "off")`.
 axis_bracket(
   ...,
   position = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   breaks,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  length = ggplot2::rel(1)
+  length = ggplot2::rel(1),
+  xintercept = NULL,
+  yintercept = NULL
 )
 ```
 
@@ -35,19 +35,12 @@ axis_bracket(
   One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
   `xintercept` or `yintercept` if not provided.
 
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the bracket to this x position in
-  data coordinates instead of the panel edge.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the bracket to this y position in
-  data coordinates instead of the panel edge.
-
 - breaks:
 
-  A numeric vector of length \>= 2. The bar spans `min(breaks)` to
+  A numeric vector of length \>= 2 in data coordinates, or wrapped in
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised panel
+  coordinates (npc), where `I(0)` is the left/bottom edge and `I(1)` is
+  the right/top edge of the panel. The bar spans `min(breaks)` to
   `max(breaks)`; caps are drawn at every break value.
 
 - colour:
@@ -70,6 +63,16 @@ axis_bracket(
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values flip the cap direction. Defaults to `rel(1)` (outward
   at theme tick length).
+
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the bracket to this x position in
+  data coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the bracket to this y position in
+  data coordinates instead of the panel edge.
 
 ## Value
 

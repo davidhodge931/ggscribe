@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Publication-Quality ggplot2 Annotation">
 <meta name="description" content="Annotation helper functions for publication-quality ggplot2 visualisation. These functions make it easier to annotate plots in a way that stays consistent with the set theme.">
@@ -71,14 +71,12 @@
 <p>The objective of ggscribe is to provide annotation helper functions for publication-quality ‘ggplot2’ visualisation.</p>
 <p>Note:</p>
 <ul>
-<li>
-<code>sec_axis_text</code> adjusts space in the plot, whereas <code>axis_*</code> functions do not.</li>
+<li>A secondary axis such as <code>sec_axis_text</code> adjusts space whereas other functions do not.</li>
 <li>
 <code>axis_ticks</code>, <code>axis_text</code> and <code>axis_bracket</code> require (1) a globally set theme with explicit panel dimensions and (2) <code>coord_cartesian(clip = "off")</code>
 </li>
 <li>
-<code>panel_shade</code> must be before geoms.</li>
-<li>Where you require annotation text along a axis with different angles etc, use a combination of <code>sec_axis_text</code> and <code>axis_*</code> functions. The <code>sec_axis_text</code> function should include the annotation that requires the maximum space that you want the plot to adjust to.</li>
+<code>panel_shade</code> should be before geoms.</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>

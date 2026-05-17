@@ -24,11 +24,17 @@ reference_line(
 
 - xintercept:
 
-  Draw a vertical reference line at this x position.
+  Draw a vertical reference line at this x position in data coordinates,
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for a
+  normalised panel coordinate (npc), where `I(0)` is the left edge and
+  `I(1)` is the right edge of the panel.
 
 - yintercept:
 
-  Draw a horizontal reference line at this y position.
+  Draw a horizontal reference line at this y position in data
+  coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
+  for a normalised panel coordinate (npc), where `I(0)` is the bottom
+  edge and `I(1)` is the top edge of the panel.
 
 - colour:
 

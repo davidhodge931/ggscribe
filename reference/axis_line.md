@@ -10,11 +10,11 @@ Draws a line along an axis edge, with style defaults taken from the
 axis_line(
   ...,
   position = NULL,
-  xintercept = NULL,
-  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
-  linetype = NULL
+  linetype = NULL,
+  xintercept = NULL,
+  yintercept = NULL
 )
 ```
 
@@ -29,16 +29,6 @@ axis_line(
   One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
   `xintercept` or `yintercept` if not provided.
 
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
-
 - colour:
 
   Inherits from `axis.line` in the set theme.
@@ -51,6 +41,16 @@ axis_line(
 - linetype:
 
   Inherits from `axis.line` in the set theme.
+
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
 
 ## Value
 

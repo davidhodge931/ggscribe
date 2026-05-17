@@ -11,8 +11,6 @@ axis_text(
   ...,
   position = NULL,
   breaks,
-  xintercept = NULL,
-  yintercept = NULL,
   labels = NULL,
   colour = NULL,
   size = NULL,
@@ -20,7 +18,9 @@ axis_text(
   hjust = NULL,
   vjust = NULL,
   angle = 0,
-  length = ggplot2::rel(1)
+  length = ggplot2::rel(1),
+  xintercept = NULL,
+  yintercept = NULL
 )
 ```
 
@@ -37,17 +37,10 @@ axis_text(
 
 - breaks:
 
-  A numeric vector of break positions.
-
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
+  A numeric vector of break positions in data coordinates, or wrapped in
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised panel
+  coordinates (npc), where `I(0)` is the left/bottom edge and `I(1)` is
+  the right/top edge of the panel.
 
 - labels:
 
@@ -85,6 +78,16 @@ axis_text(
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values place labels inside the panel. Defaults to `rel(1)`
   (theme tick length + text margin).
+
+- xintercept:
+
+  For `"left"`/`"right"` axes: float the axis to this x position in data
+  coordinates instead of the panel edge.
+
+- yintercept:
+
+  For `"top"`/`"bottom"` axes: float the axis to this y position in data
+  coordinates instead of the panel edge.
 
 ## Value
 
