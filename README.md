@@ -14,11 +14,10 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- A secondary axis such as `sec_axis_text` adjusts space whereas other
-  functions do not.
-- `axis_ticks`, `axis_text` and `axis_bracket` require (1) a globally
-  set theme with explicit panel dimensions and (2)
-  `coord_cartesian(clip = "off")`
+- Use the \*\_sec_axis\*, and subtitle and axis titles to adjust space
+  in the plot.
+- `axis_*` generally require a globally set theme with panel dimensions
+  and `coord_cartesian(clip = "off")`.
 - `panel_shade` should be before geoms.
 
 ## Installation
