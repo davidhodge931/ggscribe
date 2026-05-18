@@ -20,6 +20,9 @@
 #' @param length Total tick length as a grid unit. Supports `rel()`.
 #'   Negative values flip the tick direction (inward). Defaults to `rel(1)`
 #'   (outward at theme tick length).
+#' @param arrow A [grid::arrow()] specification, or `NULL` (default) for no
+#'   arrow. The arrowhead points toward the axis line.
+#'   E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
@@ -39,6 +42,7 @@ axis_ticks <- function(
     linewidth    = NULL,
     linetype     = NULL,
     length       = ggplot2::rel(1),
+    arrow        = NULL,
     xintercept   = NULL,
     yintercept   = NULL
 ) {
@@ -143,6 +147,7 @@ axis_ticks <- function(
 
   gp <- grid::gpar(
     col     = tick_colour,
+    fill    = tick_colour,   # fills the closed arrowhead
     lwd     = tick_linewidth * ggplot2::.pt,
     lty     = tick_linetype,
     lineend = "butt"
@@ -159,37 +164,39 @@ axis_ticks <- function(
       grid::unit(0.5, "npc")
     }
 
+    # Segments are drawn from tip → panel edge so that the arrowhead (placed
+    # at the end of the segment) points toward the axis line.
     tick_grob <- if (position == "bottom") {
       grid::segmentsGrob(
         x0 = grob_along, x1 = grob_along,
-        y0 = grid::unit(0, "npc"),
-        y1 = if (flip_direction) grid::unit(0, "npc") + length
+        y0 = if (flip_direction) grid::unit(0, "npc") + length
         else                grid::unit(0, "npc") - length,
-        gp = gp
+        y1 = grid::unit(0, "npc"),
+        gp = gp, arrow = arrow
       )
     } else if (position == "top") {
       grid::segmentsGrob(
         x0 = grob_along, x1 = grob_along,
-        y0 = grid::unit(1, "npc"),
-        y1 = if (flip_direction) grid::unit(1, "npc") - length
+        y0 = if (flip_direction) grid::unit(1, "npc") - length
         else                grid::unit(1, "npc") + length,
-        gp = gp
+        y1 = grid::unit(1, "npc"),
+        gp = gp, arrow = arrow
       )
     } else if (position == "left") {
       grid::segmentsGrob(
-        x0 = grid::unit(0, "npc"),
-        x1 = if (flip_direction) grid::unit(0, "npc") + length
+        x0 = if (flip_direction) grid::unit(0, "npc") + length
         else                grid::unit(0, "npc") - length,
+        x1 = grid::unit(0, "npc"),
         y0 = grob_along, y1 = grob_along,
-        gp = gp
+        gp = gp, arrow = arrow
       )
     } else {
       grid::segmentsGrob(
-        x0 = grid::unit(1, "npc"),
-        x1 = if (flip_direction) grid::unit(1, "npc") - length
+        x0 = if (flip_direction) grid::unit(1, "npc") - length
         else                grid::unit(1, "npc") + length,
+        x1 = grid::unit(1, "npc"),
         y0 = grob_along, y1 = grob_along,
-        gp = gp
+        gp = gp, arrow = arrow
       )
     }
 

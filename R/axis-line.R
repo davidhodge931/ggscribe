@@ -12,6 +12,9 @@
 #' @param colour Inherits from `axis.line` in the set theme.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
 #' @param linetype Inherits from `axis.line` in the set theme.
+#' @param arrow A [grid::arrow()] specification, or `NULL` (default) for no
+#'   arrow. The arrowhead points in the positive axis direction (right for x,
+#'   up for y). E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
@@ -28,6 +31,7 @@ axis_line <- function(
     colour     = NULL,
     linewidth  = NULL,
     linetype   = NULL,
+    arrow      = NULL,
     xintercept = NULL,
     yintercept = NULL
 ) {
@@ -80,6 +84,7 @@ axis_line <- function(
 
   gp <- grid::gpar(
     col     = line_colour,
+    fill    = line_colour,
     lwd     = line_linewidth * ggplot2::.pt,
     lty     = line_linetype,
     lineend = "butt"
@@ -88,18 +93,20 @@ axis_line <- function(
   # The line grob spans the full panel in the along-axis direction (0 to 1 npc)
   # and is pinned at the intercept in the perpendicular direction via
   # annotation_custom — consistent with axis_ticks, axis_text, and axis_bracket.
+  # The segment is drawn in the positive axis direction so the arrowhead (placed
+  # at the end of the segment) points right for x axes and up for y axes.
   if (axis == "x") {
     line_grob <- grid::segmentsGrob(
       x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
       y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
-      gp = gp
+      gp = gp, arrow = arrow
     )
     anno_pos <- list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
   } else {
     line_grob <- grid::segmentsGrob(
       x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
       y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
-      gp = gp
+      gp = gp, arrow = arrow
     )
     anno_pos <- list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
   }

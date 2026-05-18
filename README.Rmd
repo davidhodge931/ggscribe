@@ -90,13 +90,13 @@ mtcars |>
   ggscribe::axis_ticks(
     position = "bottom",
     breaks = 3.8,
-    length = rel(4.33),
+    length = rel(5),
   ) +
   ggscribe::axis_text(
     position = "bottom",
     breaks = 3.8,
     labels = "Threshold",
-    length = rel(4.33),
+    length = rel(5),
   ) +
   labs(x = "\nWeight") +
   #geom
