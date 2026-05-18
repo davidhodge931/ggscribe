@@ -20,28 +20,31 @@ panel_shade(
 \arguments{
 \item{...}{Not used. Allows trailing commas and named-argument style calls.}
 
-\item{xmin, xmax}{Left and right edges of the rectangle. Defaults to \code{-Inf}
-and \code{Inf}. Use \code{I()} for normalized coordinates (0-1).}
+\item{xmin, xmax}{Left and right edges of the rectangle in data coordinates.
+Defaults to \code{-Inf} and \code{Inf}. Use \code{I()} for normalised coordinates (0-1).
+May be a vector for multiple rectangles.}
 
-\item{ymin, ymax}{Bottom and top edges of the rectangle. Defaults to \code{-Inf}
-and \code{Inf}. Use \code{I()} for normalized coordinates (0-1).}
+\item{ymin, ymax}{Bottom and top edges of the rectangle in data coordinates.
+Defaults to \code{-Inf} and \code{Inf}. Use \code{I()} for normalised coordinates (0-1).
+May be a vector for multiple rectangles.}
 
-\item{fill}{Fill colour. Defaults to a neutral grey.}
+\item{fill}{Fill colour. Defaults to a neutral grey. May be a vector the
+same length as the bounds to style each rectangle individually.}
 
-\item{alpha}{Opacity of the rectangle. Defaults to \code{0.25}.}
+\item{alpha}{Opacity of the rectangle. Defaults to \code{0.25}. May be a vector.}
 
-\item{colour}{Border colour. Defaults to \code{"transparent"}.}
+\item{colour}{Border colour. Defaults to \code{"transparent"}. May be a vector.}
 
 \item{linewidth}{Inherits from \code{panel.border} in the set theme. Supports
-\code{rel()}.}
+\code{rel()}. May be a vector.}
 
-\item{linetype}{Border linetype. Defaults to \code{1}.}
+\item{linetype}{Border linetype. Defaults to \code{1}. May be a vector.}
 }
 \value{
-A list containing an annotation layer.
+A list containing annotation layers.
 }
 \description{
-Draws a filled rectangle over the panel with colour defaults taken from the
+Draws filled rectangles over the panel with colour defaults taken from the
 set theme. Defaults to a subtle overlay across the full panel, with the fill
 automatically adapting to light or dark panel backgrounds. Should be placed
 before geom layers.

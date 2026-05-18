@@ -29,15 +29,20 @@ The bar spans \code{min(breaks)} to \code{max(breaks)}; caps are drawn at every
 break value.}
 
 \item{colour}{Inherits from \code{axis.ticks} in the set theme (falling back
-through \code{axis.line} and \code{line}).}
+through \code{axis.line} and \code{line}). May be a vector the same length as
+\code{breaks} to style each cap individually. The bar always uses the first
+value.}
 
-\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports \code{rel()}.}
+\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
+\code{rel()}. May be a vector the same length as \code{breaks}. The bar always uses
+the first value.}
 
-\item{linetype}{Inherits from \code{axis.ticks} in the set theme.}
+\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a vector
+the same length as \code{breaks}. The bar always uses the first value.}
 
-\item{length}{Length of the bracket caps as a grid unit. Supports
-\code{rel()}. Negative values flip the cap direction. Defaults to \code{rel(1)}
-(outward at theme tick length).}
+\item{length}{Length of the bracket caps as a grid unit. Supports \code{rel()}.
+Negative values flip the cap direction. Defaults to \code{rel(1)} (outward at
+theme tick length). May be a vector the same length as \code{breaks}.}
 
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to this x
 position in data coordinates instead of the panel edge.}

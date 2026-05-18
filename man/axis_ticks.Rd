@@ -8,10 +8,11 @@ axis_ticks(
   ...,
   position = NULL,
   breaks,
-  minor = FALSE,
   colour = NULL,
   linewidth = NULL,
+  linetype = NULL,
   length = ggplot2::rel(1),
+  arrow = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -26,16 +27,25 @@ from \code{xintercept} or \code{yintercept} if not provided.}
 wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
 is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.}
 
-\item{minor}{Logical. If \code{TRUE}, uses minor tick theme defaults. Defaults to
-\code{FALSE}.}
+\item{colour}{Inherits from \code{axis.ticks} in the set theme. May be a vector
+the same length as \code{breaks} to style each tick individually.}
 
-\item{colour}{Inherits from \code{axis.ticks} in the set theme.}
+\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
+\code{rel()}. May be a vector the same length as \code{breaks}.}
 
-\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports \code{rel()}.}
+\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a vector
+the same length as \code{breaks}.}
 
-\item{length}{Total tick length as a grid unit. Supports \code{rel()}.
-Negative values flip the tick direction (inward). Defaults to \code{rel(1)}
-(outward at theme tick length).}
+\item{length}{Total tick length as a grid unit. Supports \code{rel()}. Negative
+values flip the tick direction (inward). Defaults to \code{rel(1)} (outward at
+theme tick length). May be a vector the same length as \code{breaks}.}
+
+\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list of such
+specifications the same length as \code{breaks} to mix arrowed and plain ticks.
+Use \code{NULL} as a list element for no arrow on a specific tick. The
+arrowhead points toward the axis line. Must use \code{list()} not \code{c()} when
+supplying multiple values.
+E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
 position in data coordinates instead of the panel edge.}

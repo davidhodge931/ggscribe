@@ -2,24 +2,27 @@
 
 #' Annotate a shaded panel region
 #'
-#' Draws a filled rectangle over the panel with colour defaults taken from the
+#' Draws filled rectangles over the panel with colour defaults taken from the
 #' set theme. Defaults to a subtle overlay across the full panel, with the fill
 #' automatically adapting to light or dark panel backgrounds. Should be placed
 #' before geom layers.
 #'
 #' @param ... Not used. Allows trailing commas and named-argument style calls.
-#' @param xmin,xmax Left and right edges of the rectangle. Defaults to `-Inf`
-#'   and `Inf`. Use `I()` for normalized coordinates (0-1).
-#' @param ymin,ymax Bottom and top edges of the rectangle. Defaults to `-Inf`
-#'   and `Inf`. Use `I()` for normalized coordinates (0-1).
-#' @param fill Fill colour. Defaults to a neutral grey.
-#' @param alpha Opacity of the rectangle. Defaults to `0.25`.
-#' @param colour Border colour. Defaults to `"transparent"`.
+#' @param xmin,xmax Left and right edges of the rectangle in data coordinates.
+#'   Defaults to `-Inf` and `Inf`. Use `I()` for normalised coordinates (0-1).
+#'   May be a vector for multiple rectangles.
+#' @param ymin,ymax Bottom and top edges of the rectangle in data coordinates.
+#'   Defaults to `-Inf` and `Inf`. Use `I()` for normalised coordinates (0-1).
+#'   May be a vector for multiple rectangles.
+#' @param fill Fill colour. Defaults to a neutral grey. May be a vector the
+#'   same length as the bounds to style each rectangle individually.
+#' @param alpha Opacity of the rectangle. Defaults to `0.25`. May be a vector.
+#' @param colour Border colour. Defaults to `"transparent"`. May be a vector.
 #' @param linewidth Inherits from `panel.border` in the set theme. Supports
-#'   `rel()`.
-#' @param linetype Border linetype. Defaults to `1`.
+#'   `rel()`. May be a vector.
+#' @param linetype Border linetype. Defaults to `1`. May be a vector.
 #'
-#' @return A list containing an annotation layer.
+#' @return A list containing annotation layers.
 #' @export
 #'
 #' @inherit sec_axis_text examples
@@ -48,8 +51,8 @@ panel_shade <- function(
 
   if (x_uses_normalized) {
     if (
-      !((xmin_is_normalized || is.infinite(xmin)) &&
-        (xmax_is_normalized || is.infinite(xmax)))
+      !((xmin_is_normalized || all(is.infinite(xmin))) &&
+        (xmax_is_normalized || all(is.infinite(xmax))))
     ) {
       rlang::abort(
         "Cannot mix normalized (I()) and data coordinates for x. Use I() for both xmin and xmax, or neither."
@@ -58,8 +61,8 @@ panel_shade <- function(
   }
   if (y_uses_normalized) {
     if (
-      !((ymin_is_normalized || is.infinite(ymin)) &&
-        (ymax_is_normalized || is.infinite(ymax)))
+      !((ymin_is_normalized || all(is.infinite(ymin))) &&
+        (ymax_is_normalized || all(is.infinite(ymax))))
     ) {
       rlang::abort(
         "Cannot mix normalized (I()) and data coordinates for y. Use I() for both ymin and ymax, or neither."
@@ -67,39 +70,21 @@ panel_shade <- function(
     }
   }
 
-  if (xmin_is_normalized) {
-    xmin <- unclass(xmin)
-    if (length(xmin) != 1 || xmin < 0 || xmin > 1) {
-      rlang::abort("Normalized xmin must be a single value between 0 and 1.")
-    }
-  }
-  if (xmax_is_normalized) {
-    xmax <- unclass(xmax)
-    if (length(xmax) != 1 || xmax < 0 || xmax > 1) {
-      rlang::abort("Normalized xmax must be a single value between 0 and 1.")
-    }
-  }
-  if (ymin_is_normalized) {
-    ymin <- unclass(ymin)
-    if (length(ymin) != 1 || ymin < 0 || ymin > 1) {
-      rlang::abort("Normalized ymin must be a single value between 0 and 1.")
-    }
-  }
-  if (ymax_is_normalized) {
-    ymax <- unclass(ymax)
-    if (length(ymax) != 1 || ymax < 0 || ymax > 1) {
-      rlang::abort("Normalized ymax must be a single value between 0 and 1.")
-    }
-  }
+  xmin <- as.numeric(xmin)
+  xmax <- as.numeric(xmax)
+  ymin <- as.numeric(ymin)
+  ymax <- as.numeric(ymax)
 
-  use_grob <- x_uses_normalized || y_uses_normalized
+  # n driven by the longest bounds vector; all recycled to match
+  n <- max(length(xmin), length(xmax), length(ymin), length(ymax))
+
+  xmin <- rep_len(xmin, n)
+  xmax <- rep_len(xmax, n)
+  ymin <- rep_len(ymin, n)
+  ymax <- rep_len(ymax, n)
 
   current_theme <- ggplot2::theme_get()
-  panel_border <- ggplot2::calc_element(
-    "panel.border",
-    current_theme,
-    skip_blank = TRUE
-  )
+  panel_border  <- ggplot2::calc_element("panel.border", current_theme, skip_blank = TRUE)
   base_linewidth <- if (
     !is.null(panel_border) && !inherits(panel_border, "element_blank")
   ) {
@@ -108,34 +93,45 @@ panel_shade <- function(
     0.5
   }
 
-  alpha     <- alpha %||% 1
-  linewidth <- if (is.null(linewidth)) {
-    base_linewidth
-  } else if (inherits(linewidth, "rel")) {
-    as.numeric(linewidth) * base_linewidth
-  } else {
-    linewidth
-  }
-  linetype  <- linetype %||% 1
+  # ---- Vectorise and recycle style args to n --------------------------------
 
-  if (use_grob) {
-    x_left <- if (xmin_is_normalized) {
-      grid::unit(xmin, "npc")
+  fill_vec   <- rep_len(fill,  n)
+  alpha_vec  <- rep_len(alpha %||% 1, n)
+  colour_vec <- rep_len(colour, n)
+
+  linewidth_vec <- if (is.null(linewidth)) {
+    rep_len(base_linewidth, n)
+  } else if (inherits(linewidth, "rel")) {
+    rep_len(as.numeric(linewidth), n) * base_linewidth
+  } else {
+    rep_len(linewidth, n)
+  }
+
+  linetype_vec <- rep_len(linetype %||% 1, n)
+
+  # ---- Draw one grob per rectangle -----------------------------------------
+  # Always uses annotation_custom + rectGrob for consistency with the other
+  # functions. npc bounds go directly into the grob; data bounds are pinned
+  # via annotation_custom's xmin/xmax/ymin/ymax.
+
+  lapply(seq_len(n), \(i) {
+    x_left <- if (x_uses_normalized) {
+      grid::unit(xmin[[i]], "npc")
     } else {
       grid::unit(0, "npc")
     }
-    x_right <- if (xmax_is_normalized) {
-      grid::unit(xmax, "npc")
+    x_right <- if (x_uses_normalized) {
+      grid::unit(xmax[[i]], "npc")
     } else {
       grid::unit(1, "npc")
     }
-    y_bottom <- if (ymin_is_normalized) {
-      grid::unit(ymin, "npc")
+    y_bottom <- if (y_uses_normalized) {
+      grid::unit(ymin[[i]], "npc")
     } else {
       grid::unit(0, "npc")
     }
-    y_top <- if (ymax_is_normalized) {
-      grid::unit(ymax, "npc")
+    y_top <- if (y_uses_normalized) {
+      grid::unit(ymax[[i]], "npc")
     } else {
       grid::unit(1, "npc")
     }
@@ -147,32 +143,22 @@ panel_shade <- function(
       height = y_top - y_bottom,
       just   = c("left", "bottom"),
       gp     = grid::gpar(
-        fill = scales::alpha(fill, alpha),
-        col  = colour,
-        lwd  = linewidth * ggplot2::.pt,
-        lty  = linetype
+        fill = scales::alpha(fill_vec[[i]], alpha_vec[[i]]),
+        col  = colour_vec[[i]],
+        lwd  = linewidth_vec[[i]] * ggplot2::.pt,
+        lty  = linetype_vec[[i]]
       )
     )
 
-    list(ggplot2::annotation_custom(
-      rect_grob,
-      xmin = -Inf,
-      xmax = Inf,
-      ymin = -Inf,
-      ymax = Inf
-    ))
-  } else {
-    list(ggplot2::annotate(
-      "rect",
-      xmin      = xmin,
-      xmax      = xmax,
-      ymin      = ymin,
-      ymax      = ymax,
-      fill      = fill,
-      colour    = colour,
-      linewidth = linewidth,
-      linetype  = linetype,
-      alpha     = alpha
-    ))
-  }
+    # For npc bounds, span the full panel — the grob's npc units handle
+    # positioning. For data bounds, pin via annotation_custom coordinates.
+    anno_pos <- list(
+      xmin = if (x_uses_normalized) -Inf else xmin[[i]],
+      xmax = if (x_uses_normalized) Inf  else xmax[[i]],
+      ymin = if (y_uses_normalized) -Inf else ymin[[i]],
+      ymax = if (y_uses_normalized) Inf  else ymax[[i]]
+    )
+
+    rlang::exec(ggplot2::annotation_custom, grob = rect_grob, !!!anno_pos)
+  })
 }

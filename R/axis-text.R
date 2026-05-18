@@ -16,18 +16,24 @@
 #'   - `NULL` (default) to use break values as labels
 #'   - A character vector the same length as `breaks`
 #'   - A function taking break values and returning labels
-#' @param colour Inherits from `axis.text` in the set theme.
-#' @param size Inherits from `axis.text` in the set theme.
-#' @param family Inherits from `axis.text` in the set theme.
+#' @param colour Inherits from `axis.text` in the set theme. May be a vector
+#'   the same length as `breaks` to style each label individually.
+#' @param size Inherits from `axis.text` in the set theme. May be a vector
+#'   the same length as `breaks`.
+#' @param family Inherits from `axis.text` in the set theme. May be a vector
+#'   the same length as `breaks`.
 #' @param hjust,vjust Justification. Auto-calculated from `position` if `NULL`.
-#' @param angle Text rotation angle. Defaults to `0`.
+#'   May be a vector the same length as `breaks`.
+#' @param angle Text rotation angle. Defaults to `0`. May be a vector the same
+#'   length as `breaks`.
+#' @param length Offset from the axis edge including tick length and margin.
+#'   Supports `rel()`. Negative values place labels inside the panel. Defaults
+#'   to `rel(1)` (theme tick length + text margin). May be a vector the same
+#'   length as `breaks`.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
 #'   position in data coordinates instead of the panel edge.
-#' @param length Offset from the axis edge including tick length and margin.
-#'   Supports `rel()`. Negative values place labels inside the panel. Defaults
-#'   to `rel(1)` (theme tick length + text margin).
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_ticks()],
@@ -64,9 +70,12 @@ axis_text <- function(
   # Check once whether breaks are in npc (I()) or data coordinates
   npc_breaks <- inherits(breaks, "AsIs")
   breaks     <- as.numeric(breaks)
+  n          <- length(breaks)
 
   intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
+
+  # ---- Resolve theme element ------------------------------------------------
 
   text_hierarchy <- c(
     paste0("axis.text.", axis, ".", position),
@@ -83,20 +92,6 @@ axis_text <- function(
     resolved_text_element <- ggplot2::element_text(colour = "black", size = 11, family = "")
   }
 
-  text_colour <- colour %||% resolved_text_element$colour %||% "black"
-  text_size   <- size   %||% resolved_text_element$size   %||% 11
-  text_family <- family %||% resolved_text_element$family %||% ""
-
-  if (is.null(labels)) {
-    labels <- as.character(breaks)
-  } else if (is.function(labels)) {
-    labels <- labels(breaks)
-  }
-
-  if (length(labels) != length(breaks)) {
-    rlang::abort("Length of `labels` must match length of `breaks`.")
-  }
-
   length_hierarchy <- c(
     paste0("axis.ticks.length.", axis, ".", position),
     paste0("axis.ticks.length.", axis),
@@ -108,62 +103,109 @@ axis_text <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length <- el; break }
   }
 
-  calculate_default_length <- function() {
+  # ---- Resolve scalar theme defaults ----------------------------------------
+
+  theme_colour <- resolved_text_element$colour %||% "black"
+  theme_size   <- resolved_text_element$size   %||% 11
+  theme_family <- resolved_text_element$family %||% ""
+
+  theme_length_pts <- {
     tl <- resolved_length
     if (is.null(tl)) {
-      return(grid::unit(0.5 * (current_theme$text$size %||% 11), "pt"))
+      0.5 * (current_theme$text$size %||% 11)
     } else if (inherits(tl, "rel")) {
       spacing_pts <- as.numeric(grid::convertUnit(current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
-      return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
+      as.numeric(tl) * spacing_pts
     } else if (!inherits(tl, "unit")) {
-      return(grid::unit(if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11), "pt"))
+      if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11)
     } else {
-      return(tl)
+      as.numeric(grid::convertUnit(tl, "pt"))
     }
   }
 
-  flip_direction <- FALSE
-  if (inherits(length, "rel")) {
-    rel_value      <- as.numeric(length)
-    default_pts    <- as.numeric(grid::convertUnit(calculate_default_length(), "pt"))
-    length   <- grid::unit(abs(rel_value) * default_pts, "pt")
-    flip_direction <- rel_value < 0
-  } else if (inherits(length, "unit")) {
-    tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
-    length   <- grid::unit(abs(tick_pts), "pt")
-    flip_direction <- tick_pts < 0
-  } else if (is.numeric(length)) {
-    flip_direction <- length < 0
-    length   <- grid::unit(abs(length), "pt")
-  }
-
+  # Margin is scalar — same for all breaks
   text_margin  <- resolved_text_element$margin
-  margin_unit  <- grid::unit(2, "pt")
+  margin_pts   <- 2  # default 2pt
   if (!is.null(text_margin)) {
     margin_index <- switch(position, bottom = 1L, top = 3L, left = 2L, right = 4L)
     if (inherits(text_margin, c("margin", "unit")) && length(text_margin) >= margin_index) {
-      margin_unit <- text_margin[margin_index]
+      margin_pts <- as.numeric(grid::convertUnit(text_margin[margin_index], "pt"))
     }
   }
-  total_length <- length + margin_unit
 
-  if (is.null(hjust)) {
-    hjust <- if (position %in% c("top", "bottom")) 0.5
-    else if (position == "left") { if (flip_direction) 0 else 1 }
-    else { if (flip_direction) 1 else 0 }
+  # ---- Resolve labels -------------------------------------------------------
+
+  if (is.null(labels)) {
+    labels <- as.character(breaks)
+  } else if (is.function(labels)) {
+    labels <- labels(breaks)
   }
-  if (is.null(vjust)) {
-    vjust <- if (position == "bottom") { if (flip_direction) 0 else 1 }
-    else if (position == "top") { if (flip_direction) 1 else 0 }
-    else 0.5
+  if (length(labels) != n) {
+    rlang::abort("Length of `labels` must match length of `breaks`.")
   }
 
-  make_gpar <- function() {
-    grid::gpar(col = text_colour, fontsize = text_size, fontfamily = text_family)
+  # ---- Vectorise and recycle all args to length(breaks) --------------------
+
+  colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
+  size_vec   <- if (is.null(size))   rep_len(theme_size, n)   else rep_len(size, n)
+  family_vec <- if (is.null(family)) rep_len(theme_family, n) else rep_len(family, n)
+  angle_vec  <- rep_len(angle, n)
+
+  length_pts_vec <- if (inherits(length, "rel")) {
+    abs(rep_len(as.numeric(length), n)) * theme_length_pts
+  } else if (inherits(length, "unit")) {
+    rep_len(abs(as.numeric(grid::convertUnit(length, "pt"))), n)
+  } else {
+    rep_len(abs(as.numeric(length)), n)
   }
+
+  flip_vec <- if (inherits(length, "rel")) {
+    rep_len(as.numeric(length) < 0, n)
+  } else if (inherits(length, "unit")) {
+    rep_len(as.numeric(grid::convertUnit(length, "pt")) < 0, n)
+  } else {
+    rep_len(as.numeric(length) < 0, n)
+  }
+
+  # total_length per break = resolved length + margin
+  total_length_vec <- length_pts_vec + margin_pts
+
+  # hjust/vjust: if NULL, auto-calculate per break from flip_vec;
+  # if provided, recycle to n
+  hjust_vec <- if (is.null(hjust)) {
+    vapply(seq_len(n), \(i) {
+      flip <- flip_vec[[i]]
+      if (position %in% c("top", "bottom")) 0.5
+      else if (position == "left") { if (flip) 0 else 1 }
+      else { if (flip) 1 else 0 }
+    }, numeric(1))
+  } else {
+    rep_len(hjust, n)
+  }
+
+  vjust_vec <- if (is.null(vjust)) {
+    vapply(seq_len(n), \(i) {
+      flip <- flip_vec[[i]]
+      if (position == "bottom") { if (flip) 0 else 1 }
+      else if (position == "top") { if (flip) 1 else 0 }
+      else 0.5
+    }, numeric(1))
+  } else {
+    rep_len(vjust, n)
+  }
+
+  # ---- Draw one grob per break ---------------------------------------------
 
   lapply(seq_along(breaks), \(i) {
-    break_val <- breaks[[i]]
+    break_val    <- breaks[[i]]
+    total_length <- grid::unit(total_length_vec[[i]], "pt")
+    flip_direction <- flip_vec[[i]]
+
+    gp <- grid::gpar(
+      col        = colour_vec[[i]],
+      fontsize   = size_vec[[i]],
+      fontfamily = family_vec[[i]]
+    )
 
     # Resolve the along-axis coordinate of the grob:
     # - data coords: pinned to 0.5 npc (annotation_custom handles the mapping)
@@ -180,7 +222,9 @@ axis_text <- function(
         x    = grob_along,
         y    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
-        just = c(hjust, vjust), rot = angle, gp = make_gpar()
+        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        rot  = angle_vec[[i]],
+        gp   = gp
       )
     } else if (position == "top") {
       grid::textGrob(
@@ -188,7 +232,9 @@ axis_text <- function(
         x    = grob_along,
         y    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
-        just = c(hjust, vjust), rot = angle, gp = make_gpar()
+        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        rot  = angle_vec[[i]],
+        gp   = gp
       )
     } else if (position == "left") {
       grid::textGrob(
@@ -196,7 +242,9 @@ axis_text <- function(
         x    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
         y    = grob_along,
-        just = c(hjust, vjust), rot = angle, gp = make_gpar()
+        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        rot  = angle_vec[[i]],
+        gp   = gp
       )
     } else {
       grid::textGrob(
@@ -204,7 +252,9 @@ axis_text <- function(
         x    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
         y    = grob_along,
-        just = c(hjust, vjust), rot = angle, gp = make_gpar()
+        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        rot  = angle_vec[[i]],
+        gp   = gp
       )
     }
 

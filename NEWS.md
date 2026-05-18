@@ -1,8 +1,10 @@
 # ggscribe (development)
 
 * Improved ticks and bracket linewidth.
-* Bracket corners no longer have a small gap where the cap meets the bar.
-* As Is normalised coordinates now work anywhere (e.g. `xintercept = I(0.5)`).
+* Made bracket corners join neatly.
+* Supported As Is normalised coordinates (e.g. `xintercept = I(0.5)`).
+* Supported vectorised style arguments.
+* Removed minor argument from `axis_ticks`.
 * Removed `theme_sec_axis_text`.
 
 # ggscribe 0.1.1

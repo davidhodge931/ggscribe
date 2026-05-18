@@ -37,19 +37,25 @@ is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.}
 \item A function taking break values and returning labels
 }}
 
-\item{colour}{Inherits from \code{axis.text} in the set theme.}
+\item{colour}{Inherits from \code{axis.text} in the set theme. May be a vector
+the same length as \code{breaks} to style each label individually.}
 
-\item{size}{Inherits from \code{axis.text} in the set theme.}
+\item{size}{Inherits from \code{axis.text} in the set theme. May be a vector
+the same length as \code{breaks}.}
 
-\item{family}{Inherits from \code{axis.text} in the set theme.}
+\item{family}{Inherits from \code{axis.text} in the set theme. May be a vector
+the same length as \code{breaks}.}
 
-\item{hjust, vjust}{Justification. Auto-calculated from \code{position} if \code{NULL}.}
+\item{hjust, vjust}{Justification. Auto-calculated from \code{position} if \code{NULL}.
+May be a vector the same length as \code{breaks}.}
 
-\item{angle}{Text rotation angle. Defaults to \code{0}.}
+\item{angle}{Text rotation angle. Defaults to \code{0}. May be a vector the same
+length as \code{breaks}.}
 
 \item{length}{Offset from the axis edge including tick length and margin.
 Supports \code{rel()}. Negative values place labels inside the panel. Defaults
-to \code{rel(1)} (theme tick length + text margin).}
+to \code{rel(1)} (theme tick length + text margin). May be a vector the same
+length as \code{breaks}.}
 
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
 position in data coordinates instead of the panel edge.}

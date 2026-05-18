@@ -16,20 +16,25 @@ reference_line(
 \arguments{
 \item{...}{Not used. Forces named arguments.}
 
-\item{xintercept}{Draw a vertical reference line at this x position in data
-coordinates, or wrapped in \code{\link[=I]{I()}} for a normalised panel coordinate (npc),
-where \code{I(0)} is the left edge and \code{I(1)} is the right edge of the panel.}
+\item{xintercept}{Draw vertical reference lines at these x positions in data
+coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc),
+where \code{I(0)} is the left edge and \code{I(1)} is the right edge of the panel.
+May be a vector for multiple lines.}
 
-\item{yintercept}{Draw a horizontal reference line at this y position in
-data coordinates, or wrapped in \code{\link[=I]{I()}} for a normalised panel coordinate
+\item{yintercept}{Draw horizontal reference lines at these y positions in
+data coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates
 (npc), where \code{I(0)} is the bottom edge and \code{I(1)} is the top edge of the
-panel.}
+panel. May be a vector for multiple lines.}
 
-\item{colour}{Inherits from \code{axis.line} in the set theme.}
+\item{colour}{Inherits from \code{axis.line} in the set theme. May be a vector
+the same length as \code{xintercept}/\code{yintercept} to style each line
+individually.}
 
-\item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
+\item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports
+\code{rel()}. May be a vector the same length as \code{xintercept}/\code{yintercept}.}
 
-\item{linetype}{Defaults to \code{"dashed"}.}
+\item{linetype}{Defaults to \code{"dashed"}. May be a vector the same length as
+\code{xintercept}/\code{yintercept}.}
 }
 \value{
 A list of ggplot2 annotation layers.

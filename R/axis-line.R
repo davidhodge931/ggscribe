@@ -9,16 +9,24 @@
 #' @param ... Not used. Forces named arguments.
 #' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
 #'   from `xintercept` or `yintercept` if not provided.
-#' @param colour Inherits from `axis.line` in the set theme.
-#' @param linewidth Inherits from `axis.line` in the set theme. Supports `rel()`.
-#' @param linetype Inherits from `axis.line` in the set theme.
-#' @param arrow A [grid::arrow()] specification, or `NULL` (default) for no
-#'   arrow. The arrowhead points in the positive axis direction (right for x,
-#'   up for y). E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
-#'   position in data coordinates instead of the panel edge.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
-#'   position in data coordinates instead of the panel edge.
+#' @param colour Inherits from `axis.line` in the set theme. May be a vector
+#'   the same length as `xintercept`/`yintercept` to style each line
+#'   individually.
+#' @param linewidth Inherits from `axis.line` in the set theme. Supports
+#'   `rel()`. May be a vector the same length as `xintercept`/`yintercept`.
+#' @param linetype Inherits from `axis.line` in the set theme. May be a vector
+#'   the same length as `xintercept`/`yintercept`.
+#' @param arrow A [grid::arrow()] specification, or a list of such
+#'   specifications the same length as `xintercept`/`yintercept`. The
+#'   arrowhead points in the positive axis direction (right for x, up for y).
+#'   Must use `list()` not `c()` when supplying multiple values.
+#'   E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+#' @param xintercept For `"left"`/`"right"` axes: draw lines at these x
+#'   positions in data coordinates, or wrapped in [I()] for normalised panel
+#'   coordinates (npc). May be a vector for multiple lines.
+#' @param yintercept For `"top"`/`"bottom"` axes: draw lines at these y
+#'   positions in data coordinates, or wrapped in [I()] for normalised panel
+#'   coordinates (npc). May be a vector for multiple lines.
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_ticks()], [axis_text()],
@@ -39,8 +47,29 @@ axis_line <- function(
   position <- .infer_position(position, xintercept, yintercept)
   axis     <- if (position %in% c("top", "bottom")) "x" else "y"
   .validate_intercept(axis, position, xintercept, yintercept)
-  intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
+
+  # Detect npc once for the whole intercept vector, then strip AsIs
+  if (axis == "x") {
+    npc_intercept <- inherits(yintercept, "AsIs")
+    intercepts    <- if (is.null(yintercept)) {
+      if (position == "bottom") -Inf else Inf
+    } else {
+      as.numeric(yintercept)
+    }
+  } else {
+    npc_intercept <- inherits(xintercept, "AsIs")
+    intercepts    <- if (is.null(xintercept)) {
+      if (position == "left") -Inf else Inf
+    } else {
+      as.numeric(xintercept)
+    }
+  }
+
+  intercepts <- as.numeric(intercepts)
+  n          <- length(intercepts)
   current_theme <- ggplot2::theme_get()
+
+  # ---- Resolve theme element ------------------------------------------------
 
   element_hierarchy <- c(
     paste0("axis.line.", axis, ".", position),
@@ -72,44 +101,93 @@ axis_line <- function(
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  line_colour    <- colour %||% resolved_element$colour %||% "black"
-  line_linewidth <- if (is.null(linewidth)) {
-    resolved_element$linewidth %||% 0.5
+  # ---- Resolve scalar theme defaults ----------------------------------------
+
+  theme_colour    <- resolved_element$colour   %||% "black"
+  theme_linewidth <- resolved_element$linewidth %||% 0.5
+  theme_linetype  <- resolved_element$linetype  %||% 1
+
+  # ---- Vectorise and recycle style args to n --------------------------------
+
+  colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
+
+  linewidth_vec <- if (is.null(linewidth)) {
+    rep_len(theme_linewidth, n)
   } else if (inherits(linewidth, "rel")) {
-    as.numeric(linewidth) * (resolved_element$linewidth %||% 0.5)
+    rep_len(as.numeric(linewidth), n) * theme_linewidth
   } else {
-    linewidth
-  }
-  line_linetype <- linetype %||% resolved_element$linetype %||% 1
-
-  gp <- grid::gpar(
-    col     = line_colour,
-    fill    = line_colour,
-    lwd     = line_linewidth * ggplot2::.pt,
-    lty     = line_linetype,
-    lineend = "butt"
-  )
-
-  # The line grob spans the full panel in the along-axis direction (0 to 1 npc)
-  # and is pinned at the intercept in the perpendicular direction via
-  # annotation_custom — consistent with axis_ticks, axis_text, and axis_bracket.
-  # The segment is drawn in the positive axis direction so the arrowhead (placed
-  # at the end of the segment) points right for x axes and up for y axes.
-  if (axis == "x") {
-    line_grob <- grid::segmentsGrob(
-      x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
-      y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
-      gp = gp, arrow = arrow
-    )
-    anno_pos <- list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
-  } else {
-    line_grob <- grid::segmentsGrob(
-      x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
-      y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
-      gp = gp, arrow = arrow
-    )
-    anno_pos <- list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
+    rep_len(linewidth, n)
   }
 
-  list(rlang::exec(ggplot2::annotation_custom, grob = line_grob, !!!anno_pos))
+  linetype_vec <- if (is.null(linetype)) rep_len(theme_linetype, n) else rep_len(linetype, n)
+
+  arrow_list <- if (inherits(arrow, "arrow")) {
+    rep_len(list(arrow), n)
+  } else if (is.list(arrow)) {
+    rep_len(arrow, n)
+  } else {
+    rep_len(list(NULL), n)
+  }
+
+  # ---- Draw one grob per intercept ------------------------------------------
+
+  lapply(seq_len(n), \(i) {
+    intercept <- intercepts[[i]]
+
+    gp <- grid::gpar(
+      col     = colour_vec[[i]],
+      fill    = colour_vec[[i]],
+      lwd     = linewidth_vec[[i]] * ggplot2::.pt,
+      lty     = linetype_vec[[i]],
+      lineend = "butt"
+    )
+
+    # For npc intercepts, the value goes directly into the grob as
+    # unit(val, "npc") and the annotation spans the full panel.
+    # For data intercepts, the grob spans the full panel in npc and
+    # annotation_custom pins it at the intercept in data coordinates.
+    # The segment is drawn in the positive axis direction so the arrowhead
+    # points right for x axes and up for y axes.
+    if (axis == "x") {
+      line_grob <- if (npc_intercept) {
+        grid::segmentsGrob(
+          x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
+          y0 = grid::unit(intercept, "npc"), y1 = grid::unit(intercept, "npc"),
+          gp = gp, arrow = arrow_list[[i]]
+        )
+      } else {
+        grid::segmentsGrob(
+          x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
+          y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
+          gp = gp, arrow = arrow_list[[i]]
+        )
+      }
+      anno_pos <- if (npc_intercept) {
+        list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      } else {
+        list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
+      }
+    } else {
+      line_grob <- if (npc_intercept) {
+        grid::segmentsGrob(
+          x0 = grid::unit(intercept, "npc"), x1 = grid::unit(intercept, "npc"),
+          y0 = grid::unit(0, "npc"), y1 = grid::unit(1, "npc"),
+          gp = gp, arrow = arrow_list[[i]]
+        )
+      } else {
+        grid::segmentsGrob(
+          x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
+          y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
+          gp = gp, arrow = arrow_list[[i]]
+        )
+      }
+      anno_pos <- if (npc_intercept) {
+        list(xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+      } else {
+        list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
+      }
+    }
+
+    rlang::exec(ggplot2::annotation_custom, grob = line_grob, !!!anno_pos)
+  })
 }

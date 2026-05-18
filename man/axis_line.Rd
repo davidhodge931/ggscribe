@@ -10,6 +10,7 @@ axis_line(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
+  arrow = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -20,17 +21,29 @@ axis_line(
 \item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
 from \code{xintercept} or \code{yintercept} if not provided.}
 
-\item{colour}{Inherits from \code{axis.line} in the set theme.}
+\item{colour}{Inherits from \code{axis.line} in the set theme. May be a vector
+the same length as \code{xintercept}/\code{yintercept} to style each line
+individually.}
 
-\item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports \code{rel()}.}
+\item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports
+\code{rel()}. May be a vector the same length as \code{xintercept}/\code{yintercept}.}
 
-\item{linetype}{Inherits from \code{axis.line} in the set theme.}
+\item{linetype}{Inherits from \code{axis.line} in the set theme. May be a vector
+the same length as \code{xintercept}/\code{yintercept}.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
+\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list of such
+specifications the same length as \code{xintercept}/\code{yintercept}. The
+arrowhead points in the positive axis direction (right for x, up for y).
+Must use \code{list()} not \code{c()} when supplying multiple values.
+E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: draw lines at these x
+positions in data coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel
+coordinates (npc). May be a vector for multiple lines.}
+
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: draw lines at these y
+positions in data coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel
+coordinates (npc). May be a vector for multiple lines.}
 }
 \value{
 A list of ggplot2 annotation layers.

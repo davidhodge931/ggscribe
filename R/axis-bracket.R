@@ -16,12 +16,17 @@
 #'   The bar spans `min(breaks)` to `max(breaks)`; caps are drawn at every
 #'   break value.
 #' @param colour Inherits from `axis.ticks` in the set theme (falling back
-#'   through `axis.line` and `line`).
-#' @param linewidth Inherits from `axis.ticks` in the set theme. Supports `rel()`.
-#' @param linetype Inherits from `axis.ticks` in the set theme.
-#' @param length Length of the bracket caps as a grid unit. Supports
-#'   `rel()`. Negative values flip the cap direction. Defaults to `rel(1)`
-#'   (outward at theme tick length).
+#'   through `axis.line` and `line`). May be a vector the same length as
+#'   `breaks` to style each cap individually. The bar always uses the first
+#'   value.
+#' @param linewidth Inherits from `axis.ticks` in the set theme. Supports
+#'   `rel()`. May be a vector the same length as `breaks`. The bar always uses
+#'   the first value.
+#' @param linetype Inherits from `axis.ticks` in the set theme. May be a vector
+#'   the same length as `breaks`. The bar always uses the first value.
+#' @param length Length of the bracket caps as a grid unit. Supports `rel()`.
+#'   Negative values flip the cap direction. Defaults to `rel(1)` (outward at
+#'   theme tick length). May be a vector the same length as `breaks`.
 #' @param xintercept For `"left"`/`"right"` axes: float the bracket to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the bracket to this y
@@ -60,6 +65,7 @@ axis_bracket <- function(
   # Check once whether breaks are in npc (I()) or data coordinates
   npc_breaks <- inherits(breaks, "AsIs")
   breaks     <- as.numeric(breaks)
+  n          <- length(breaks)
 
   bracket_from  <- min(breaks)
   bracket_to    <- max(breaks)
@@ -87,15 +93,11 @@ axis_bracket <- function(
     resolved_element <- list(colour = "#333333FF", linewidth = 0.5, linetype = 1)
   }
 
-  line_colour    <- colour   %||% resolved_element$colour   %||% "#333333FF"
-  line_linewidth <- if (is.null(linewidth)) {
-    resolved_element$linewidth %||% 0.5
-  } else if (inherits(linewidth, "rel")) {
-    as.numeric(linewidth) * (resolved_element$linewidth %||% 0.5)
-  } else {
-    linewidth
-  }
-  line_linetype  <- linetype %||% resolved_element$linetype %||% 1
+  # ---- Resolve scalar theme defaults ----------------------------------------
+
+  theme_colour    <- resolved_element$colour   %||% "#333333FF"
+  theme_linewidth <- resolved_element$linewidth %||% 0.5
+  theme_linetype  <- resolved_element$linetype  %||% 1
 
   # ---- Resolve Cap Length ---------------------------------------------------
 
@@ -110,69 +112,86 @@ axis_bracket <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length <- el; break }
   }
 
-  calculate_theme_length <- function() {
+  theme_length_pts <- {
     tl <- resolved_length
     if (is.null(tl)) {
-      return(grid::unit(0.5 * (current_theme$text$size %||% 11), "pt"))
+      0.5 * (current_theme$text$size %||% 11)
     } else if (inherits(tl, "rel")) {
       spacing_pts <- as.numeric(grid::convertUnit(current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
-      return(grid::unit(as.numeric(tl) * spacing_pts, "pt"))
+      as.numeric(tl) * spacing_pts
     } else if (!inherits(tl, "unit")) {
-      return(grid::unit(if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11), "pt"))
+      if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11)
     } else {
-      return(tl)
+      as.numeric(grid::convertUnit(tl, "pt"))
     }
   }
 
-  flip_direction <- FALSE
-  if (inherits(length, "rel")) {
-    rel_value      <- as.numeric(length)
-    default_pts    <- as.numeric(grid::convertUnit(calculate_theme_length(), "pt"))
-    length         <- grid::unit(abs(rel_value) * default_pts, "pt")
-    flip_direction <- rel_value < 0
-  } else if (inherits(length, "unit")) {
-    tick_pts       <- as.numeric(grid::convertUnit(length, "pt"))
-    length         <- grid::unit(abs(tick_pts), "pt")
-    flip_direction <- tick_pts < 0
-  } else if (is.numeric(length)) {
-    flip_direction <- length < 0
-    length         <- grid::unit(abs(length), "pt")
+  # ---- Vectorise and recycle style args to length(breaks) ------------------
+  # Bar uses the first value of each style vector; caps use per-break values.
+
+  colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
+
+  linewidth_vec <- if (is.null(linewidth)) {
+    rep_len(theme_linewidth, n)
+  } else if (inherits(linewidth, "rel")) {
+    rep_len(as.numeric(linewidth), n) * theme_linewidth
+  } else {
+    rep_len(linewidth, n)
   }
 
-  gp_bar <- grid::gpar(
-    col     = line_colour,
-    lwd     = line_linewidth * ggplot2::.pt,
-    lty     = line_linetype,
-    lineend = "square"
-  )
+  linetype_vec <- if (is.null(linetype)) rep_len(theme_linetype, n) else rep_len(linetype, n)
 
-  gp_cap <- grid::gpar(
-    col     = line_colour,
-    lwd     = line_linewidth * ggplot2::.pt,
-    lty     = line_linetype,
-    lineend = "square"
-  )
+  length_pts_vec <- if (inherits(length, "rel")) {
+    abs(rep_len(as.numeric(length), n)) * theme_length_pts
+  } else if (inherits(length, "unit")) {
+    rep_len(abs(as.numeric(grid::convertUnit(length, "pt"))), n)
+  } else {
+    rep_len(abs(as.numeric(length)), n)
+  }
+
+  flip_vec <- if (inherits(length, "rel")) {
+    rep_len(as.numeric(length) < 0, n)
+  } else if (inherits(length, "unit")) {
+    rep_len(as.numeric(grid::convertUnit(length, "pt")) < 0, n)
+  } else {
+    rep_len(as.numeric(length) < 0, n)
+  }
 
   # ---- Bar ------------------------------------------------------------------
-  # For data coords: annotate("segment") — same rendering path as axis_line().
-  # For npc coords: annotation_custom + segmentsGrob with npc units, spanning
-  # the full panel in the perpendicular direction with intercept preserved.
+  # Bar uses the first value from each style vector.
+  # For data coords: the grob spans 0 to 1 npc; the annotation_custom bounding
+  # box is set to bracket_from/bracket_to so npc 0 = bracket_from and
+  # npc 1 = bracket_to — no "native" units needed.
+  # For npc coords: break values go directly into the grob as npc units.
+
+  gp_bar <- grid::gpar(
+    col     = colour_vec[[1]],
+    lwd     = linewidth_vec[[1]] * ggplot2::.pt,
+    lty     = linetype_vec[[1]],
+    lineend = "square"
+  )
 
   stamp <- if (!npc_breaks && axis == "x") {
-    list(ggplot2::annotate(
-      "segment",
-      x = bracket_from, xend = bracket_to,
-      y = intercept,    yend = intercept,
-      colour = line_colour, linewidth = line_linewidth, linetype = line_linetype,
-      lineend = "square"
+    bar_grob <- grid::segmentsGrob(
+      x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
+      y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
+      gp = gp_bar
+    )
+    list(ggplot2::annotation_custom(
+      grob = bar_grob,
+      xmin = bracket_from, xmax = bracket_to,
+      ymin = intercept,    ymax = intercept
     ))
   } else if (!npc_breaks && axis == "y") {
-    list(ggplot2::annotate(
-      "segment",
-      x = intercept,    xend = intercept,
-      y = bracket_from, yend = bracket_to,
-      colour = line_colour, linewidth = line_linewidth, linetype = line_linetype,
-      lineend = "square"
+    bar_grob <- grid::segmentsGrob(
+      x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
+      y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
+      gp = gp_bar
+    )
+    list(ggplot2::annotation_custom(
+      grob = bar_grob,
+      xmin = intercept,    xmax = intercept,
+      ymin = bracket_from, ymax = bracket_to
     ))
   } else if (npc_breaks && axis == "x") {
     bar_grob <- grid::segmentsGrob(
@@ -197,49 +216,58 @@ axis_bracket <- function(
   }
 
   # ---- Caps -----------------------------------------------------------------
-  # annotation_custom + segmentsGrob pinned to each break.
-  # For npc breaks, the along-axis coordinate is set directly in the grob
-  # and the annotation spans the full panel in that direction.
+  # Per-break styles — each cap gets its own gp built from the style vectors.
 
-  cap_grob_template <- if (position == "bottom") {
-    function(grob_along) grid::segmentsGrob(
-      x0 = grob_along, x1 = grob_along,
-      y0 = grid::unit(0, "npc"),
-      y1 = if (flip_direction) grid::unit(0, "npc") + length
-      else                grid::unit(0, "npc") - length,
-      gp = gp_cap
-    )
-  } else if (position == "top") {
-    function(grob_along) grid::segmentsGrob(
-      x0 = grob_along, x1 = grob_along,
-      y0 = grid::unit(1, "npc"),
-      y1 = if (flip_direction) grid::unit(1, "npc") - length
-      else                grid::unit(1, "npc") + length,
-      gp = gp_cap
-    )
-  } else if (position == "left") {
-    function(grob_along) grid::segmentsGrob(
-      x0 = grid::unit(0, "npc"),
-      x1 = if (flip_direction) grid::unit(0, "npc") + length
-      else                grid::unit(0, "npc") - length,
-      y0 = grob_along, y1 = grob_along,
-      gp = gp_cap
-    )
-  } else {
-    function(grob_along) grid::segmentsGrob(
-      x0 = grid::unit(1, "npc"),
-      x1 = if (flip_direction) grid::unit(1, "npc") - length
-      else                grid::unit(1, "npc") + length,
-      y0 = grob_along, y1 = grob_along,
-      gp = gp_cap
-    )
-  }
+  cap_annotations <- lapply(seq_along(breaks), \(i) {
+    break_val      <- breaks[[i]]
+    cap_length     <- grid::unit(length_pts_vec[[i]], "pt")
+    flip_direction <- flip_vec[[i]]
 
-  cap_annotations <- lapply(breaks, \(break_val) {
+    gp_cap <- grid::gpar(
+      col     = colour_vec[[i]],
+      lwd     = linewidth_vec[[i]] * ggplot2::.pt,
+      lty     = linetype_vec[[i]],
+      lineend = "square"
+    )
+
     grob_along <- if (npc_breaks) {
       grid::unit(break_val, "npc")
     } else {
       grid::unit(0.5, "npc")
+    }
+
+    cap_grob <- if (position == "bottom") {
+      grid::segmentsGrob(
+        x0 = grob_along, x1 = grob_along,
+        y0 = grid::unit(0, "npc"),
+        y1 = if (flip_direction) grid::unit(0, "npc") + cap_length
+        else                grid::unit(0, "npc") - cap_length,
+        gp = gp_cap
+      )
+    } else if (position == "top") {
+      grid::segmentsGrob(
+        x0 = grob_along, x1 = grob_along,
+        y0 = grid::unit(1, "npc"),
+        y1 = if (flip_direction) grid::unit(1, "npc") - cap_length
+        else                grid::unit(1, "npc") + cap_length,
+        gp = gp_cap
+      )
+    } else if (position == "left") {
+      grid::segmentsGrob(
+        x0 = grid::unit(0, "npc"),
+        x1 = if (flip_direction) grid::unit(0, "npc") + cap_length
+        else                grid::unit(0, "npc") - cap_length,
+        y0 = grob_along, y1 = grob_along,
+        gp = gp_cap
+      )
+    } else {
+      grid::segmentsGrob(
+        x0 = grid::unit(1, "npc"),
+        x1 = if (flip_direction) grid::unit(1, "npc") - cap_length
+        else                grid::unit(1, "npc") + cap_length,
+        y0 = grob_along, y1 = grob_along,
+        gp = gp_cap
+      )
     }
 
     cap_pos <- if (npc_breaks && axis == "x") {
@@ -252,11 +280,7 @@ axis_bracket <- function(
       list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)
     }
 
-    rlang::exec(
-      ggplot2::annotation_custom,
-      grob = cap_grob_template(grob_along),
-      !!!cap_pos
-    )
+    rlang::exec(ggplot2::annotation_custom, grob = cap_grob, !!!cap_pos)
   })
 
   c(stamp, cap_annotations)

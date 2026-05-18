@@ -14,8 +14,8 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- Use the \*\_sec_axis\*, and subtitle and axis titles to adjust space
-  in the plot.
+- Use the \*\_sec_axis\*, and subtitle, caption and axis titles to
+  adjust space in the plot.
 - `axis_*` generally require a globally set theme with panel dimensions
   and `coord_cartesian(clip = "off")`.
 - `panel_shade` should be before geoms.
