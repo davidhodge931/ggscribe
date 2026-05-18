@@ -16,6 +16,7 @@
 #'   `FALSE`.
 #' @param colour Inherits from `axis.ticks` in the set theme.
 #' @param linewidth Inherits from `axis.ticks` in the set theme. Supports `rel()`.
+#' @param linetype Inherits from `axis.ticks` in the set theme.
 #' @param length Total tick length as a grid unit. Supports `rel()`.
 #'   Negative values flip the tick direction (inward). Defaults to `rel(1)`
 #'   (outward at theme tick length).
@@ -36,6 +37,7 @@ axis_ticks <- function(
     minor        = FALSE,
     colour       = NULL,
     linewidth    = NULL,
+    linetype     = NULL,
     length       = ggplot2::rel(1),
     xintercept   = NULL,
     yintercept   = NULL
@@ -81,7 +83,7 @@ axis_ticks <- function(
     rlang::warn("The set theme does not define an `axis.ticks` linewidth. Defaulting to `0.5`.")
   }
   if (is.null(resolved_tick_element)) {
-    resolved_tick_element <- list(colour = "black", linewidth = 0.5)
+    resolved_tick_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
   length_hierarchy <- if (minor) {
@@ -98,7 +100,7 @@ axis_ticks <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length_element <- el; break }
   }
 
-  tick_colour    <- colour %||% resolved_tick_element$colour %||% "black"
+  tick_colour    <- colour   %||% resolved_tick_element$colour   %||% "black"
   tick_linewidth <- if (is.null(linewidth)) {
     resolved_tick_element$linewidth %||% 0.5
   } else if (inherits(linewidth, "rel")) {
@@ -106,6 +108,7 @@ axis_ticks <- function(
   } else {
     linewidth
   }
+  tick_linetype  <- linetype %||% resolved_tick_element$linetype %||% 1
 
   calculate_theme_length <- function() {
     tl <- resolved_length_element
@@ -141,6 +144,7 @@ axis_ticks <- function(
   gp <- grid::gpar(
     col     = tick_colour,
     lwd     = tick_linewidth * ggplot2::.pt,
+    lty     = tick_linetype,
     lineend = "butt"
   )
 
