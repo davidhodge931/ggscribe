@@ -13,6 +13,7 @@ axis_line(
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
+  arrow = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -31,26 +32,44 @@ axis_line(
 
 - colour:
 
-  Inherits from `axis.line` in the set theme.
+  Inherits from `axis.line` in the set theme. May be a vector the same
+  length as `xintercept`/`yintercept` to style each line individually.
 
 - linewidth:
 
   Inherits from `axis.line` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
+  be a vector the same length as `xintercept`/`yintercept`.
 
 - linetype:
 
-  Inherits from `axis.line` in the set theme.
+  Inherits from `axis.line` in the set theme. May be a vector the same
+  length as `xintercept`/`yintercept`.
+
+- arrow:
+
+  A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
+  or a list of such specifications the same length as
+  `xintercept`/`yintercept`. The arrowhead points in the positive axis
+  direction (right for x, up for y). Must use
+  [`list()`](https://rdrr.io/r/base/list.html) not
+  [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
+  E.g.
+  `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
 
 - xintercept:
 
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
+  For `"left"`/`"right"` axes: draw lines at these x positions in data
+  coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
+  for normalised panel coordinates (npc). May be a vector for multiple
+  lines.
 
 - yintercept:
 
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
+  For `"top"`/`"bottom"` axes: draw lines at these y positions in data
+  coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
+  for normalised panel coordinates (npc). May be a vector for multiple
+  lines.
 
 ## Value
 

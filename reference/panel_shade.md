@@ -1,6 +1,6 @@
 # Annotate a shaded panel region
 
-Draws a filled rectangle over the panel with colour defaults taken from
+Draws filled rectangles over the panel with colour defaults taken from
 the set theme. Defaults to a subtle overlay across the full panel, with
 the fill automatically adapting to light or dark panel backgrounds.
 Should be placed before geom layers.
@@ -30,40 +30,42 @@ panel_shade(
 
 - xmin, xmax:
 
-  Left and right edges of the rectangle. Defaults to `-Inf` and `Inf`.
-  Use [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized
-  coordinates (0-1).
+  Left and right edges of the rectangle in data coordinates. Defaults to
+  `-Inf` and `Inf`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) for
+  normalised coordinates (0-1). May be a vector for multiple rectangles.
 
 - ymin, ymax:
 
-  Bottom and top edges of the rectangle. Defaults to `-Inf` and `Inf`.
-  Use [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized
-  coordinates (0-1).
+  Bottom and top edges of the rectangle in data coordinates. Defaults to
+  `-Inf` and `Inf`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) for
+  normalised coordinates (0-1). May be a vector for multiple rectangles.
 
 - fill:
 
-  Fill colour. Defaults to a neutral grey.
+  Fill colour. Defaults to a neutral grey. May be a vector the same
+  length as the bounds to style each rectangle individually.
 
 - alpha:
 
-  Opacity of the rectangle. Defaults to `0.25`.
+  Opacity of the rectangle. Defaults to `0.25`. May be a vector.
 
 - colour:
 
-  Border colour. Defaults to `"transparent"`.
+  Border colour. Defaults to `"transparent"`. May be a vector.
 
 - linewidth:
 
   Inherits from `panel.border` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
+  be a vector.
 
 - linetype:
 
-  Border linetype. Defaults to `1`.
+  Border linetype. Defaults to `1`. May be a vector.
 
 ## Value
 
-A list containing an annotation layer.
+A list containing annotation layers.
 
 ## Examples
 

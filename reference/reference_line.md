@@ -24,30 +24,35 @@ reference_line(
 
 - xintercept:
 
-  Draw a vertical reference line at this x position in data coordinates,
-  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for a
-  normalised panel coordinate (npc), where `I(0)` is the left edge and
-  `I(1)` is the right edge of the panel.
+  Draw vertical reference lines at these x positions in data
+  coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
+  for normalised panel coordinates (npc), where `I(0)` is the left edge
+  and `I(1)` is the right edge of the panel. May be a vector for
+  multiple lines.
 
 - yintercept:
 
-  Draw a horizontal reference line at this y position in data
+  Draw horizontal reference lines at these y positions in data
   coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
-  for a normalised panel coordinate (npc), where `I(0)` is the bottom
-  edge and `I(1)` is the top edge of the panel.
+  for normalised panel coordinates (npc), where `I(0)` is the bottom
+  edge and `I(1)` is the top edge of the panel. May be a vector for
+  multiple lines.
 
 - colour:
 
-  Inherits from `axis.line` in the set theme.
+  Inherits from `axis.line` in the set theme. May be a vector the same
+  length as `xintercept`/`yintercept` to style each line individually.
 
 - linewidth:
 
   Inherits from `axis.line` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
+  be a vector the same length as `xintercept`/`yintercept`.
 
 - linetype:
 
-  Defaults to `"dashed"`.
+  Defaults to `"dashed"`. May be a vector the same length as
+  `xintercept`/`yintercept`.
 
 ## Value
 

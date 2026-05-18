@@ -89,21 +89,26 @@ break value.</p></dd>
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
 <dd><p>Inherits from <code>axis.ticks</code> in the set theme (falling back
-through <code>axis.line</code> and <code>line</code>).</p></dd>
+through <code>axis.line</code> and <code>line</code>). May be a vector the same length as
+<code>breaks</code> to style each cap individually. The bar always uses the first
+value.</p></dd>
 
 
 <dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>
-<dd><p>Inherits from <code>axis.ticks</code> in the set theme. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>.</p></dd>
+<dd><p>Inherits from <code>axis.ticks</code> in the set theme. Supports
+<code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. May be a vector the same length as <code>breaks</code>. The bar always uses
+the first value.</p></dd>
 
 
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
-<dd><p>Inherits from <code>axis.ticks</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.ticks</code> in the set theme. May be a vector
+the same length as <code>breaks</code>. The bar always uses the first value.</p></dd>
 
 
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
-<dd><p>Length of the bracket caps as a grid unit. Supports
-<code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the cap direction. Defaults to <code>rel(1)</code>
-(outward at theme tick length).</p></dd>
+<dd><p>Length of the bracket caps as a grid unit. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>.
+Negative values flip the cap direction. Defaults to <code>rel(1)</code> (outward at
+theme tick length). May be a vector the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>

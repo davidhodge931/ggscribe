@@ -66,28 +66,33 @@ axis.line element of the set theme."><meta property="og:image" content="https://
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>
-<dd><p>Draw a vertical reference line at this x position in data
-coordinates, or wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for a normalised panel coordinate (npc),
-where <code>I(0)</code> is the left edge and <code>I(1)</code> is the right edge of the panel.</p></dd>
+<dd><p>Draw vertical reference lines at these x positions in data
+coordinates, or wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for normalised panel coordinates (npc),
+where <code>I(0)</code> is the left edge and <code>I(1)</code> is the right edge of the panel.
+May be a vector for multiple lines.</p></dd>
 
 
 <dt id="arg-yintercept">yintercept<a class="anchor" aria-label="anchor" href="#arg-yintercept"></a></dt>
-<dd><p>Draw a horizontal reference line at this y position in
-data coordinates, or wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for a normalised panel coordinate
+<dd><p>Draw horizontal reference lines at these y positions in
+data coordinates, or wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for normalised panel coordinates
 (npc), where <code>I(0)</code> is the bottom edge and <code>I(1)</code> is the top edge of the
-panel.</p></dd>
+panel. May be a vector for multiple lines.</p></dd>
 
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
-<dd><p>Inherits from <code>axis.line</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.line</code> in the set theme. May be a vector
+the same length as <code>xintercept</code>/<code>yintercept</code> to style each line
+individually.</p></dd>
 
 
 <dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>
-<dd><p>Inherits from <code>axis.line</code> in the set theme. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>.</p></dd>
+<dd><p>Inherits from <code>axis.line</code> in the set theme. Supports
+<code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. May be a vector the same length as <code>xintercept</code>/<code>yintercept</code>.</p></dd>
 
 
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
-<dd><p>Defaults to <code>"dashed"</code>.</p></dd>
+<dd><p>Defaults to <code>"dashed"</code>. May be a vector the same length as
+<code>xintercept</code>/<code>yintercept</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

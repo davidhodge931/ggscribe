@@ -11,10 +11,11 @@ axis_ticks(
   ...,
   position = NULL,
   breaks,
-  minor = FALSE,
   colour = NULL,
   linewidth = NULL,
+  linetype = NULL,
   length = ggplot2::rel(1),
+  arrow = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -38,26 +39,40 @@ axis_ticks(
   coordinates (npc), where `I(0)` is the left/bottom edge and `I(1)` is
   the right/top edge of the panel.
 
-- minor:
-
-  Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
-  `FALSE`.
-
 - colour:
 
-  Inherits from `axis.ticks` in the set theme.
+  Inherits from `axis.ticks` in the set theme. May be a vector the same
+  length as `breaks` to style each tick individually.
 
 - linewidth:
 
   Inherits from `axis.ticks` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
+  be a vector the same length as `breaks`.
+
+- linetype:
+
+  Inherits from `axis.ticks` in the set theme. May be a vector the same
+  length as `breaks`.
 
 - length:
 
   Total tick length as a grid unit. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values flip the tick direction (inward). Defaults to `rel(1)`
-  (outward at theme tick length).
+  (outward at theme tick length). May be a vector the same length as
+  `breaks`.
+
+- arrow:
+
+  A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
+  or a list of such specifications the same length as `breaks` to mix
+  arrowed and plain ticks. Use `NULL` as a list element for no arrow on
+  a specific tick. The arrowhead points toward the axis line. Must use
+  [`list()`](https://rdrr.io/r/base/list.html) not
+  [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
+  E.g.
+  `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
 
 - xintercept:
 

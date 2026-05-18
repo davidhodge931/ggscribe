@@ -94,29 +94,35 @@ is the left/bottom edge and <code>I(1)</code> is the right/top edge of the panel
 
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
-<dd><p>Inherits from <code>axis.text</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.text</code> in the set theme. May be a vector
+the same length as <code>breaks</code> to style each label individually.</p></dd>
 
 
 <dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
-<dd><p>Inherits from <code>axis.text</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.text</code> in the set theme. May be a vector
+the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p>Inherits from <code>axis.text</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.text</code> in the set theme. May be a vector
+the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-hjust-vjust">hjust, vjust<a class="anchor" aria-label="anchor" href="#arg-hjust-vjust"></a></dt>
-<dd><p>Justification. Auto-calculated from <code>position</code> if <code>NULL</code>.</p></dd>
+<dd><p>Justification. Auto-calculated from <code>position</code> if <code>NULL</code>.
+May be a vector the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-angle">angle<a class="anchor" aria-label="anchor" href="#arg-angle"></a></dt>
-<dd><p>Text rotation angle. Defaults to <code>0</code>.</p></dd>
+<dd><p>Text rotation angle. Defaults to <code>0</code>. May be a vector the same
+length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
 <dd><p>Offset from the axis edge including tick length and margin.
 Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values place labels inside the panel. Defaults
-to <code>rel(1)</code> (theme tick length + text margin).</p></dd>
+to <code>rel(1)</code> (theme tick length + text margin). May be a vector the same
+length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>

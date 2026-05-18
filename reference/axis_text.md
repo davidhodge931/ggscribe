@@ -54,30 +54,36 @@ axis_text(
 
 - colour:
 
-  Inherits from `axis.text` in the set theme.
+  Inherits from `axis.text` in the set theme. May be a vector the same
+  length as `breaks` to style each label individually.
 
 - size:
 
-  Inherits from `axis.text` in the set theme.
+  Inherits from `axis.text` in the set theme. May be a vector the same
+  length as `breaks`.
 
 - family:
 
-  Inherits from `axis.text` in the set theme.
+  Inherits from `axis.text` in the set theme. May be a vector the same
+  length as `breaks`.
 
 - hjust, vjust:
 
-  Justification. Auto-calculated from `position` if `NULL`.
+  Justification. Auto-calculated from `position` if `NULL`. May be a
+  vector the same length as `breaks`.
 
 - angle:
 
-  Text rotation angle. Defaults to `0`.
+  Text rotation angle. Defaults to `0`. May be a vector the same length
+  as `breaks`.
 
 - length:
 
   Offset from the axis edge including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values place labels inside the panel. Defaults to `rel(1)`
-  (theme tick length + text margin).
+  (theme tick length + text margin). May be a vector the same length as
+  `breaks`.
 
 - xintercept:
 

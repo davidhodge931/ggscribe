@@ -5,8 +5,8 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- Use the \*\_sec_axis\*, and subtitle and axis titles to adjust space
-  in the plot.
+- Use the \*\_sec_axis\*, and subtitle, caption and axis titles to
+  adjust space in the plot.
 - `axis_*` generally require a globally set theme with panel dimensions
   and `coord_cartesian(clip = "off")`.
 - `panel_shade` should be before geoms.
@@ -79,13 +79,13 @@ mtcars |>
   ggscribe::axis_ticks(
     position = "bottom",
     breaks = 3.8,
-    length = rel(4.33),
+    length = rel(5),
   ) +
   ggscribe::axis_text(
     position = "bottom",
     breaks = 3.8,
     labels = "Threshold",
-    length = rel(4.33),
+    length = rel(5),
   ) +
   labs(x = "\nWeight") +
   #geom

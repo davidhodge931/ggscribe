@@ -46,23 +46,27 @@ axis_bracket(
 - colour:
 
   Inherits from `axis.ticks` in the set theme (falling back through
-  `axis.line` and `line`).
+  `axis.line` and `line`). May be a vector the same length as `breaks`
+  to style each cap individually. The bar always uses the first value.
 
 - linewidth:
 
   Inherits from `axis.ticks` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
+  be a vector the same length as `breaks`. The bar always uses the first
+  value.
 
 - linetype:
 
-  Inherits from `axis.ticks` in the set theme.
+  Inherits from `axis.ticks` in the set theme. May be a vector the same
+  length as `breaks`. The bar always uses the first value.
 
 - length:
 
   Length of the bracket caps as a grid unit. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values flip the cap direction. Defaults to `rel(1)` (outward
-  at theme tick length).
+  at theme tick length). May be a vector the same length as `breaks`.
 
 - xintercept:
 

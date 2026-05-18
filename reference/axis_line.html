@@ -56,6 +56,7 @@ coord_cartesian(clip = "off").'><meta property="og:image" content="https://david
 <span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linewidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  arrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  yintercept <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -75,25 +76,39 @@ from <code>xintercept</code> or <code>yintercept</code> if not provided.</p></dd
 
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
-<dd><p>Inherits from <code>axis.line</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.line</code> in the set theme. May be a vector
+the same length as <code>xintercept</code>/<code>yintercept</code> to style each line
+individually.</p></dd>
 
 
 <dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>
-<dd><p>Inherits from <code>axis.line</code> in the set theme. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>.</p></dd>
+<dd><p>Inherits from <code>axis.line</code> in the set theme. Supports
+<code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. May be a vector the same length as <code>xintercept</code>/<code>yintercept</code>.</p></dd>
 
 
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
-<dd><p>Inherits from <code>axis.line</code> in the set theme.</p></dd>
+<dd><p>Inherits from <code>axis.line</code> in the set theme. May be a vector
+the same length as <code>xintercept</code>/<code>yintercept</code>.</p></dd>
+
+
+<dt id="arg-arrow">arrow<a class="anchor" aria-label="anchor" href="#arg-arrow"></a></dt>
+<dd><p>A <code><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">grid::arrow()</a></code> specification, or a list of such
+specifications the same length as <code>xintercept</code>/<code>yintercept</code>. The
+arrowhead points in the positive axis direction (right for x, up for y).
+Must use <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> not <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> when supplying multiple values.
+E.g. <code>grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")</code>.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>
-<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the axis to this x
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"left"</code>/<code>"right"</code> axes: draw lines at these x
+positions in data coordinates, or wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for normalised panel
+coordinates (npc). May be a vector for multiple lines.</p></dd>
 
 
 <dt id="arg-yintercept">yintercept<a class="anchor" aria-label="anchor" href="#arg-yintercept"></a></dt>
-<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the axis to this y
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: draw lines at these y
+positions in data coordinates, or wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> for normalised panel
+coordinates (npc). May be a vector for multiple lines.</p></dd>
 
 </dl></div>
     <div class="section level2">
