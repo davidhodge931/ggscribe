@@ -6,6 +6,7 @@ reference:
 - title: Secondary axis
 - contents:
   - sec_axis_text
+  - sec_axis_spacer
   - guide_sec_axis_text
 - title: Annotation
 - contents:
