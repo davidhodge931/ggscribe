@@ -12,7 +12,9 @@ reference_line(
   yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
-  linetype = "dashed"
+  linetype = "dashed",
+  arrow = NULL,
+  layout = NULL
 )
 ```
 
@@ -53,6 +55,25 @@ reference_line(
 
   Defaults to `"dashed"`. May be a vector the same length as
   `xintercept`/`yintercept`.
+
+- arrow:
+
+  A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
+  or a list of such specifications the same length as
+  `xintercept`/`yintercept`. The arrowhead points in the positive axis
+  direction (right for vertical lines, up for horizontal lines). Must
+  use [`list()`](https://rdrr.io/r/base/list.html) not
+  [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
+  E.g.
+  `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+
+- layout:
+
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 ## Value
 

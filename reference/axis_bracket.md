@@ -19,6 +19,7 @@ axis_bracket(
   linewidth = NULL,
   linetype = NULL,
   length = ggplot2::rel(1),
+  layout = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -67,6 +68,14 @@ axis_bracket(
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values flip the cap direction. Defaults to `rel(1)` (outward
   at theme tick length). May be a vector the same length as `breaks`.
+
+- layout:
+
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 - xintercept:
 

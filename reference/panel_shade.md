@@ -18,7 +18,8 @@ panel_shade(
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
-  linetype = NULL
+  linetype = NULL,
+  layout = NULL
 )
 ```
 
@@ -62,6 +63,14 @@ panel_shade(
 - linetype:
 
   Border linetype. Defaults to `1`. May be a vector.
+
+- layout:
+
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 ## Value
 

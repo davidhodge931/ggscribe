@@ -61,6 +61,7 @@ Requires <code>coord_cartesian(clip = "off")</code>.</p>
 <span>  linewidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  length <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  layout <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  yintercept <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -109,6 +110,13 @@ the same length as <code>breaks</code>. The bar always uses the first value.</p>
 <dd><p>Length of the bracket caps as a grid unit. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>.
 Negative values flip the cap direction. Defaults to <code>rel(1)</code> (outward at
 theme tick length). May be a vector the same length as <code>breaks</code>.</p></dd>
+
+
+<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
+<dd><p>Controls which panels the annotation appears in. <code>NULL</code>
+(default) repeats in all panels. An integer targets a specific panel.
+<code>"fixed"</code> repeats in all panels ignoring faceting variables. See
+<code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">ggplot2::layer()</a></code> for full details.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>

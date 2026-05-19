@@ -57,6 +57,7 @@ coord_cartesian(clip = "off").'><meta property="og:image" content="https://david
 <span>  linewidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  arrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  layout <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xintercept <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  yintercept <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -97,6 +98,13 @@ specifications the same length as <code>xintercept</code>/<code>yintercept</code
 arrowhead points in the positive axis direction (right for x, up for y).
 Must use <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> not <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> when supplying multiple values.
 E.g. <code>grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")</code>.</p></dd>
+
+
+<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
+<dd><p>Controls which panels the annotation appears in. <code>NULL</code>
+(default) repeats in all panels. An integer targets a specific panel.
+<code>"fixed"</code> repeats in all panels ignoring faceting variables. See
+<code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">ggplot2::layer()</a></code> for full details.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>

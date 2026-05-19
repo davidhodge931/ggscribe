@@ -14,6 +14,7 @@ axis_line(
   linewidth = NULL,
   linetype = NULL,
   arrow = NULL,
+  layout = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -56,6 +57,14 @@ axis_line(
   [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
   E.g.
   `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+
+- layout:
+
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 - xintercept:
 

@@ -19,6 +19,7 @@ axis_text(
   vjust = NULL,
   angle = 0,
   length = ggplot2::rel(1),
+  layout = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -84,6 +85,14 @@ axis_text(
   Negative values place labels inside the panel. Defaults to `rel(1)`
   (theme tick length + text margin). May be a vector the same length as
   `breaks`.
+
+- layout:
+
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 - xintercept:
 
