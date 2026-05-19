@@ -21,6 +21,10 @@
 #' @param linewidth Inherits from `panel.border` in the set theme. Supports
 #'   `rel()`. May be a vector.
 #' @param linetype Border linetype. Defaults to `1`. May be a vector.
+#' @param layout Controls which panels the annotation appears in. `NULL`
+#'   (default) repeats in all panels. An integer targets a specific panel.
+#'   `"fixed"` repeats in all panels ignoring faceting variables. See
+#'   [ggplot2::layer()] for full details.
 #'
 #' @return A list containing annotation layers.
 #' @export
@@ -37,7 +41,8 @@ panel_shade <- function(
     alpha = 0.25,
     colour = "transparent",
     linewidth = NULL,
-    linetype = NULL
+    linetype = NULL,
+    layout = NULL
 ) {
   rlang::check_dots_empty()
 
@@ -75,7 +80,6 @@ panel_shade <- function(
   ymin <- as.numeric(ymin)
   ymax <- as.numeric(ymax)
 
-  # n driven by the longest bounds vector; all recycled to match
   n <- max(length(xmin), length(xmax), length(ymin), length(ymax))
 
   xmin <- rep_len(xmin, n)
@@ -93,9 +97,7 @@ panel_shade <- function(
     0.5
   }
 
-  # ---- Vectorise and recycle style args to n --------------------------------
-
-  fill_vec   <- rep_len(fill,  n)
+  fill_vec   <- rep_len(fill, n)
   alpha_vec  <- rep_len(alpha %||% 1, n)
   colour_vec <- rep_len(colour, n)
 
@@ -108,11 +110,6 @@ panel_shade <- function(
   }
 
   linetype_vec <- rep_len(linetype %||% 1, n)
-
-  # ---- Draw one grob per rectangle -----------------------------------------
-  # Always uses annotation_custom + rectGrob for consistency with the other
-  # functions. npc bounds go directly into the grob; data bounds are pinned
-  # via annotation_custom's xmin/xmax/ymin/ymax.
 
   lapply(seq_len(n), \(i) {
     x_left <- if (x_uses_normalized) {
@@ -150,8 +147,6 @@ panel_shade <- function(
       )
     )
 
-    # For npc bounds, span the full panel — the grob's npc units handle
-    # positioning. For data bounds, pin via annotation_custom coordinates.
     anno_pos <- list(
       xmin = if (x_uses_normalized) -Inf else xmin[[i]],
       xmax = if (x_uses_normalized) Inf  else xmax[[i]],
@@ -159,6 +154,14 @@ panel_shade <- function(
       ymax = if (y_uses_normalized) Inf  else ymax[[i]]
     )
 
-    rlang::exec(ggplot2::annotation_custom, grob = rect_grob, !!!anno_pos)
+    ggplot2::layer(
+      geom     = ggplot2::GeomCustomAnn,
+      stat     = "identity",
+      data     = NULL,
+      mapping  = ggplot2::aes(),
+      position = "identity",
+      params   = c(list(grob = rect_grob, na.rm = FALSE), anno_pos),
+      layout   = layout
+    )
   })
 }

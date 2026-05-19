@@ -21,6 +21,10 @@
 #'   arrowhead points in the positive axis direction (right for x, up for y).
 #'   Must use `list()` not `c()` when supplying multiple values.
 #'   E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+#' @param layout Controls which panels the annotation appears in. `NULL`
+#'   (default) repeats in all panels. An integer targets a specific panel.
+#'   `"fixed"` repeats in all panels ignoring faceting variables. See
+#'   [ggplot2::layer()] for full details.
 #' @param xintercept For `"left"`/`"right"` axes: draw lines at these x
 #'   positions in data coordinates, or wrapped in [I()] for normalised panel
 #'   coordinates (npc). May be a vector for multiple lines.
@@ -40,6 +44,7 @@ axis_line <- function(
     linewidth  = NULL,
     linetype   = NULL,
     arrow      = NULL,
+    layout     = NULL,
     xintercept = NULL,
     yintercept = NULL
 ) {
@@ -48,7 +53,6 @@ axis_line <- function(
   axis     <- if (position %in% c("top", "bottom")) "x" else "y"
   .validate_intercept(axis, position, xintercept, yintercept)
 
-  # Detect npc once for the whole intercept vector, then strip AsIs
   if (axis == "x") {
     npc_intercept <- inherits(yintercept, "AsIs")
     intercepts    <- if (is.null(yintercept)) {
@@ -65,11 +69,9 @@ axis_line <- function(
     }
   }
 
-  intercepts <- as.numeric(intercepts)
-  n          <- length(intercepts)
+  intercepts    <- as.numeric(intercepts)
+  n             <- length(intercepts)
   current_theme <- ggplot2::theme_get()
-
-  # ---- Resolve theme element ------------------------------------------------
 
   element_hierarchy <- c(
     paste0("axis.line.", axis, ".", position),
@@ -101,13 +103,9 @@ axis_line <- function(
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  # ---- Resolve scalar theme defaults ----------------------------------------
-
   theme_colour    <- resolved_element$colour   %||% "black"
   theme_linewidth <- resolved_element$linewidth %||% 0.5
   theme_linetype  <- resolved_element$linetype  %||% 1
-
-  # ---- Vectorise and recycle style args to n --------------------------------
 
   colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
 
@@ -129,8 +127,6 @@ axis_line <- function(
     rep_len(list(NULL), n)
   }
 
-  # ---- Draw one grob per intercept ------------------------------------------
-
   lapply(seq_len(n), \(i) {
     intercept <- intercepts[[i]]
 
@@ -142,12 +138,6 @@ axis_line <- function(
       lineend = "butt"
     )
 
-    # For npc intercepts, the value goes directly into the grob as
-    # unit(val, "npc") and the annotation spans the full panel.
-    # For data intercepts, the grob spans the full panel in npc and
-    # annotation_custom pins it at the intercept in data coordinates.
-    # The segment is drawn in the positive axis direction so the arrowhead
-    # points right for x axes and up for y axes.
     if (axis == "x") {
       line_grob <- if (npc_intercept) {
         grid::segmentsGrob(
@@ -188,6 +178,14 @@ axis_line <- function(
       }
     }
 
-    rlang::exec(ggplot2::annotation_custom, grob = line_grob, !!!anno_pos)
+    ggplot2::layer(
+      geom     = ggplot2::GeomCustomAnn,
+      stat     = "identity",
+      data     = NULL,
+      mapping  = ggplot2::aes(),
+      position = "identity",
+      params   = c(list(grob = line_grob, na.rm = FALSE), anno_pos),
+      layout   = layout
+    )
   })
 }

@@ -30,6 +30,10 @@
 #'   Supports `rel()`. Negative values place labels inside the panel. Defaults
 #'   to `rel(1)` (theme tick length + text margin). May be a vector the same
 #'   length as `breaks`.
+#' @param layout Controls which panels the annotation appears in. `NULL`
+#'   (default) repeats in all panels. An integer targets a specific panel.
+#'   `"fixed"` repeats in all panels ignoring faceting variables. See
+#'   [ggplot2::layer()] for full details.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
@@ -55,6 +59,7 @@ axis_text <- function(
     vjust        = NULL,
     angle        = 0,
     length       = ggplot2::rel(1),
+    layout       = NULL,
     xintercept   = NULL,
     yintercept   = NULL
 ) {
@@ -67,7 +72,6 @@ axis_text <- function(
 
   if (length(breaks) == 0) return(list())
 
-  # Check once whether breaks are in npc (I()) or data coordinates
   npc_breaks <- inherits(breaks, "AsIs")
   breaks     <- as.numeric(breaks)
   n          <- length(breaks)
@@ -75,14 +79,11 @@ axis_text <- function(
   intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
-  # ---- Resolve theme element ------------------------------------------------
-
   text_hierarchy <- c(
     paste0("axis.text.", axis, ".", position),
     paste0("axis.text.", axis),
     "axis.text"
   )
-
   resolved_text_element <- NULL
   for (nm in text_hierarchy) {
     el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
@@ -103,8 +104,6 @@ axis_text <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length <- el; break }
   }
 
-  # ---- Resolve scalar theme defaults ----------------------------------------
-
   theme_colour <- resolved_text_element$colour %||% "black"
   theme_size   <- resolved_text_element$size   %||% 11
   theme_family <- resolved_text_element$family %||% ""
@@ -123,17 +122,14 @@ axis_text <- function(
     }
   }
 
-  # Margin is scalar — same for all breaks
   text_margin  <- resolved_text_element$margin
-  margin_pts   <- 2  # default 2pt
+  margin_pts   <- 2
   if (!is.null(text_margin)) {
     margin_index <- switch(position, bottom = 1L, top = 3L, left = 2L, right = 4L)
     if (inherits(text_margin, c("margin", "unit")) && length(text_margin) >= margin_index) {
       margin_pts <- as.numeric(grid::convertUnit(text_margin[margin_index], "pt"))
     }
   }
-
-  # ---- Resolve labels -------------------------------------------------------
 
   if (is.null(labels)) {
     labels <- as.character(breaks)
@@ -143,8 +139,6 @@ axis_text <- function(
   if (length(labels) != n) {
     rlang::abort("Length of `labels` must match length of `breaks`.")
   }
-
-  # ---- Vectorise and recycle all args to length(breaks) --------------------
 
   colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
   size_vec   <- if (is.null(size))   rep_len(theme_size, n)   else rep_len(size, n)
@@ -167,11 +161,8 @@ axis_text <- function(
     rep_len(as.numeric(length) < 0, n)
   }
 
-  # total_length per break = resolved length + margin
   total_length_vec <- length_pts_vec + margin_pts
 
-  # hjust/vjust: if NULL, auto-calculate per break from flip_vec;
-  # if provided, recycle to n
   hjust_vec <- if (is.null(hjust)) {
     vapply(seq_len(n), \(i) {
       flip <- flip_vec[[i]]
@@ -194,8 +185,6 @@ axis_text <- function(
     rep_len(vjust, n)
   }
 
-  # ---- Draw one grob per break ---------------------------------------------
-
   lapply(seq_along(breaks), \(i) {
     break_val    <- breaks[[i]]
     total_length <- grid::unit(total_length_vec[[i]], "pt")
@@ -207,9 +196,6 @@ axis_text <- function(
       fontfamily = family_vec[[i]]
     )
 
-    # Resolve the along-axis coordinate of the grob:
-    # - data coords: pinned to 0.5 npc (annotation_custom handles the mapping)
-    # - npc coords:  directly placed via unit(break_val, "npc")
     grob_along <- if (npc_breaks) {
       grid::unit(break_val, "npc")
     } else {
@@ -223,8 +209,7 @@ axis_text <- function(
         y    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
         just = c(hjust_vec[[i]], vjust_vec[[i]]),
-        rot  = angle_vec[[i]],
-        gp   = gp
+        rot  = angle_vec[[i]], gp = gp
       )
     } else if (position == "top") {
       grid::textGrob(
@@ -233,8 +218,7 @@ axis_text <- function(
         y    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
         just = c(hjust_vec[[i]], vjust_vec[[i]]),
-        rot  = angle_vec[[i]],
-        gp   = gp
+        rot  = angle_vec[[i]], gp = gp
       )
     } else if (position == "left") {
       grid::textGrob(
@@ -243,8 +227,7 @@ axis_text <- function(
         else                grid::unit(0, "npc") - total_length,
         y    = grob_along,
         just = c(hjust_vec[[i]], vjust_vec[[i]]),
-        rot  = angle_vec[[i]],
-        gp   = gp
+        rot  = angle_vec[[i]], gp = gp
       )
     } else {
       grid::textGrob(
@@ -253,16 +236,10 @@ axis_text <- function(
         else                grid::unit(1, "npc") + total_length,
         y    = grob_along,
         just = c(hjust_vec[[i]], vjust_vec[[i]]),
-        rot  = angle_vec[[i]],
-        gp   = gp
+        rot  = angle_vec[[i]], gp = gp
       )
     }
 
-    # For npc breaks, span the full panel in the along-axis direction so the
-    # grob's internal npc coordinate handles positioning. The intercept is
-    # preserved in the perpendicular direction so yintercept/xintercept
-    # floating still works correctly.
-    # For data breaks, pin to the break value as before.
     annotation_position <- if (npc_breaks && axis == "x") {
       list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
     } else if (npc_breaks && axis == "y") {
@@ -273,6 +250,14 @@ axis_text <- function(
       list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)
     }
 
-    rlang::exec(ggplot2::annotation_custom, grob = text_grob, !!!annotation_position)
+    ggplot2::layer(
+      geom     = ggplot2::GeomCustomAnn,
+      stat     = "identity",
+      data     = NULL,
+      mapping  = ggplot2::aes(),
+      position = "identity",
+      params   = c(list(grob = text_grob, na.rm = FALSE), annotation_position),
+      layout   = layout
+    )
   })
 }

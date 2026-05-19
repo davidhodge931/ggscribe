@@ -11,6 +11,7 @@ axis_line(
   linewidth = NULL,
   linetype = NULL,
   arrow = NULL,
+  layout = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -36,6 +37,11 @@ specifications the same length as \code{xintercept}/\code{yintercept}. The
 arrowhead points in the positive axis direction (right for x, up for y).
 Must use \code{list()} not \code{c()} when supplying multiple values.
 E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
+
+\item{layout}{Controls which panels the annotation appears in. \code{NULL}
+(default) repeats in all panels. An integer targets a specific panel.
+\code{"fixed"} repeats in all panels ignoring faceting variables. See
+\code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
 
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: draw lines at these x
 positions in data coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel

@@ -14,10 +14,10 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- Use the \*\_sec_axis\*, and subtitle, caption and axis titles to
+- Use the secondary axis, or subtitle, caption, axis titles or labels to
   adjust space in the plot.
-- `axis_*` generally require a globally set theme with panel dimensions
-  and `coord_cartesian(clip = "off")`.
+- `axis_*` functions generally require a globally set theme with panel
+  dimensions and `coord_cartesian(clip = "off")`.
 - `panel_shade` should be before geoms.
 
 ## Installation

@@ -13,6 +13,7 @@ axis_ticks(
   linetype = NULL,
   length = ggplot2::rel(1),
   arrow = NULL,
+  layout = NULL,
   xintercept = NULL,
   yintercept = NULL
 )
@@ -46,6 +47,11 @@ Use \code{NULL} as a list element for no arrow on a specific tick. The
 arrowhead points toward the axis line. Must use \code{list()} not \code{c()} when
 supplying multiple values.
 E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
+
+\item{layout}{Controls which panels the annotation appears in. \code{NULL}
+(default) repeats in all panels. An integer targets a specific panel.
+\code{"fixed"} repeats in all panels ignoring faceting variables. See
+\code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
 
 \item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
 position in data coordinates instead of the panel edge.}

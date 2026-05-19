@@ -27,6 +27,10 @@
 #'   arrowhead points toward the axis line. Must use `list()` not `c()` when
 #'   supplying multiple values.
 #'   E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+#' @param layout Controls which panels the annotation appears in. `NULL`
+#'   (default) repeats in all panels. An integer targets a specific panel.
+#'   `"fixed"` repeats in all panels ignoring faceting variables. See
+#'   [ggplot2::layer()] for full details.
 #' @param xintercept For `"left"`/`"right"` axes: float the axis to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the axis to this y
@@ -46,6 +50,7 @@ axis_ticks <- function(
     linetype     = NULL,
     length       = ggplot2::rel(1),
     arrow        = NULL,
+    layout       = NULL,
     xintercept   = NULL,
     yintercept   = NULL
 ) {
@@ -173,7 +178,7 @@ axis_ticks <- function(
     rep_len(list(NULL), n)
   }
 
-  # ---- Draw one grob per break ---------------------------------------------
+  # ---- Draw one layer per break --------------------------------------------
 
   lapply(seq_along(breaks), \(i) {
     break_val      <- breaks[[i]]
@@ -244,6 +249,14 @@ axis_ticks <- function(
       list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)
     }
 
-    rlang::exec(ggplot2::annotation_custom, grob = tick_grob, !!!annotation_position)
+    ggplot2::layer(
+      geom     = ggplot2::GeomCustomAnn,
+      stat     = "identity",
+      data     = NULL,
+      mapping  = ggplot2::aes(),
+      position = "identity",
+      params   = c(list(grob = tick_grob, na.rm = FALSE), annotation_position),
+      layout   = layout
+    )
   })
 }

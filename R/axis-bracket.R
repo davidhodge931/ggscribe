@@ -27,6 +27,10 @@
 #' @param length Length of the bracket caps as a grid unit. Supports `rel()`.
 #'   Negative values flip the cap direction. Defaults to `rel(1)` (outward at
 #'   theme tick length). May be a vector the same length as `breaks`.
+#' @param layout Controls which panels the annotation appears in. `NULL`
+#'   (default) repeats in all panels. An integer targets a specific panel.
+#'   `"fixed"` repeats in all panels ignoring faceting variables. See
+#'   [ggplot2::layer()] for full details.
 #' @param xintercept For `"left"`/`"right"` axes: float the bracket to this x
 #'   position in data coordinates instead of the panel edge.
 #' @param yintercept For `"top"`/`"bottom"` axes: float the bracket to this y
@@ -48,6 +52,7 @@ axis_bracket <- function(
     linewidth    = NULL,
     linetype     = NULL,
     length       = ggplot2::rel(1),
+    layout       = NULL,
     xintercept   = NULL,
     yintercept   = NULL
 ) {
@@ -62,7 +67,6 @@ axis_bracket <- function(
     rlang::abort("`breaks` must have at least 2 values to define the bracket span.")
   }
 
-  # Check once whether breaks are in npc (I()) or data coordinates
   npc_breaks <- inherits(breaks, "AsIs")
   breaks     <- as.numeric(breaks)
   n          <- length(breaks)
@@ -71,9 +75,6 @@ axis_bracket <- function(
   bracket_to    <- max(breaks)
   intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
-
-  # ---- Resolve Style Element ------------------------------------------------
-  # Walk axis.line → axis.ticks → line for consistent appearance.
 
   line_hierarchy <- c(
     paste0("axis.line.", axis, ".", position),
@@ -93,13 +94,9 @@ axis_bracket <- function(
     resolved_element <- list(colour = "#333333FF", linewidth = 0.5, linetype = 1)
   }
 
-  # ---- Resolve scalar theme defaults ----------------------------------------
-
   theme_colour    <- resolved_element$colour   %||% "#333333FF"
   theme_linewidth <- resolved_element$linewidth %||% 0.5
   theme_linetype  <- resolved_element$linetype  %||% 1
-
-  # ---- Resolve Cap Length ---------------------------------------------------
 
   length_hierarchy <- c(
     paste0("axis.ticks.length.", axis, ".", position),
@@ -125,9 +122,6 @@ axis_bracket <- function(
       as.numeric(grid::convertUnit(tl, "pt"))
     }
   }
-
-  # ---- Vectorise and recycle style args to length(breaks) ------------------
-  # Bar uses the first value of each style vector; caps use per-break values.
 
   colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
 
@@ -157,12 +151,19 @@ axis_bracket <- function(
     rep_len(as.numeric(length) < 0, n)
   }
 
+  .make_layer <- function(grob, anno_pos) {
+    ggplot2::layer(
+      geom     = ggplot2::GeomCustomAnn,
+      stat     = "identity",
+      data     = NULL,
+      mapping  = ggplot2::aes(),
+      position = "identity",
+      params   = c(list(grob = grob, na.rm = FALSE), anno_pos),
+      layout   = layout
+    )
+  }
+
   # ---- Bar ------------------------------------------------------------------
-  # Bar uses the first value from each style vector.
-  # For data coords: the grob spans 0 to 1 npc; the annotation_custom bounding
-  # box is set to bracket_from/bracket_to so npc 0 = bracket_from and
-  # npc 1 = bracket_to — no "native" units needed.
-  # For npc coords: break values go directly into the grob as npc units.
 
   gp_bar <- grid::gpar(
     col     = colour_vec[[1]],
@@ -177,46 +178,41 @@ axis_bracket <- function(
       y0 = grid::unit(0.5, "npc"), y1 = grid::unit(0.5, "npc"),
       gp = gp_bar
     )
-    list(ggplot2::annotation_custom(
-      grob = bar_grob,
+    list(.make_layer(bar_grob, list(
       xmin = bracket_from, xmax = bracket_to,
       ymin = intercept,    ymax = intercept
-    ))
+    )))
   } else if (!npc_breaks && axis == "y") {
     bar_grob <- grid::segmentsGrob(
       x0 = grid::unit(0.5, "npc"), x1 = grid::unit(0.5, "npc"),
       y0 = grid::unit(0, "npc"),   y1 = grid::unit(1, "npc"),
       gp = gp_bar
     )
-    list(ggplot2::annotation_custom(
-      grob = bar_grob,
+    list(.make_layer(bar_grob, list(
       xmin = intercept,    xmax = intercept,
       ymin = bracket_from, ymax = bracket_to
-    ))
+    )))
   } else if (npc_breaks && axis == "x") {
     bar_grob <- grid::segmentsGrob(
       x0 = grid::unit(bracket_from, "npc"), x1 = grid::unit(bracket_to, "npc"),
       y0 = grid::unit(0, "npc"),            y1 = grid::unit(0, "npc"),
       gp = gp_bar
     )
-    list(ggplot2::annotation_custom(
-      grob = bar_grob,
+    list(.make_layer(bar_grob, list(
       xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept
-    ))
+    )))
   } else {
     bar_grob <- grid::segmentsGrob(
       x0 = grid::unit(0, "npc"), x1 = grid::unit(0, "npc"),
       y0 = grid::unit(bracket_from, "npc"), y1 = grid::unit(bracket_to, "npc"),
       gp = gp_bar
     )
-    list(ggplot2::annotation_custom(
-      grob = bar_grob,
+    list(.make_layer(bar_grob, list(
       xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf
-    ))
+    )))
   }
 
   # ---- Caps -----------------------------------------------------------------
-  # Per-break styles — each cap gets its own gp built from the style vectors.
 
   cap_annotations <- lapply(seq_along(breaks), \(i) {
     break_val      <- breaks[[i]]
@@ -280,7 +276,7 @@ axis_bracket <- function(
       list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)
     }
 
-    rlang::exec(ggplot2::annotation_custom, grob = cap_grob, !!!cap_pos)
+    .make_layer(cap_grob, cap_pos)
   })
 
   c(stamp, cap_annotations)

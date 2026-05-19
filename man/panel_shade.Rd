@@ -14,7 +14,8 @@ panel_shade(
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
-  linetype = NULL
+  linetype = NULL,
+  layout = NULL
 )
 }
 \arguments{
@@ -39,6 +40,11 @@ same length as the bounds to style each rectangle individually.}
 \code{rel()}. May be a vector.}
 
 \item{linetype}{Border linetype. Defaults to \code{1}. May be a vector.}
+
+\item{layout}{Controls which panels the annotation appears in. \code{NULL}
+(default) repeats in all panels. An integer targets a specific panel.
+\code{"fixed"} repeats in all panels ignoring faceting variables. See
+\code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
 }
 \value{
 A list containing annotation layers.

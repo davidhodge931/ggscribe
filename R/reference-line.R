@@ -27,6 +27,10 @@
 #'   up for horizontal lines). Must use `list()` not `c()` when supplying
 #'   multiple values.
 #'   E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+#' @param layout Controls which panels the annotation appears in. `NULL`
+#'   (default) repeats in all panels. An integer targets a specific panel.
+#'   `"fixed"` repeats in all panels ignoring faceting variables. See
+#'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_ticks()],
@@ -43,7 +47,8 @@ reference_line <- function(
     colour     = NULL,
     linewidth  = NULL,
     linetype   = "dashed",
-    arrow      = NULL
+    arrow      = NULL,
+    layout     = NULL
 ) {
   rlang::check_dots_empty()
 
@@ -61,8 +66,6 @@ reference_line <- function(
 
   n             <- length(intercepts)
   current_theme <- ggplot2::theme_get()
-
-  # ---- Resolve theme element ------------------------------------------------
 
   position <- if (axis == "x") "bottom" else "left"
 
@@ -90,12 +93,8 @@ reference_line <- function(
     resolved_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  # ---- Resolve scalar theme defaults ----------------------------------------
-
   theme_colour    <- resolved_element$colour   %||% "black"
   theme_linewidth <- resolved_element$linewidth %||% 0.5
-
-  # ---- Vectorise and recycle style args to n --------------------------------
 
   colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
 
@@ -117,8 +116,6 @@ reference_line <- function(
     rep_len(list(NULL), n)
   }
 
-  # ---- Draw one grob per intercept ------------------------------------------
-
   lapply(seq_len(n), \(i) {
     intercept <- intercepts[[i]]
 
@@ -130,12 +127,6 @@ reference_line <- function(
       lineend = "butt"
     )
 
-    # For npc intercepts, the value goes directly into the grob as
-    # unit(val, "npc") and the annotation spans the full panel.
-    # For data intercepts, the grob spans the full panel in npc and
-    # annotation_custom pins it at the intercept in data coordinates.
-    # The segment is drawn in the positive axis direction so the arrowhead
-    # points right for vertical lines and up for horizontal lines.
     if (axis == "x") {
       line_grob <- if (npc_intercept) {
         grid::segmentsGrob(
@@ -176,6 +167,14 @@ reference_line <- function(
       }
     }
 
-    rlang::exec(ggplot2::annotation_custom, grob = line_grob, !!!anno_pos)
+    ggplot2::layer(
+      geom     = ggplot2::GeomCustomAnn,
+      stat     = "identity",
+      data     = NULL,
+      mapping  = ggplot2::aes(),
+      position = "identity",
+      params   = c(list(grob = line_grob, na.rm = FALSE), anno_pos),
+      layout   = layout
+    )
   })
 }
