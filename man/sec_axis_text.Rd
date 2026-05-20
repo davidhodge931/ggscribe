@@ -5,22 +5,17 @@
 \title{Secondary axis optimised for text annotations}
 \usage{
 sec_axis_text(
-  breaks = ggplot2::waiver(),
-  labels = NULL,
+  breaks = function(x) mean(x),
+  labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_text(),
   ...
 )
 }
 \arguments{
-\item{breaks}{One of:
-\itemize{
-\item \code{NULL} for no breaks
-\item \code{\link[ggplot2:waiver]{ggplot2::waiver()}} (default) to inherit breaks from the primary axis
-\item A numeric vector of break positions
-\item A function that takes the scale limits as input and returns break
-positions (e.g. \verb{\\(x) mean(c(x[2], 32))})
-}}
+\item{breaks}{A function or numeric vector giving the break position(s) used
+to anchor the spacer. Defaults to \verb{\\(x) mean(x)}, which places a single
+text label at the midpoint of the scale.}
 
 \item{labels}{One of:
 \itemize{

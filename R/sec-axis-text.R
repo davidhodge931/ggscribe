@@ -2,19 +2,16 @@
 
 #' Secondary axis optimised for text annotations
 #'
-#' @param breaks One of:
-#'    - `NULL` for no breaks
-#'    - [ggplot2::waiver()] (default) to inherit breaks from the primary axis
-#'    - A numeric vector of break positions
-#'    - A function that takes the scale limits as input and returns break
-#'      positions (e.g. `\(x) mean(c(x[2], 32))`)
+#' @param breaks A function or numeric vector giving the break position(s) used
+#'   to anchor the spacer. Defaults to `\(x) mean(x)`, which places a single
+#'   text label at the midpoint of the scale.
+#' @param labels One of:
+#'    - A character vector of labels, the same length as `breaks`
+#'    - A function that takes break positions as input and returns labels
 #' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
 #'    derive the name from the primary axis, or `NULL` (default) for no name.
 #' @param guide A guide object used to render the axis. Defaults to
 #'    [guide_sec_axis_text()], which makes transparent ticks and lines.
-#' @param labels One of:
-#'    - A character vector of labels, the same length as `breaks`
-#'    - A function that takes break positions as input and returns labels
 #' @param ... Additional arguments passed to [ggplot2::dup_axis()].
 #'
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
@@ -77,18 +74,18 @@
 #'   theme(plot.background = element_rect(colour = "grey92"))
 #'
 sec_axis_text <- function(
-    breaks = ggplot2::waiver(),
-    labels = NULL,
+    breaks = \(x) mean(x),
+    labels = ggplot2::waiver(),
     name = NULL,
     guide = guide_sec_axis_text(),
     ...
 ) {
 
-  if (is.null(labels)) {
-    labels <- as.character(breaks)
-  } else if (is.function(labels)) {
-    labels <- labels(breaks)
-  }
+  # if (is.null(labels)) {
+  #   labels <- as.character(breaks)
+  # } else if (is.function(labels)) {
+  #   labels <- labels(breaks)
+  # }
 
   ggplot2::sec_axis(
     transform = "identity",

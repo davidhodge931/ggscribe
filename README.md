@@ -14,10 +14,9 @@ publication-quality ‘ggplot2’ visualisation.
 
 Note:
 
-- Use the secondary axis, or subtitle, caption, axis titles or labels to
-  adjust space in the plot.
-- `axis_*` functions generally require a globally set theme with panel
-  dimensions and `coord_cartesian(clip = "off")`.
+- Use the secondary axis, subtitle, or axis titles to adjust space.
+- `axis_*` functions placed outside the panel require `clip = "off"` in
+  the coord space.
 - `panel_shade` should be before geoms.
 
 ## Installation
@@ -86,13 +85,13 @@ mtcars |>
   ggscribe::axis_ticks(
     position = "bottom",
     breaks = 3.8,
-    length = rel(5),
+    length = rel(4.5),
   ) +
   ggscribe::axis_text(
     position = "bottom",
     breaks = 3.8,
     labels = "Threshold",
-    length = rel(5),
+    length = rel(4.5),
   ) +
   labs(x = "\nWeight") +
   #geom

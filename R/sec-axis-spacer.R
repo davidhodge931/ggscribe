@@ -7,57 +7,41 @@
 #' Useful for pushing axis titles away from the panel to make room for
 #' annotations added with [axis_text()], [axis_ticks()], or [axis_bracket()].
 #'
-#' @param ... Arguments passed on to [sec_axis_text()].
 #' @param breaks A function or numeric vector giving the break position(s) used
 #'   to anchor the spacer. Defaults to `\(x) mean(x)`, which places a single
 #'   invisible label at the midpoint of the scale.
-#' @param labels A character string used as the spacer. Defaults to `""` (no
-#'   space). Use repeated newlines (e.g. `"\n\n"`) or spaces (e.g. `"   "`) to
-#'   increase the gap.
+#' @param labels A character string used as the spacer. Defaults to `""`. Use
+#' repeated newlines (e.g. `"\n"`) or a word to fit (e.g. `"Threshold"`).
+#' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
+#'    derive the name from the primary axis, or `NULL` (default) for no name.
+#' @param guide A guide object used to render the axis. Defaults to
+#'    [guide_sec_axis_spacer()], which makes transparent ticks and lines.
+#' @param ... Additional arguments passed to [ggplot2::dup_axis()].
 #'
 #' @return A [ggplot2::sec_axis()] object.
-#' @seealso [sec_axis_text()], [axis_text()], [axis_ticks()], [axis_bracket()]
+#' @seealso [guide_sec_axis_spacer()], [axis_text()], [axis_ticks()], [axis_bracket()]
 #' @export
 #'
-#' @examples
-#' # sec_axis_spacer reserves room above the panel for custom annotations.
-#' # Without it, axis_text drawn above the top axis would overlap the plot title.
-#'
-#' library(ggplot2)
-#'
-#' set_theme(ggrefine::theme_light())
-#'
-#' p <- ggplot(mpg, aes(displ, hwy)) +
-#'   geom_point() +
-#'   coord_cartesian(clip = "off") +
-#'   reference_line(
-#'     xintercept = 3
-#'   ) +
-#'   labs(
-#'     title    = "Larger engines have worse fuel economy",
-#'     subtitle = "Highway MPG by engine displacement\n"
-#'   )
-#'
-#' p
-#'
-#' p +
-#'   scale_x_continuous(
-#'     sec.axis = sec_axis_spacer()
-#'   ) +
-#'   axis_text(
-#'     position = "top",
-#'     breaks   = 3,
-#'     labels   = "Threshold",
-#'   )
-#'
 sec_axis_spacer <- function(
-    ...,
     breaks = \(x) mean(x),
-    labels = ""
+    labels = "",
+    name = NULL,
+    guide = guide_sec_axis_spacer(),
+    ...
 ) {
-  ggscribe::sec_axis_text(
+
+  # if (is.null(labels)) {
+  #   labels <- as.character(breaks)
+  # } else if (is.function(labels)) {
+  #   labels <- labels(breaks)
+  # }
+
+  ggplot2::sec_axis(
+    transform = "identity",
     breaks = breaks,
     labels = labels,
-    ...
+    name = name,
+    guide = guide
   )
 }
+

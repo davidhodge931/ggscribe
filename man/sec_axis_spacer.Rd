@@ -4,18 +4,29 @@
 \alias{sec_axis_spacer}
 \title{Add space above an axis}
 \usage{
-sec_axis_spacer(..., breaks = function(x) mean(x), labels = "")
+sec_axis_spacer(
+  breaks = function(x) mean(x),
+  labels = "",
+  name = NULL,
+  guide = guide_sec_axis_spacer(),
+  ...
+)
 }
 \arguments{
-\item{...}{Arguments passed on to \code{\link[=sec_axis_text]{sec_axis_text()}}.}
-
 \item{breaks}{A function or numeric vector giving the break position(s) used
 to anchor the spacer. Defaults to \verb{\\(x) mean(x)}, which places a single
 invisible label at the midpoint of the scale.}
 
-\item{labels}{A character string used as the spacer. Defaults to \code{""} (no
-space). Use repeated newlines (e.g. \code{"\\n\\n"}) or spaces (e.g. \code{"   "}) to
-increase the gap.}
+\item{labels}{A character string used as the spacer. Defaults to \code{""}. Use
+repeated newlines (e.g. \code{"\\n"}) or a word to fit (e.g. \code{"Threshold"}).}
+
+\item{name}{The name of the secondary axis. Use \code{\link[ggplot2:waiver]{ggplot2::waiver()}} to
+derive the name from the primary axis, or \code{NULL} (default) for no name.}
+
+\item{guide}{A guide object used to render the axis. Defaults to
+\code{\link[=guide_sec_axis_spacer]{guide_sec_axis_spacer()}}, which makes transparent ticks and lines.}
+
+\item{...}{Additional arguments passed to \code{\link[ggplot2:dup_axis]{ggplot2::dup_axis()}}.}
 }
 \value{
 A \code{\link[ggplot2:sec_axis]{ggplot2::sec_axis()}} object.
@@ -26,38 +37,6 @@ horizontal) space above (or beside) an axis without drawing visible text.
 Useful for pushing axis titles away from the panel to make room for
 annotations added with \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, or \code{\link[=axis_bracket]{axis_bracket()}}.
 }
-\examples{
-# sec_axis_spacer reserves room above the panel for custom annotations.
-# Without it, axis_text drawn above the top axis would overlap the plot title.
-
-library(ggplot2)
-
-set_theme(ggrefine::theme_light())
-
-p <- ggplot(mpg, aes(displ, hwy)) +
-  geom_point() +
-  coord_cartesian(clip = "off") +
-  reference_line(
-    xintercept = 3
-  ) +
-  labs(
-    title    = "Larger engines have worse fuel economy",
-    subtitle = "Highway MPG by engine displacement\n"
-  )
-
-p
-
-p +
-  scale_x_continuous(
-    sec.axis = sec_axis_spacer()
-  ) +
-  axis_text(
-    position = "top",
-    breaks   = 3,
-    labels   = "Threshold",
-  )
-
-}
 \seealso{
-\code{\link[=sec_axis_text]{sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}
+\code{\link[=guide_sec_axis_spacer]{guide_sec_axis_spacer()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}
 }
