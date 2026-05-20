@@ -13,15 +13,16 @@ or
 ## Usage
 
 ``` r
-sec_axis_spacer(..., breaks = function(x) mean(x), labels = "")
+sec_axis_spacer(
+  breaks = function(x) mean(x),
+  labels = "",
+  name = NULL,
+  guide = guide_sec_axis_spacer(),
+  ...
+)
 ```
 
 ## Arguments
-
-- ...:
-
-  Arguments passed on to
-  [`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md).
 
 - breaks:
 
@@ -31,9 +32,26 @@ sec_axis_spacer(..., breaks = function(x) mean(x), labels = "")
 
 - labels:
 
-  A character string used as the spacer. Defaults to `""` (no space).
-  Use repeated newlines (e.g. `"\n\n"`) or spaces (e.g. `" "`) to
-  increase the gap.
+  A character string used as the spacer. Defaults to `""`. Use repeated
+  newlines (e.g. `"\n"`) or a word to fit (e.g. `"Threshold"`).
+
+- name:
+
+  The name of the secondary axis. Use
+  [`ggplot2::waiver()`](https://ggplot2.tidyverse.org/reference/waiver.html)
+  to derive the name from the primary axis, or `NULL` (default) for no
+  name.
+
+- guide:
+
+  A guide object used to render the axis. Defaults to
+  [`guide_sec_axis_spacer()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_spacer.md),
+  which makes transparent ticks and lines.
+
+- ...:
+
+  Additional arguments passed to
+  [`ggplot2::dup_axis()`](https://ggplot2.tidyverse.org/reference/sec_axis.html).
 
 ## Value
 
@@ -43,43 +61,7 @@ object.
 
 ## See also
 
-[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md),
+[`guide_sec_axis_spacer()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_spacer.md),
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)
-
-## Examples
-
-``` r
-# sec_axis_spacer reserves room above the panel for custom annotations.
-# Without it, axis_text drawn above the top axis would overlap the plot title.
-
-library(ggplot2)
-
-set_theme(ggrefine::theme_light())
-
-p <- ggplot(mpg, aes(displ, hwy)) +
-  geom_point() +
-  coord_cartesian(clip = "off") +
-  reference_line(
-    xintercept = 3
-  ) +
-  labs(
-    title    = "Larger engines have worse fuel economy",
-    subtitle = "Highway MPG by engine displacement\n"
-  )
-
-p
-
-
-p +
-  scale_x_continuous(
-    sec.axis = sec_axis_spacer()
-  ) +
-  axis_text(
-    position = "top",
-    breaks   = 3,
-    labels   = "Threshold",
-  )
-
-```
