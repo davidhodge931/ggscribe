@@ -8,7 +8,6 @@
 #'
 #' @param ... Additional arguments passed to [ggplot2::guide_axis()], such as
 #'   `title`, `check.overlap`, or `angle`.
-#' @param theme A `theme` object to adjust the style of the guide.
 #'
 #' @returns A `guide` object to be used in a scale's `guide` argument or within
 #'   [sec_axis_text()].
@@ -19,9 +18,9 @@
 #'
 #' @inherit sec_axis_text examples
 #'
-guide_sec_axis_spacer <- function(..., theme = NULL) {
+guide_sec_axis_spacer <- function(...) {
   ggplot2::guide_axis(
-    theme = theme_sec_axis_spacer() + theme,
+    theme = theme_sec_axis_spacer(),
     ...
   )
 }

@@ -103,7 +103,7 @@ mtcars |>
     breaks = 12,
     labels = "Threshold",
   ) +
-  #'geom
+  #geom
   geom_point() +
   #annotations fit plot
   theme(plot.background = element_rect(colour = "grey92"))

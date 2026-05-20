@@ -5,7 +5,7 @@
 \title{Secondary axis optimised for text annotations}
 \usage{
 sec_axis_text(
-  breaks = function(x) mean(x),
+  breaks = ggplot2::waiver(),
   labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_text(),
@@ -14,8 +14,9 @@ sec_axis_text(
 }
 \arguments{
 \item{breaks}{A function or numeric vector giving the break position(s) used
-to anchor the spacer. Defaults to \verb{\\(x) mean(x)}, which places a single
-text label at the midpoint of the scale.}
+to anchor the text. Defaults to \code{NULL}, which places a single label at the
+midpoint of the scale — the middle level for discrete scales, or the mean
+of the limits for continuous scales.}
 
 \item{labels}{One of:
 \itemize{
@@ -86,12 +87,12 @@ mtcars |>
     breaks = 12,
     labels = "Threshold",
   ) +
-  #'geom
+  #geom
   geom_point() +
   #annotations fit plot
   theme(plot.background = element_rect(colour = "grey92"))
 
 }
 \seealso{
-\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}#'
+\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}
 }

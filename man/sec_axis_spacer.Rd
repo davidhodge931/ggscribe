@@ -5,8 +5,8 @@
 \title{Add space above an axis}
 \usage{
 sec_axis_spacer(
-  breaks = function(x) mean(x),
-  labels = "",
+  breaks = ggplot2::waiver(),
+  labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_spacer(),
   ...
@@ -14,8 +14,9 @@ sec_axis_spacer(
 }
 \arguments{
 \item{breaks}{A function or numeric vector giving the break position(s) used
-to anchor the spacer. Defaults to \verb{\\(x) mean(x)}, which places a single
-invisible label at the midpoint of the scale.}
+to anchor the spacer. Defaults to \code{NULL}, which places a single invisible
+label at the midpoint of the scale — the middle level for discrete scales,
+or the mean of the limits for continuous scales.}
 
 \item{labels}{A character string used as the spacer. Defaults to \code{""}. Use
 repeated newlines (e.g. \code{"\\n"}) or a word to fit (e.g. \code{"Threshold"}).}

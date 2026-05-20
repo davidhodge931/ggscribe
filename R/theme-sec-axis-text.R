@@ -11,16 +11,15 @@
 #' [axis_text()], [reference_line()]
 #'
 theme_sec_axis_text <- function() {
+  ggplot2::theme(
+    axis.line.x.top = ggplot2::element_line(linetype = 0),
+    axis.line.x.bottom = ggplot2::element_line(linetype = 0),
+    axis.ticks.x.top = ggplot2::element_line(linetype = 0),
+    axis.ticks.x.bottom = ggplot2::element_line(linetype = 0),
 
-    ggplot2::theme(
-      axis.line.x.top = ggplot2::element_line(linetype = 0),
-      axis.line.x.bottom = ggplot2::element_line(linetype = 0),
-      axis.ticks.x.top = ggplot2::element_line(linetype = 0),
-      axis.ticks.x.bottom = ggplot2::element_line(linetype = 0),
-
-      axis.line.y.right = ggplot2::element_line(linetype = 0),
-      axis.line.y.left = ggplot2::element_line(linetype = 0),
-      axis.ticks.y.right = ggplot2::element_line(linetype = 0),
-      axis.ticks.y.left = ggplot2::element_line(linetype = 0),
-    )
+    axis.line.y.right = ggplot2::element_line(linetype = 0),
+    axis.line.y.left = ggplot2::element_line(linetype = 0),
+    axis.ticks.y.right = ggplot2::element_line(linetype = 0),
+    axis.ticks.y.left = ggplot2::element_line(linetype = 0),
+  )
 }
