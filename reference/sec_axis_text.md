@@ -6,7 +6,7 @@ Secondary axis optimised for text annotations
 
 ``` r
 sec_axis_text(
-  breaks = function(x) mean(x),
+  breaks = ggplot2::waiver(),
   labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_text(),
@@ -19,8 +19,9 @@ sec_axis_text(
 - breaks:
 
   A function or numeric vector giving the break position(s) used to
-  anchor the spacer. Defaults to `\(x) mean(x)`, which places a single
-  text label at the midpoint of the scale.
+  anchor the text. Defaults to `NULL`, which places a single label at
+  the midpoint of the scale — the middle level for discrete scales, or
+  the mean of the limits for continuous scales.
 
 - labels:
 
@@ -60,7 +61,7 @@ or
 [`guide_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_text.md),
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
-[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)\#'
+[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)
 
 ## Examples
 
@@ -112,7 +113,7 @@ mtcars |>
     breaks = 12,
     labels = "Threshold",
   ) +
-  #'geom
+  #geom
   geom_point() +
   #annotations fit plot
   theme(plot.background = element_rect(colour = "grey92"))

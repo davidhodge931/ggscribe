@@ -47,7 +47,7 @@ ticks and lines while preserving text, making it ideal for annotation labels.</p
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">guide_sec_axis_text</span><span class="op">(</span><span class="va">...</span>, theme <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">guide_sec_axis_text</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -57,10 +57,6 @@ ticks and lines while preserving text, making it ideal for annotation labels.</p
 <dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to <code><a href="https://ggplot2.tidyverse.org/reference/guide_axis.html" class="external-link">ggplot2::guide_axis()</a></code>, such as
 <code>title</code>, <code>check.overlap</code>, or <code>angle</code>.</p></dd>
-
-
-<dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
-<dd><p>A <code>theme</code> object to adjust the style of the guide.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -122,7 +118,7 @@ ticks and lines while preserving text, making it ideal for annotation labels.</p
 <span class="r-in"><span>    breaks <span class="op">=</span> <span class="fl">12</span>,</span></span>
 <span class="r-in"><span>    labels <span class="op">=</span> <span class="st">"Threshold"</span>,</span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="co">#'geom</span></span></span>
+<span class="r-in"><span>  <span class="co">#geom</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="co">#annotations fit plot</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"grey92"</span><span class="op">)</span><span class="op">)</span></span></span>

@@ -14,8 +14,8 @@ or
 
 ``` r
 sec_axis_spacer(
-  breaks = function(x) mean(x),
-  labels = "",
+  breaks = ggplot2::waiver(),
+  labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_spacer(),
   ...
@@ -27,8 +27,9 @@ sec_axis_spacer(
 - breaks:
 
   A function or numeric vector giving the break position(s) used to
-  anchor the spacer. Defaults to `\(x) mean(x)`, which places a single
-  invisible label at the midpoint of the scale.
+  anchor the spacer. Defaults to `NULL`, which places a single invisible
+  label at the midpoint of the scale — the middle level for discrete
+  scales, or the mean of the limits for continuous scales.
 
 - labels:
 

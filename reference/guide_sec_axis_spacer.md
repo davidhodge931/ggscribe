@@ -8,7 +8,7 @@ the same colour as the plot background fill from the set theme.
 ## Usage
 
 ``` r
-guide_sec_axis_spacer(..., theme = NULL)
+guide_sec_axis_spacer(...)
 ```
 
 ## Arguments
@@ -18,10 +18,6 @@ guide_sec_axis_spacer(..., theme = NULL)
   Additional arguments passed to
   [`ggplot2::guide_axis()`](https://ggplot2.tidyverse.org/reference/guide_axis.html),
   such as `title`, `check.overlap`, or `angle`.
-
-- theme:
-
-  A `theme` object to adjust the style of the guide.
 
 ## Value
 
@@ -85,7 +81,7 @@ mtcars |>
     breaks = 12,
     labels = "Threshold",
   ) +
-  #'geom
+  #geom
   geom_point() +
   #annotations fit plot
   theme(plot.background = element_rect(colour = "grey92"))
