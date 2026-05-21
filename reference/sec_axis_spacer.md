@@ -1,4 +1,4 @@
-# Add space above an axis
+# Secondary axis for providing space for text annotations
 
 A convenience wrapper around
 [`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)
@@ -14,8 +14,8 @@ or
 
 ``` r
 sec_axis_spacer(
-  breaks = ggplot2::waiver(),
-  labels = ggplot2::waiver(),
+  breaks = function(x) mean(x),
+  labels = "",
   name = NULL,
   guide = guide_sec_axis_spacer(),
   ...
@@ -27,14 +27,14 @@ sec_axis_spacer(
 - breaks:
 
   A function or numeric vector giving the break position(s) used to
-  anchor the spacer. Defaults to `NULL`, which places a single invisible
-  label at the midpoint of the scale — the middle level for discrete
-  scales, or the mean of the limits for continuous scales.
+  anchor the text. Defaults to `NULL`, which places a single label at
+  the midpoint of the scale — the mean of the limits for continuous
+  scales.
 
 - labels:
 
   A character string used as the spacer. Defaults to `""`. Use repeated
-  newlines (e.g. `"\n"`) or a word to fit (e.g. `"Threshold"`).
+  newlines (e.g. `"\n"`) or a word to fit.
 
 - name:
 

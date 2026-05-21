@@ -3,9 +3,9 @@
 ## Secondary axis
 
 - [`sec_axis_spacer()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_spacer.md)
-  : Add space above an axis
+  : Secondary axis for providing space for text annotations
 - [`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)
-  : Secondary axis optimised for text annotations
+  : Secondary axis for text annotations
 - [`guide_sec_axis_spacer()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_spacer.md)
   : Guide optimised for secondary axis space adjustments
 - [`guide_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_text.md)

@@ -1,12 +1,12 @@
-# Secondary axis optimised for text annotations
+# Secondary axis for text annotations
 
-Secondary axis optimised for text annotations
+Secondary axis for text annotations
 
 ## Usage
 
 ``` r
 sec_axis_text(
-  breaks = ggplot2::waiver(),
+  breaks = function(x) mean(x),
   labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_text(),
@@ -20,8 +20,8 @@ sec_axis_text(
 
   A function or numeric vector giving the break position(s) used to
   anchor the text. Defaults to `NULL`, which places a single label at
-  the midpoint of the scale — the middle level for discrete scales, or
-  the mean of the limits for continuous scales.
+  the midpoint of the scale — the mean of the limits for continuous
+  scales.
 
 - labels:
 
