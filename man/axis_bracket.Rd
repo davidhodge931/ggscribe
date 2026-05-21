@@ -27,23 +27,24 @@ from \code{xintercept} or \code{yintercept} if not provided.}
 wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
 is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.
 The bar spans \code{min(breaks)} to \code{max(breaks)}; caps are drawn at every
-break value.}
+break value. Pass a list of such vectors to draw multiple brackets in one
+call — e.g. \code{breaks = list(c(2, 4), c(6, 8))} draws two brackets. Style
+args are then recycled to the number of brackets.}
 
 \item{colour}{Inherits from \code{axis.ticks} in the set theme (falling back
-through \code{axis.line} and \code{line}). May be a vector the same length as
-\code{breaks} to style each cap individually. The bar always uses the first
-value.}
+through \code{axis.line} and \code{line}). May be a vector the same length as the
+number of brackets to style each bracket individually.}
 
 \item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
-\code{rel()}. May be a vector the same length as \code{breaks}. The bar always uses
-the first value.}
+\code{rel()}. May be a vector the same length as the number of brackets.}
 
-\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a vector
-the same length as \code{breaks}. The bar always uses the first value.}
+\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a
+vector the same length as the number of brackets.}
 
 \item{length}{Length of the bracket caps as a grid unit. Supports \code{rel()}.
 Negative values flip the cap direction. Defaults to \code{rel(1)} (outward at
-theme tick length). May be a vector the same length as \code{breaks}.}
+theme tick length). May be a vector the same length as the number of
+brackets.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
@@ -60,9 +61,10 @@ position in data coordinates instead of the panel edge.}
 A list of ggplot2 annotation layers.
 }
 \description{
-Draws a bracket spanning \code{min(breaks)} to \code{max(breaks)} along an axis edge
-or at a floating data position. The bar uses the same rendering path as
-\code{\link[=axis_line]{axis_line()}}; the caps use the same path as \code{\link[=axis_ticks]{axis_ticks()}}.
+Draws one or more brackets along an axis edge or at a floating data
+position. Each bracket spans \code{min(breaks)} to \code{max(breaks)} with caps at
+every break value. The bar uses the same rendering path as \code{\link[=axis_line]{axis_line()}};
+the caps use the same path as \code{\link[=axis_ticks]{axis_ticks()}}.
 Requires \code{coord_cartesian(clip = "off")}.
 }
 \examples{
