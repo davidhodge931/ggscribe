@@ -1,8 +1,8 @@
 # Annotate an axis bracket
 
-Draws a bracket spanning `min(breaks)` to `max(breaks)` along an axis
-edge or at a floating data position. The bar uses the same rendering
-path as
+Draws one or more brackets along an axis edge or at a floating data
+position. Each bracket spans `min(breaks)` to `max(breaks)` with caps at
+every break value. The bar uses the same rendering path as
 [`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md);
 the caps use the same path as
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md).
@@ -42,32 +42,35 @@ axis_bracket(
   [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised panel
   coordinates (npc), where `I(0)` is the left/bottom edge and `I(1)` is
   the right/top edge of the panel. The bar spans `min(breaks)` to
-  `max(breaks)`; caps are drawn at every break value.
+  `max(breaks)`; caps are drawn at every break value. Pass a list of
+  such vectors to draw multiple brackets in one call — e.g.
+  `breaks = list(c(2, 4), c(6, 8))` draws two brackets. Style args are
+  then recycled to the number of brackets.
 
 - colour:
 
   Inherits from `axis.ticks` in the set theme (falling back through
-  `axis.line` and `line`). May be a vector the same length as `breaks`
-  to style each cap individually. The bar always uses the first value.
+  `axis.line` and `line`). May be a vector the same length as the number
+  of brackets to style each bracket individually.
 
 - linewidth:
 
   Inherits from `axis.ticks` in the set theme. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
-  be a vector the same length as `breaks`. The bar always uses the first
-  value.
+  be a vector the same length as the number of brackets.
 
 - linetype:
 
   Inherits from `axis.ticks` in the set theme. May be a vector the same
-  length as `breaks`. The bar always uses the first value.
+  length as the number of brackets.
 
 - length:
 
   Length of the bracket caps as a grid unit. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values flip the cap direction. Defaults to `rel(1)` (outward
-  at theme tick length). May be a vector the same length as `breaks`.
+  at theme tick length). May be a vector the same length as the number
+  of brackets.
 
 - layout:
 
