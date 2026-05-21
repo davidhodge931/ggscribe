@@ -2,11 +2,11 @@
 % Please edit documentation in R/sec-axis-spacer.R
 \name{sec_axis_spacer}
 \alias{sec_axis_spacer}
-\title{Add space above an axis}
+\title{Secondary axis for providing space for text annotations}
 \usage{
 sec_axis_spacer(
-  breaks = ggplot2::waiver(),
-  labels = ggplot2::waiver(),
+  breaks = function(x) mean(x),
+  labels = "",
   name = NULL,
   guide = guide_sec_axis_spacer(),
   ...
@@ -14,12 +14,11 @@ sec_axis_spacer(
 }
 \arguments{
 \item{breaks}{A function or numeric vector giving the break position(s) used
-to anchor the spacer. Defaults to \code{NULL}, which places a single invisible
-label at the midpoint of the scale — the middle level for discrete scales,
-or the mean of the limits for continuous scales.}
+to anchor the text. Defaults to \code{NULL}, which places a single label at the
+midpoint of the scale — the mean of the limits for continuous scales.}
 
 \item{labels}{A character string used as the spacer. Defaults to \code{""}. Use
-repeated newlines (e.g. \code{"\\n"}) or a word to fit (e.g. \code{"Threshold"}).}
+repeated newlines (e.g. \code{"\\n"}) or a word to fit.}
 
 \item{name}{The name of the secondary axis. Use \code{\link[ggplot2:waiver]{ggplot2::waiver()}} to
 derive the name from the primary axis, or \code{NULL} (default) for no name.}

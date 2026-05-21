@@ -1,11 +1,10 @@
 # sec_axis_text --------------------------------------------------------------------
 
-#' Secondary axis optimised for text annotations
+#' Secondary axis for text annotations
 #'
 #' @param breaks A function or numeric vector giving the break position(s) used
 #'   to anchor the text. Defaults to `NULL`, which places a single label at the
-#'   midpoint of the scale — the middle level for discrete scales, or the mean
-#'   of the limits for continuous scales.
+#'   midpoint of the scale — the mean of the limits for continuous scales.
 #' @param labels One of:
 #'   - A character vector of labels, the same length as `breaks`
 #'   - A function that takes break positions as input and returns labels
@@ -75,7 +74,7 @@
 #'   theme(plot.background = element_rect(colour = "grey92"))
 #'
 sec_axis_text <- function(
-    breaks = ggplot2::waiver(),
+    breaks = \(x) mean(x),
     labels = ggplot2::waiver(),
     name   = NULL,
     guide  = guide_sec_axis_text(),

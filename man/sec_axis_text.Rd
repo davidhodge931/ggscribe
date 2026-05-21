@@ -2,10 +2,10 @@
 % Please edit documentation in R/sec-axis-text.R
 \name{sec_axis_text}
 \alias{sec_axis_text}
-\title{Secondary axis optimised for text annotations}
+\title{Secondary axis for text annotations}
 \usage{
 sec_axis_text(
-  breaks = ggplot2::waiver(),
+  breaks = function(x) mean(x),
   labels = ggplot2::waiver(),
   name = NULL,
   guide = guide_sec_axis_text(),
@@ -15,8 +15,7 @@ sec_axis_text(
 \arguments{
 \item{breaks}{A function or numeric vector giving the break position(s) used
 to anchor the text. Defaults to \code{NULL}, which places a single label at the
-midpoint of the scale — the middle level for discrete scales, or the mean
-of the limits for continuous scales.}
+midpoint of the scale — the mean of the limits for continuous scales.}
 
 \item{labels}{One of:
 \itemize{
@@ -37,7 +36,7 @@ A \code{AxisSecondary} object for use in the \code{sec.axis} argument of
 \code{scale_x_continuous()} or \code{scale_y_continuous()}.
 }
 \description{
-Secondary axis optimised for text annotations
+Secondary axis for text annotations
 }
 \examples{
 library(ggplot2)
