@@ -110,8 +110,11 @@ the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-hjust-vjust">hjust, vjust<a class="anchor" aria-label="anchor" href="#arg-hjust-vjust"></a></dt>
-<dd><p>Justification. Auto-calculated from <code>position</code> if <code>NULL</code>.
-May be a vector the same length as <code>breaks</code>.</p></dd>
+<dd><p>Justification. Auto-calculated from <code>position</code> and
+<code>angle</code> if <code>NULL</code>. Text always anchors to the tick end — the label edge
+facing the tick aligns to it, rotating naturally with <code>angle</code>. Negative
+<code>length</code> flips the anchor to the opposite edge. May be a vector the same
+length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-angle">angle<a class="anchor" aria-label="anchor" href="#arg-angle"></a></dt>
@@ -121,9 +124,9 @@ length as <code>breaks</code>.</p></dd>
 
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
 <dd><p>Offset from the axis edge including tick length and margin.
-Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values place labels inside the panel. Defaults
-to <code>rel(1)</code> (theme tick length + text margin). May be a vector the same
-length as <code>breaks</code>.</p></dd>
+Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the tick direction (text appears on
+the panel side of the axis). Defaults to <code>rel(1)</code> (theme tick length +
+text margin). May be a vector the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>

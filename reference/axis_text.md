@@ -70,8 +70,11 @@ axis_text(
 
 - hjust, vjust:
 
-  Justification. Auto-calculated from `position` if `NULL`. May be a
-  vector the same length as `breaks`.
+  Justification. Auto-calculated from `position` and `angle` if `NULL`.
+  Text always anchors to the tick end — the label edge facing the tick
+  aligns to it, rotating naturally with `angle`. Negative `length` flips
+  the anchor to the opposite edge. May be a vector the same length as
+  `breaks`.
 
 - angle:
 
@@ -82,9 +85,9 @@ axis_text(
 
   Offset from the axis edge including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values place labels inside the panel. Defaults to `rel(1)`
-  (theme tick length + text margin). May be a vector the same length as
-  `breaks`.
+  Negative values flip the tick direction (text appears on the panel
+  side of the axis). Defaults to `rel(1)` (theme tick length + text
+  margin). May be a vector the same length as `breaks`.
 
 - layout:
 
