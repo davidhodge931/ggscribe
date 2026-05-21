@@ -22,14 +22,17 @@
 #'   the same length as `breaks`.
 #' @param family Inherits from `axis.text` in the set theme. May be a vector
 #'   the same length as `breaks`.
-#' @param hjust,vjust Justification. Auto-calculated from `position` if `NULL`.
-#'   May be a vector the same length as `breaks`.
+#' @param hjust,vjust Justification. Auto-calculated from `position` and
+#'   `angle` if `NULL`. Text always anchors to the tick end — the label edge
+#'   facing the tick aligns to it, rotating naturally with `angle`. Negative
+#'   `length` flips the anchor to the opposite edge. May be a vector the same
+#'   length as `breaks`.
 #' @param angle Text rotation angle. Defaults to `0`. May be a vector the same
 #'   length as `breaks`.
 #' @param length Offset from the axis edge including tick length and margin.
-#'   Supports `rel()`. Negative values place labels inside the panel. Defaults
-#'   to `rel(1)` (theme tick length + text margin). May be a vector the same
-#'   length as `breaks`.
+#'   Supports `rel()`. Negative values flip the tick direction (text appears on
+#'   the panel side of the axis). Defaults to `rel(1)` (theme tick length +
+#'   text margin). May be a vector the same length as `breaks`.
 #' @param layout Controls which panels the annotation appears in. `NULL`
 #'   (default) repeats in all panels. An integer targets a specific panel.
 #'   `"fixed"` repeats in all panels ignoring faceting variables. See
@@ -79,6 +82,8 @@ axis_text <- function(
   intercept     <- .resolve_intercept(axis, position, xintercept, yintercept)
   current_theme <- ggplot2::theme_get()
 
+  # ---- Resolve theme element ------------------------------------------------
+
   text_hierarchy <- c(
     paste0("axis.text.", axis, ".", position),
     paste0("axis.text.", axis),
@@ -104,6 +109,8 @@ axis_text <- function(
     if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length <- el; break }
   }
 
+  # ---- Resolve scalar theme defaults ----------------------------------------
+
   theme_colour <- resolved_text_element$colour %||% "black"
   theme_size   <- resolved_text_element$size   %||% 11
   theme_family <- resolved_text_element$family %||% ""
@@ -122,14 +129,16 @@ axis_text <- function(
     }
   }
 
-  text_margin  <- resolved_text_element$margin
-  margin_pts   <- 2
+  text_margin <- resolved_text_element$margin
+  margin_pts  <- 2
   if (!is.null(text_margin)) {
     margin_index <- switch(position, bottom = 1L, top = 3L, left = 2L, right = 4L)
     if (inherits(text_margin, c("margin", "unit")) && length(text_margin) >= margin_index) {
       margin_pts <- as.numeric(grid::convertUnit(text_margin[margin_index], "pt"))
     }
   }
+
+  # ---- Resolve labels -------------------------------------------------------
 
   if (is.null(labels)) {
     labels <- as.character(breaks)
@@ -139,6 +148,8 @@ axis_text <- function(
   if (length(labels) != n) {
     rlang::abort("Length of `labels` must match length of `breaks`.")
   }
+
+  # ---- Vectorise and recycle all args to n ---------------------------------
 
   colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
   size_vec   <- if (is.null(size))   rep_len(theme_size, n)   else rep_len(size, n)
@@ -163,31 +174,57 @@ axis_text <- function(
 
   total_length_vec <- length_pts_vec + margin_pts
 
-  hjust_vec <- if (is.null(hjust)) {
-    vapply(seq_len(n), \(i) {
-      flip <- flip_vec[[i]]
-      if (position %in% c("top", "bottom")) 0.5
-      else if (position == "left") { if (flip) 0 else 1 }
-      else { if (flip) 1 else 0 }
-    }, numeric(1))
-  } else {
-    rep_len(hjust, n)
+  # ---- Auto justification ---------------------------------------------------
+  # Uses trig to determine which bbox edge faces the tick end, anchoring the
+  # label neatly at any angle. sign(round(cos/sin)) maps to 0/0.5/1 via
+  # sign/2 + 0.5. Negative length (flip) inverts the anchor edge.
+
+  .deg2rad <- function(deg) deg * pi / 180
+
+  .get_hjust <- function(pos, ang, flip) {
+    rad    <- .deg2rad(ang)
+    cosine <- sign(round(cos(rad), 3)) / 2 + 0.5
+    sine   <- sign(round(sin(rad), 3)) / 2 + 0.5
+    h <- switch(pos,
+                left   = cosine,
+                right  = 1 - cosine,
+                top    = 1 - sine,
+                bottom = sine
+    )
+    if (flip) 1 - h else h
   }
 
-  vjust_vec <- if (is.null(vjust)) {
-    vapply(seq_len(n), \(i) {
-      flip <- flip_vec[[i]]
-      if (position == "bottom") { if (flip) 0 else 1 }
-      else if (position == "top") { if (flip) 1 else 0 }
-      else 0.5
-    }, numeric(1))
-  } else {
-    rep_len(vjust, n)
+  .get_vjust <- function(pos, ang, flip) {
+    rad    <- .deg2rad(ang)
+    cosine <- sign(round(cos(rad), 3)) / 2 + 0.5
+    sine   <- sign(round(sin(rad), 3)) / 2 + 0.5
+    v <- switch(pos,
+                left   = 1 - sine,
+                right  = sine,
+                top    = 1 - cosine,
+                bottom = cosine
+    )
+    if (flip) 1 - v else v
   }
+
+  hjust_provided <- !is.null(hjust)
+  vjust_provided <- !is.null(vjust)
+  hjust_vec_raw  <- if (hjust_provided) rep_len(hjust, n) else NULL
+  vjust_vec_raw  <- if (vjust_provided) rep_len(vjust, n) else NULL
+
+  just_list <- lapply(seq_len(n), \(i) {
+    flip <- flip_vec[[i]]
+    c(
+      hjust = if (hjust_provided) hjust_vec_raw[[i]] else .get_hjust(position, angle_vec[[i]], flip),
+      vjust = if (vjust_provided) vjust_vec_raw[[i]] else .get_vjust(position, angle_vec[[i]], flip)
+    )
+  })
+
+  # ---- Draw one layer per break --------------------------------------------
 
   lapply(seq_along(breaks), \(i) {
-    break_val    <- breaks[[i]]
-    total_length <- grid::unit(total_length_vec[[i]], "pt")
+    break_val      <- breaks[[i]]
+    total_length   <- grid::unit(total_length_vec[[i]], "pt")
     flip_direction <- flip_vec[[i]]
 
     gp <- grid::gpar(
@@ -208,7 +245,7 @@ axis_text <- function(
         x    = grob_along,
         y    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
-        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        just = c(just_list[[i]][["hjust"]], just_list[[i]][["vjust"]]),
         rot  = angle_vec[[i]], gp = gp
       )
     } else if (position == "top") {
@@ -217,7 +254,7 @@ axis_text <- function(
         x    = grob_along,
         y    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
-        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        just = c(just_list[[i]][["hjust"]], just_list[[i]][["vjust"]]),
         rot  = angle_vec[[i]], gp = gp
       )
     } else if (position == "left") {
@@ -226,7 +263,7 @@ axis_text <- function(
         x    = if (flip_direction) grid::unit(0, "npc") + total_length
         else                grid::unit(0, "npc") - total_length,
         y    = grob_along,
-        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        just = c(just_list[[i]][["hjust"]], just_list[[i]][["vjust"]]),
         rot  = angle_vec[[i]], gp = gp
       )
     } else {
@@ -235,7 +272,7 @@ axis_text <- function(
         x    = if (flip_direction) grid::unit(1, "npc") - total_length
         else                grid::unit(1, "npc") + total_length,
         y    = grob_along,
-        just = c(hjust_vec[[i]], vjust_vec[[i]]),
+        just = c(just_list[[i]][["hjust"]], just_list[[i]][["vjust"]]),
         rot  = angle_vec[[i]], gp = gp
       )
     }

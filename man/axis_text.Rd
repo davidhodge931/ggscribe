@@ -47,16 +47,19 @@ the same length as \code{breaks}.}
 \item{family}{Inherits from \code{axis.text} in the set theme. May be a vector
 the same length as \code{breaks}.}
 
-\item{hjust, vjust}{Justification. Auto-calculated from \code{position} if \code{NULL}.
-May be a vector the same length as \code{breaks}.}
+\item{hjust, vjust}{Justification. Auto-calculated from \code{position} and
+\code{angle} if \code{NULL}. Text always anchors to the tick end — the label edge
+facing the tick aligns to it, rotating naturally with \code{angle}. Negative
+\code{length} flips the anchor to the opposite edge. May be a vector the same
+length as \code{breaks}.}
 
 \item{angle}{Text rotation angle. Defaults to \code{0}. May be a vector the same
 length as \code{breaks}.}
 
 \item{length}{Offset from the axis edge including tick length and margin.
-Supports \code{rel()}. Negative values place labels inside the panel. Defaults
-to \code{rel(1)} (theme tick length + text margin). May be a vector the same
-length as \code{breaks}.}
+Supports \code{rel()}. Negative values flip the tick direction (text appears on
+the panel side of the axis). Defaults to \code{rel(1)} (theme tick length +
+text margin). May be a vector the same length as \code{breaks}.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.

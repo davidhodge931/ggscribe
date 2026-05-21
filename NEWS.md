@@ -7,6 +7,7 @@
 * Removed `minor` argument from `axis_ticks`.
 * Added `layout` argument to support panel annotations on facet plots.
 * Added `sec_axis_spacer` and `guide_sec_axis_spacer` functions to provide space.
+* Added smart `hjust` and `vjust` defaults to `axis_text`.
 * Removed `theme_sec_axis_text`.
 
 # ggscribe 0.1.1
