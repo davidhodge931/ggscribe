@@ -48,7 +48,7 @@ axis_line <- function(
     xintercept = NULL,
     yintercept = NULL
 ) {
-  rlang::check_dots_empty()
+  
   position <- .infer_position(position, xintercept, yintercept)
   axis     <- if (position %in% c("top", "bottom")) "x" else "y"
   .validate_intercept(axis, position, xintercept, yintercept)

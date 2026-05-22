@@ -44,7 +44,7 @@ panel_shade <- function(
     linetype = NULL,
     layout = NULL
 ) {
-  rlang::check_dots_empty()
+  
 
   xmin_is_normalized <- inherits(xmin, "AsIs")
   xmax_is_normalized <- inherits(xmax, "AsIs")

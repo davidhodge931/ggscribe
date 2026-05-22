@@ -50,7 +50,7 @@ reference_line <- function(
     arrow      = NULL,
     layout     = NULL
 ) {
-  rlang::check_dots_empty()
+  
 
   if (!is.null(xintercept)) {
     npc_intercept <- inherits(xintercept, "AsIs")

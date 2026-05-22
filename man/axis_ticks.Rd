@@ -37,15 +37,13 @@ the same length as \code{breaks} to style each tick individually.}
 \item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a vector
 the same length as \code{breaks}.}
 
-\item{length}{Total tick length as a grid unit. Supports \code{rel()}. Negative
-values flip the tick direction (inward). Defaults to \code{rel(1)} (outward at
-theme tick length). May be a vector the same length as \code{breaks}.}
+\item{length}{Total tick length. Supports \code{rel()}. Negative values flip the
+tick direction (inward). Defaults to \code{rel(1)}. May be a vector the same
+length as \code{breaks}.}
 
 \item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list of such
-specifications the same length as \code{breaks} to mix arrowed and plain ticks.
-Use \code{NULL} as a list element for no arrow on a specific tick. The
-arrowhead points toward the axis line. Must use \code{list()} not \code{c()} when
-supplying multiple values.
+specifications. The arrowhead points toward the axis line. Must use
+\code{list()} not \code{c()} when supplying multiple values.
 E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
@@ -53,11 +51,13 @@ E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to these x
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+\code{breaks} — each break gets its own intercept, recycling applies.}
 
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to these y
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+\code{breaks} — each break gets its own intercept, recycling applies.}
 }
 \value{
 A list of ggplot2 annotation layers.

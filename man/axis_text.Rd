@@ -57,20 +57,21 @@ length as \code{breaks}.}
 length as \code{breaks}.}
 
 \item{length}{Offset from the axis edge including tick length and margin.
-Supports \code{rel()}. Negative values flip the tick direction (text appears on
-the panel side of the axis). Defaults to \code{rel(1)} (theme tick length +
-text margin). May be a vector the same length as \code{breaks}.}
+Supports \code{rel()}. Negative values flip the tick direction. Defaults to
+\code{rel(1)}. May be a vector the same length as \code{breaks}.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to this x
-position in data coordinates instead of the panel edge.}
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to these x
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+\code{breaks} — each break gets its own intercept, recycling applies.}
 
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to this y
-position in data coordinates instead of the panel edge.}
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to these y
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+\code{breaks} — each break gets its own intercept, recycling applies.}
 }
 \value{
 A list of ggplot2 annotation layers.

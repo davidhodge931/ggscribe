@@ -29,11 +29,10 @@ is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.
 The bar spans \code{min(breaks)} to \code{max(breaks)}; caps are drawn at every
 break value. Pass a list of such vectors to draw multiple brackets in one
 call — e.g. \code{breaks = list(c(2, 4), c(6, 8))} draws two brackets. Style
-args are then recycled to the number of brackets.}
+args and intercepts are recycled to the number of brackets.}
 
-\item{colour}{Inherits from \code{axis.ticks} in the set theme (falling back
-through \code{axis.line} and \code{line}). May be a vector the same length as the
-number of brackets to style each bracket individually.}
+\item{colour}{Inherits from \code{axis.ticks} in the set theme. May be a vector
+the same length as the number of brackets.}
 
 \item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
 \code{rel()}. May be a vector the same length as the number of brackets.}
@@ -41,21 +40,22 @@ number of brackets to style each bracket individually.}
 \item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a
 vector the same length as the number of brackets.}
 
-\item{length}{Length of the bracket caps as a grid unit. Supports \code{rel()}.
-Negative values flip the cap direction. Defaults to \code{rel(1)} (outward at
-theme tick length). May be a vector the same length as the number of
-brackets.}
+\item{length}{Length of the bracket caps. Supports \code{rel()}. Negative values
+flip the cap direction. Defaults to \code{rel(1)}. May be a vector the same
+length as the number of brackets.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
 
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to this x
-position in data coordinates instead of the panel edge.}
+\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to these x
+positions in data coordinates. Paired 1:1 with brackets — each bracket
+gets its own intercept, recycling applies.}
 
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to this y
-position in data coordinates instead of the panel edge.}
+\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to these y
+positions in data coordinates. Paired 1:1 with brackets — each bracket
+gets its own intercept, recycling applies.}
 }
 \value{
 A list of ggplot2 annotation layers.
