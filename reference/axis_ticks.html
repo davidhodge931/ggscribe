@@ -100,17 +100,15 @@ the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
-<dd><p>Total tick length as a grid unit. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative
-values flip the tick direction (inward). Defaults to <code>rel(1)</code> (outward at
-theme tick length). May be a vector the same length as <code>breaks</code>.</p></dd>
+<dd><p>Total tick length. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the
+tick direction (inward). Defaults to <code>rel(1)</code>. May be a vector the same
+length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-arrow">arrow<a class="anchor" aria-label="anchor" href="#arg-arrow"></a></dt>
 <dd><p>A <code><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">grid::arrow()</a></code> specification, or a list of such
-specifications the same length as <code>breaks</code> to mix arrowed and plain ticks.
-Use <code>NULL</code> as a list element for no arrow on a specific tick. The
-arrowhead points toward the axis line. Must use <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> not <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> when
-supplying multiple values.
+specifications. The arrowhead points toward the axis line. Must use
+<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> not <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> when supplying multiple values.
 E.g. <code>grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")</code>.</p></dd>
 
 
@@ -122,13 +120,15 @@ E.g. <code>grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")</c
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>
-<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the axis to this x
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the axis to these x
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+<code>breaks</code> — each break gets its own intercept, recycling applies.</p></dd>
 
 
 <dt id="arg-yintercept">yintercept<a class="anchor" aria-label="anchor" href="#arg-yintercept"></a></dt>
-<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the axis to this y
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the axis to these y
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+<code>breaks</code> — each break gets its own intercept, recycling applies.</p></dd>
 
 </dl></div>
     <div class="section level2">

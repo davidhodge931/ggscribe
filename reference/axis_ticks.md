@@ -58,19 +58,16 @@ axis_ticks(
 
 - length:
 
-  Total tick length as a grid unit. Supports
+  Total tick length. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the tick direction (inward). Defaults to `rel(1)`
-  (outward at theme tick length). May be a vector the same length as
-  `breaks`.
+  Negative values flip the tick direction (inward). Defaults to
+  `rel(1)`. May be a vector the same length as `breaks`.
 
 - arrow:
 
   A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
-  or a list of such specifications the same length as `breaks` to mix
-  arrowed and plain ticks. Use `NULL` as a list element for no arrow on
-  a specific tick. The arrowhead points toward the axis line. Must use
-  [`list()`](https://rdrr.io/r/base/list.html) not
+  or a list of such specifications. The arrowhead points toward the axis
+  line. Must use [`list()`](https://rdrr.io/r/base/list.html) not
   [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
   E.g.
   `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
@@ -85,13 +82,15 @@ axis_ticks(
 
 - xintercept:
 
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
+  For `"left"`/`"right"` axes: float the axis to these x positions in
+  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
+  each break gets its own intercept, recycling applies.
 
 - yintercept:
 
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
+  For `"top"`/`"bottom"` axes: float the axis to these y positions in
+  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
+  each break gets its own intercept, recycling applies.
 
 ## Value
 

@@ -85,9 +85,8 @@ axis_text(
 
   Offset from the axis edge including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the tick direction (text appears on the panel
-  side of the axis). Defaults to `rel(1)` (theme tick length + text
-  margin). May be a vector the same length as `breaks`.
+  Negative values flip the tick direction. Defaults to `rel(1)`. May be
+  a vector the same length as `breaks`.
 
 - layout:
 
@@ -99,13 +98,15 @@ axis_text(
 
 - xintercept:
 
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
+  For `"left"`/`"right"` axes: float the axis to these x positions in
+  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
+  each break gets its own intercept, recycling applies.
 
 - yintercept:
 
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
+  For `"top"`/`"bottom"` axes: float the axis to these y positions in
+  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
+  each break gets its own intercept, recycling applies.
 
 ## Value
 

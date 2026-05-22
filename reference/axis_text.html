@@ -124,9 +124,8 @@ length as <code>breaks</code>.</p></dd>
 
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
 <dd><p>Offset from the axis edge including tick length and margin.
-Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the tick direction (text appears on
-the panel side of the axis). Defaults to <code>rel(1)</code> (theme tick length +
-text margin). May be a vector the same length as <code>breaks</code>.</p></dd>
+Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values flip the tick direction. Defaults to
+<code>rel(1)</code>. May be a vector the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -137,13 +136,15 @@ text margin). May be a vector the same length as <code>breaks</code>.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>
-<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the axis to this x
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the axis to these x
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+<code>breaks</code> — each break gets its own intercept, recycling applies.</p></dd>
 
 
 <dt id="arg-yintercept">yintercept<a class="anchor" aria-label="anchor" href="#arg-yintercept"></a></dt>
-<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the axis to this y
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the axis to these y
+positions in data coordinates instead of the panel edge. Paired 1:1 with
+<code>breaks</code> — each break gets its own intercept, recycling applies.</p></dd>
 
 </dl></div>
     <div class="section level2">

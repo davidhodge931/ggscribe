@@ -90,13 +90,12 @@ is the left/bottom edge and <code>I(1)</code> is the right/top edge of the panel
 The bar spans <code>min(breaks)</code> to <code>max(breaks)</code>; caps are drawn at every
 break value. Pass a list of such vectors to draw multiple brackets in one
 call — e.g. <code>breaks = list(c(2, 4), c(6, 8))</code> draws two brackets. Style
-args are then recycled to the number of brackets.</p></dd>
+args and intercepts are recycled to the number of brackets.</p></dd>
 
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
-<dd><p>Inherits from <code>axis.ticks</code> in the set theme (falling back
-through <code>axis.line</code> and <code>line</code>). May be a vector the same length as the
-number of brackets to style each bracket individually.</p></dd>
+<dd><p>Inherits from <code>axis.ticks</code> in the set theme. May be a vector
+the same length as the number of brackets.</p></dd>
 
 
 <dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>
@@ -110,10 +109,9 @@ vector the same length as the number of brackets.</p></dd>
 
 
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
-<dd><p>Length of the bracket caps as a grid unit. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>.
-Negative values flip the cap direction. Defaults to <code>rel(1)</code> (outward at
-theme tick length). May be a vector the same length as the number of
-brackets.</p></dd>
+<dd><p>Length of the bracket caps. Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values
+flip the cap direction. Defaults to <code>rel(1)</code>. May be a vector the same
+length as the number of brackets.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -124,13 +122,15 @@ brackets.</p></dd>
 
 
 <dt id="arg-xintercept">xintercept<a class="anchor" aria-label="anchor" href="#arg-xintercept"></a></dt>
-<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the bracket to this x
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"left"</code>/<code>"right"</code> axes: float the bracket to these x
+positions in data coordinates. Paired 1:1 with brackets — each bracket
+gets its own intercept, recycling applies.</p></dd>
 
 
 <dt id="arg-yintercept">yintercept<a class="anchor" aria-label="anchor" href="#arg-yintercept"></a></dt>
-<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the bracket to this y
-position in data coordinates instead of the panel edge.</p></dd>
+<dd><p>For <code>"top"</code>/<code>"bottom"</code> axes: float the bracket to these y
+positions in data coordinates. Paired 1:1 with brackets — each bracket
+gets its own intercept, recycling applies.</p></dd>
 
 </dl></div>
     <div class="section level2">

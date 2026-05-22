@@ -44,14 +44,13 @@ axis_bracket(
   the right/top edge of the panel. The bar spans `min(breaks)` to
   `max(breaks)`; caps are drawn at every break value. Pass a list of
   such vectors to draw multiple brackets in one call — e.g.
-  `breaks = list(c(2, 4), c(6, 8))` draws two brackets. Style args are
-  then recycled to the number of brackets.
+  `breaks = list(c(2, 4), c(6, 8))` draws two brackets. Style args and
+  intercepts are recycled to the number of brackets.
 
 - colour:
 
-  Inherits from `axis.ticks` in the set theme (falling back through
-  `axis.line` and `line`). May be a vector the same length as the number
-  of brackets to style each bracket individually.
+  Inherits from `axis.ticks` in the set theme. May be a vector the same
+  length as the number of brackets.
 
 - linewidth:
 
@@ -66,11 +65,10 @@ axis_bracket(
 
 - length:
 
-  Length of the bracket caps as a grid unit. Supports
+  Length of the bracket caps. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the cap direction. Defaults to `rel(1)` (outward
-  at theme tick length). May be a vector the same length as the number
-  of brackets.
+  Negative values flip the cap direction. Defaults to `rel(1)`. May be a
+  vector the same length as the number of brackets.
 
 - layout:
 
@@ -82,13 +80,15 @@ axis_bracket(
 
 - xintercept:
 
-  For `"left"`/`"right"` axes: float the bracket to this x position in
-  data coordinates instead of the panel edge.
+  For `"left"`/`"right"` axes: float the bracket to these x positions in
+  data coordinates. Paired 1:1 with brackets — each bracket gets its own
+  intercept, recycling applies.
 
 - yintercept:
 
-  For `"top"`/`"bottom"` axes: float the bracket to this y position in
-  data coordinates instead of the panel edge.
+  For `"top"`/`"bottom"` axes: float the bracket to these y positions in
+  data coordinates. Paired 1:1 with brackets — each bracket gets its own
+  intercept, recycling applies.
 
 ## Value
 
