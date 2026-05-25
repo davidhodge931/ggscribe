@@ -1,73 +1,77 @@
 # Annotate axis ticks
 
-Draws axis ticks at specified break positions, with style defaults taken
-from the `axis.ticks` element of the set theme. Requires
-`coord_cartesian(clip = "off")`.
+Draws axis ticks at specified break positions along a floating axis
+line. Requires `coord_cartesian(clip = "off")`.
 
 ## Usage
 
 ``` r
 axis_ticks(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
+  length = ggplot2::rel(1),
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  length = ggplot2::rel(1),
   arrow = NULL,
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 ```
 
 ## Arguments
 
-- ...:
+- xintercept:
 
-  Not used. Forces named arguments.
+  One or more x positions for vertical axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate axis.
 
-- position:
+- yintercept:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
-  `xintercept` or `yintercept` if not provided.
+  One or more y positions for horizontal axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate axis.
 
 - breaks:
 
   A numeric vector of break positions in data coordinates, or wrapped in
-  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised panel
-  coordinates (npc), where `I(0)` is the left/bottom edge and `I(1)` is
-  the right/top edge of the panel.
-
-- colour:
-
-  Inherits from `axis.ticks` in the set theme. May be a vector the same
-  length as `breaks` to style each tick individually.
-
-- linewidth:
-
-  Inherits from `axis.ticks` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
-  be a vector the same length as `breaks`.
-
-- linetype:
-
-  Inherits from `axis.ticks` in the set theme. May be a vector the same
-  length as `breaks`.
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for npc. Pass a list the
+  same length as the total number of axes (xintercept + yintercept
+  combined) to use different breaks per axis.
 
 - length:
 
   Total tick length. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the tick direction (inward). Defaults to
-  `rel(1)`. May be a vector the same length as `breaks`.
+  Negative values flip the tick direction. Defaults to `rel(1)` (theme
+  tick length). May be a vector the same length as the number of axes.
+
+- colour:
+
+  Inherits from `axis.ticks` in the set theme. May be a vector the same
+  length as the number of axes — one style per axis, applied to all
+  breaks on that axis.
+
+- linewidth:
+
+  Inherits from `axis.ticks` in the set theme. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
+  be a vector the same length as the number of axes.
+
+- linetype:
+
+  Inherits from `axis.ticks` in the set theme. May be a vector the same
+  length as the number of axes.
 
 - arrow:
 
   A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
-  or a list of such specifications. The arrowhead points toward the axis
-  line. Must use [`list()`](https://rdrr.io/r/base/list.html) not
+  or a list the same length as the number of axes. The arrowhead points
+  toward the axis line. Must use
+  [`list()`](https://rdrr.io/r/base/list.html) not
   [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
   E.g.
   `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
@@ -80,21 +84,15 @@ axis_ticks(
   [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
   for full details.
 
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the axis to these x positions in
-  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
-  each break gets its own intercept, recycling applies.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to these y positions in
-  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
-  each break gets its own intercept, recycling applies.
-
 ## Value
 
 A list of ggplot2 annotation layers.
+
+## Details
+
+Ticks always point in the positive direction by default (right for
+`xintercept`, up for `yintercept`). Use a negative `length` (e.g.
+`length = -rel(1)`) to flip them left or down.
 
 ## See also
 
@@ -102,5 +100,4 @@ A list of ggplot2 annotation layers.
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md),
-[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)
+[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)

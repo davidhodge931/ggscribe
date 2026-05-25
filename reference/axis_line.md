@@ -1,58 +1,59 @@
 # Annotate an axis line
 
-Draws a line along an axis edge, with style defaults taken from the
-`axis.line` element of the set theme. Requires
+Draws a full line at one or more floating positions, with style defaults
+taken from the `axis.line` element of the set theme. Requires
 `coord_cartesian(clip = "off")`.
 
 ## Usage
 
 ``` r
 axis_line(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
   arrow = NULL,
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 ```
 
 ## Arguments
 
-- ...:
+- xintercept:
 
-  Not used. Forces named arguments.
+  One or more x positions for vertical axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate line.
 
-- position:
+- yintercept:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
-  `xintercept` or `yintercept` if not provided.
+  One or more y positions for horizontal axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate line.
 
 - colour:
 
   Inherits from `axis.line` in the set theme. May be a vector the same
-  length as `xintercept`/`yintercept` to style each line individually.
+  length as the total number of lines.
 
 - linewidth:
 
   Inherits from `axis.line` in the set theme. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
-  be a vector the same length as `xintercept`/`yintercept`.
+  be a vector the same length as the total number of lines.
 
 - linetype:
 
   Inherits from `axis.line` in the set theme. May be a vector the same
-  length as `xintercept`/`yintercept`.
+  length as the total number of lines.
 
 - arrow:
 
   A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
-  or a list of such specifications the same length as
-  `xintercept`/`yintercept`. The arrowhead points in the positive axis
-  direction (right for x, up for y). Must use
+  or a list the same length as the total number of lines. Must use
   [`list()`](https://rdrr.io/r/base/list.html) not
   [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
   E.g.
@@ -66,23 +67,14 @@ axis_line(
   [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
   for full details.
 
-- xintercept:
-
-  For `"left"`/`"right"` axes: draw lines at these x positions in data
-  coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
-  for normalised panel coordinates (npc). May be a vector for multiple
-  lines.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: draw lines at these y positions in data
-  coordinates, or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html)
-  for normalised panel coordinates (npc). May be a vector for multiple
-  lines.
-
 ## Value
 
 A list of ggplot2 annotation layers.
+
+## Details
+
+The arrow (if any) points in the positive direction by default —
+rightward for `xintercept` lines, upward for `yintercept` lines.
 
 ## See also
 
@@ -90,5 +82,4 @@ A list of ggplot2 annotation layers.
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md),
-[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)
+[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)

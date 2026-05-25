@@ -130,5 +130,5 @@ mtcars |>
   geom_point() +
   #annotations fit plot
   theme(plot.background = element_rect(colour = "grey92"))
-
+#> Error in ggscribe::axis_bracket(position = "top", breaks = c(4, 5), ): unused argument (position = "top")
 ```

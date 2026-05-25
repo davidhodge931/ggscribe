@@ -1,47 +1,50 @@
 # Annotate axis text
 
-Draws text labels at specified break positions along an axis, with style
-defaults taken from the `axis.text` element of the set theme. Requires
-`coord_cartesian(clip = "off")`.
+Draws text labels at specified break positions along a floating axis
+line, with style defaults taken from the `axis.text` element of the set
+theme. Requires `coord_cartesian(clip = "off")`.
 
 ## Usage
 
 ``` r
 axis_text(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
   labels = NULL,
+  length = ggplot2::rel(1),
+  angle = 0,
+  hjust = NULL,
+  vjust = NULL,
   colour = NULL,
   size = NULL,
   family = NULL,
-  hjust = NULL,
-  vjust = NULL,
-  angle = 0,
-  length = ggplot2::rel(1),
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 ```
 
 ## Arguments
 
-- ...:
+- xintercept:
 
-  Not used. Forces named arguments.
+  One or more x positions for vertical axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate axis.
 
-- position:
+- yintercept:
 
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
-  `xintercept` or `yintercept` if not provided.
+  One or more y positions for horizontal axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate axis.
 
 - breaks:
 
   A numeric vector of break positions in data coordinates, or wrapped in
-  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised panel
-  coordinates (npc), where `I(0)` is the left/bottom edge and `I(1)` is
-  the right/top edge of the panel.
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for npc. Pass a list the
+  same length as the total number of axes to use different breaks per
+  axis.
 
 - labels:
 
@@ -53,40 +56,41 @@ axis_text(
 
   - A function taking break values and returning labels
 
-- colour:
+  - A list the same length as the number of axes, each element being one
+    of the above
 
-  Inherits from `axis.text` in the set theme. May be a vector the same
-  length as `breaks` to style each label individually.
+- length:
 
-- size:
-
-  Inherits from `axis.text` in the set theme. May be a vector the same
-  length as `breaks`.
-
-- family:
-
-  Inherits from `axis.text` in the set theme. May be a vector the same
-  length as `breaks`.
-
-- hjust, vjust:
-
-  Justification. Auto-calculated from `position` and `angle` if `NULL`.
-  Text always anchors to the tick end — the label edge facing the tick
-  aligns to it, rotating naturally with `angle`. Negative `length` flips
-  the anchor to the opposite edge. May be a vector the same length as
-  `breaks`.
+  Offset from the axis line including tick length and margin. Supports
+  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  Negative values place text on the opposite side. Defaults to `rel(1)`.
+  May be a vector the same length as the number of axes.
 
 - angle:
 
   Text rotation angle. Defaults to `0`. May be a vector the same length
-  as `breaks`.
+  as the number of axes.
 
-- length:
+- hjust, vjust:
 
-  Offset from the axis edge including tick length and margin. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the tick direction. Defaults to `rel(1)`. May be
-  a vector the same length as `breaks`.
+  Justification. Auto-calculated from axis direction and `angle` if
+  `NULL`. Text always anchors to the tick end. May be a vector the same
+  length as the number of axes.
+
+- colour:
+
+  Inherits from `axis.text` in the set theme. May be a vector the same
+  length as the number of axes.
+
+- size:
+
+  Inherits from `axis.text` in the set theme. May be a vector the same
+  length as the number of axes.
+
+- family:
+
+  Inherits from `axis.text` in the set theme. May be a vector the same
+  length as the number of axes.
 
 - layout:
 
@@ -96,21 +100,15 @@ axis_text(
   [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
   for full details.
 
-- xintercept:
-
-  For `"left"`/`"right"` axes: float the axis to these x positions in
-  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
-  each break gets its own intercept, recycling applies.
-
-- yintercept:
-
-  For `"top"`/`"bottom"` axes: float the axis to these y positions in
-  data coordinates instead of the panel edge. Paired 1:1 with `breaks` —
-  each break gets its own intercept, recycling applies.
-
 ## Value
 
 A list of ggplot2 annotation layers.
+
+## Details
+
+Text always sits on the positive side of the axis by default (right of
+`xintercept` lines, above `yintercept` lines). Use a negative `length`
+(e.g. `length = -rel(1)`) to place text on the opposite side.
 
 ## See also
 
@@ -118,62 +116,4 @@ A list of ggplot2 annotation layers.
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md),
-[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md)
-
-## Examples
-
-``` r
-library(ggplot2)
-library(dplyr)
-
-set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-  )
-)
-
-mtcars |>
-  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
-  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
-  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
-  coord_cartesian(clip = "off") +
-  #reference lines and shade
-  ggscribe::reference_line(xintercept = 2.4) +
-  ggscribe::reference_line(yintercept = 12)  +
-  ggscribe::panel_shade(
-    xmin = 4,
-    xmax = 5,
-  ) +
-  #top axis
-  scale_x_continuous(
-    sec.axis = ggscribe::sec_axis_text(
-      breaks = c(mean(c(4, 5))),
-      labels = c("Range"),
-      guide = ggscribe::guide_sec_axis_text(
-        angle = 90,
-      )
-    )
-  ) +
-  ggscribe::axis_bracket(
-    position = "top",
-    breaks = c(4, 5),
-  ) +
-  ggscribe::axis_text(
-    position = "top",
-    breaks = c(2.4),
-    labels = c("Threshold"),
-  ) +
-  #right axis
-  ggscribe::axis_text(
-    position = "right",
-    breaks = 12,
-    labels = "Threshold",
-  ) +
-  #geom
-  geom_point() +
-  #annotations fit plot
-  theme(plot.background = element_rect(colour = "grey92"))
-
-```
+[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
