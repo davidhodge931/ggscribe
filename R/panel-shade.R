@@ -3,16 +3,14 @@
 #' Annotate a shaded panel region
 #'
 #' Draws filled rectangles over the panel with colour defaults taken from the
-#' set theme. Defaults to a subtle overlay across the full panel, with the fill
-#' automatically adapting to light or dark panel backgrounds. Should be placed
-#' before geom layers.
+#' set theme. Defaults to a subtle overlay across the full panel. Should be
+#' placed before geom layers.
 #'
-#' @param ... Not used. Allows trailing commas and named-argument style calls.
 #' @param xmin,xmax Left and right edges of the rectangle in data coordinates.
-#'   Defaults to `-Inf` and `Inf`. Use `I()` for normalised coordinates (0-1).
+#'   Defaults to `-Inf` and `Inf`. Use [I()] for normalised coordinates (0-1).
 #'   May be a vector for multiple rectangles.
 #' @param ymin,ymax Bottom and top edges of the rectangle in data coordinates.
-#'   Defaults to `-Inf` and `Inf`. Use `I()` for normalised coordinates (0-1).
+#'   Defaults to `-Inf` and `Inf`. Use [I()] for normalised coordinates (0-1).
 #'   May be a vector for multiple rectangles.
 #' @param fill Fill colour. Defaults to a neutral grey. May be a vector the
 #'   same length as the bounds to style each rectangle individually.
@@ -32,20 +30,17 @@
 #' @inherit sec_axis_text examples
 #'
 panel_shade <- function(
-    ...,
-    xmin = -Inf,
-    xmax = Inf,
-    ymin = -Inf,
-    ymax = Inf,
-    fill = "#878580",
-    alpha = 0.25,
-    colour = "transparent",
+    xmin      = -Inf,
+    xmax      = Inf,
+    ymin      = -Inf,
+    ymax      = Inf,
+    fill      = "#878580",
+    alpha     = 0.25,
+    colour    = "transparent",
     linewidth = NULL,
-    linetype = NULL,
-    layout = NULL
+    linetype  = NULL,
+    layout    = NULL
 ) {
-  
-
   xmin_is_normalized <- inherits(xmin, "AsIs")
   xmax_is_normalized <- inherits(xmax, "AsIs")
   ymin_is_normalized <- inherits(ymin, "AsIs")
@@ -97,9 +92,9 @@ panel_shade <- function(
     0.5
   }
 
-  fill_vec   <- rep_len(fill, n)
+  fill_vec   <- rep_len(fill,        n)
   alpha_vec  <- rep_len(alpha %||% 1, n)
-  colour_vec <- rep_len(colour, n)
+  colour_vec <- rep_len(colour,      n)
 
   linewidth_vec <- if (is.null(linewidth)) {
     rep_len(base_linewidth, n)
@@ -112,26 +107,10 @@ panel_shade <- function(
   linetype_vec <- rep_len(linetype %||% 1, n)
 
   lapply(seq_len(n), \(i) {
-    x_left <- if (x_uses_normalized) {
-      grid::unit(xmin[[i]], "npc")
-    } else {
-      grid::unit(0, "npc")
-    }
-    x_right <- if (x_uses_normalized) {
-      grid::unit(xmax[[i]], "npc")
-    } else {
-      grid::unit(1, "npc")
-    }
-    y_bottom <- if (y_uses_normalized) {
-      grid::unit(ymin[[i]], "npc")
-    } else {
-      grid::unit(0, "npc")
-    }
-    y_top <- if (y_uses_normalized) {
-      grid::unit(ymax[[i]], "npc")
-    } else {
-      grid::unit(1, "npc")
-    }
+    x_left   <- if (x_uses_normalized) grid::unit(xmin[[i]], "npc") else grid::unit(0, "npc")
+    x_right  <- if (x_uses_normalized) grid::unit(xmax[[i]], "npc") else grid::unit(1, "npc")
+    y_bottom <- if (y_uses_normalized) grid::unit(ymin[[i]], "npc") else grid::unit(0, "npc")
+    y_top    <- if (y_uses_normalized) grid::unit(ymax[[i]], "npc") else grid::unit(1, "npc")
 
     rect_grob <- grid::rectGrob(
       x      = x_left,
@@ -154,14 +133,6 @@ panel_shade <- function(
       ymax = if (y_uses_normalized) Inf  else ymax[[i]]
     )
 
-    ggplot2::layer(
-      geom     = ggplot2::GeomCustomAnn,
-      stat     = "identity",
-      data     = NULL,
-      mapping  = ggplot2::aes(),
-      position = "identity",
-      params   = c(list(grob = rect_grob, na.rm = FALSE), anno_pos),
-      layout   = layout
-    )
+    .make_ann_layer(rect_grob, anno_pos, layout)
   })
 }

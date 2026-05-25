@@ -1,26 +1,25 @@
-# axis_line -------------------------------------------------------------------
+# reference_line --------------------------------------------------------------
 
-#' Annotate an axis line
+#' Annotate a reference line
 #'
-#' Draws a full line at one or more floating positions, with style defaults
-#' taken from the `axis.line` element of the set theme. Requires
-#' `coord_cartesian(clip = "off")`.
+#' Draws one or more reference lines within the panel, with style defaults
+#' taken from the `axis.line` element of the set theme.
 #'
 #' The arrow (if any) points in the positive direction by default — rightward
 #' for `xintercept` lines, upward for `yintercept` lines.
 #'
-#' @param xintercept One or more x positions for vertical axis lines, in data
-#'   coordinates or wrapped in [I()] for normalised panel coordinates (npc).
-#'   May be a vector; each value produces a separate line.
-#' @param yintercept One or more y positions for horizontal axis lines, in data
-#'   coordinates or wrapped in [I()] for normalised panel coordinates (npc).
-#'   May be a vector; each value produces a separate line.
+#' @param xintercept One or more x positions for vertical reference lines, in
+#'   data coordinates or wrapped in [I()] for normalised panel coordinates
+#'   (npc). May be a vector; each value produces a separate line.
+#' @param yintercept One or more y positions for horizontal reference lines, in
+#'   data coordinates or wrapped in [I()] for normalised panel coordinates
+#'   (npc). May be a vector; each value produces a separate line.
 #' @param colour Inherits from `axis.line` in the set theme. May be a vector
 #'   the same length as the total number of lines.
 #' @param linewidth Inherits from `axis.line` in the set theme. Supports
 #'   `rel()`. May be a vector the same length as the total number of lines.
-#' @param linetype Inherits from `axis.line` in the set theme. May be a vector
-#'   the same length as the total number of lines.
+#' @param linetype Defaults to `"dashed"`. May be a vector the same length as
+#'   the total number of lines.
 #' @param arrow A [grid::arrow()] specification, or a list the same length as
 #'   the total number of lines. Must use `list()` not `c()` when supplying
 #'   multiple values.
@@ -31,15 +30,15 @@
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_ticks()], [axis_text()],
-#'   [axis_bracket()], [reference_line()], [panel_shade()]
+#' @seealso [axis_line()], [axis_ticks()],
+#'   [axis_text()], [axis_bracket()], [panel_shade()]
 #' @export
-axis_line <- function(
+reference_line <- function(
     xintercept = NULL,
     yintercept = NULL,
     colour     = NULL,
     linewidth  = NULL,
-    linetype   = NULL,
+    linetype   = "dashed",
     arrow      = NULL,
     layout     = NULL
 ) {
@@ -54,12 +53,8 @@ axis_line <- function(
 
   theme_colour    <- resolved_element$colour   %||% "black"
   theme_linewidth <- resolved_element$linewidth %||% 0.5
-  theme_linetype  <- resolved_element$linetype  %||% 1
 
-  if (is.null(colour)    && is.null(resolved_element$colour))    rlang::warn("The set theme does not define an `axis.line` colour. Defaulting to \"black\".")
-  if (is.null(linewidth) && is.null(resolved_element$linewidth)) rlang::warn("The set theme does not define an `axis.line` linewidth. Defaulting to `0.5`.")
-
-  colour_vec    <- rep_len(colour    %||% theme_colour,    n_groups)
+  colour_vec    <- rep_len(colour   %||% theme_colour,    n_groups)
   linewidth_vec <- if (is.null(linewidth)) {
     rep_len(theme_linewidth, n_groups)
   } else if (inherits(linewidth, "rel")) {
@@ -67,7 +62,7 @@ axis_line <- function(
   } else {
     rep_len(linewidth, n_groups)
   }
-  linetype_vec  <- rep_len(linetype  %||% theme_linetype,  n_groups)
+  linetype_vec  <- rep_len(linetype, n_groups)
 
   arrow_list <- if (inherits(arrow, "arrow")) {
     rep_len(list(arrow), n_groups)
@@ -104,8 +99,6 @@ axis_line <- function(
       )
     }
 
-    # annotation_position: perpendicular direction pinned at intercept,
-    # along-axis direction spans full panel
     anno_pos <- if (grp$int_axis == "x") {
       list(
         xmin = if (grp$npc) -Inf else grp$intercept,

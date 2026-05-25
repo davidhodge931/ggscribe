@@ -5,62 +5,56 @@
 \title{Annotate an axis line}
 \usage{
 axis_line(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
   arrow = NULL,
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 }
 \arguments{
-\item{...}{Not used. Forces named arguments.}
+\item{xintercept}{One or more x positions for vertical axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate line.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
-from \code{xintercept} or \code{yintercept} if not provided.}
+\item{yintercept}{One or more y positions for horizontal axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate line.}
 
 \item{colour}{Inherits from \code{axis.line} in the set theme. May be a vector
-the same length as \code{xintercept}/\code{yintercept} to style each line
-individually.}
+the same length as the total number of lines.}
 
 \item{linewidth}{Inherits from \code{axis.line} in the set theme. Supports
-\code{rel()}. May be a vector the same length as \code{xintercept}/\code{yintercept}.}
+\code{rel()}. May be a vector the same length as the total number of lines.}
 
 \item{linetype}{Inherits from \code{axis.line} in the set theme. May be a vector
-the same length as \code{xintercept}/\code{yintercept}.}
+the same length as the total number of lines.}
 
-\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list of such
-specifications the same length as \code{xintercept}/\code{yintercept}. The
-arrowhead points in the positive axis direction (right for x, up for y).
-Must use \code{list()} not \code{c()} when supplying multiple values.
+\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list the same length as
+the total number of lines. Must use \code{list()} not \code{c()} when supplying
+multiple values.
 E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
-
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: draw lines at these x
-positions in data coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel
-coordinates (npc). May be a vector for multiple lines.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: draw lines at these y
-positions in data coordinates, or wrapped in \code{\link[=I]{I()}} for normalised panel
-coordinates (npc). May be a vector for multiple lines.}
 }
 \value{
 A list of ggplot2 annotation layers.
 }
 \description{
-Draws a line along an axis edge, with style defaults taken from the
-\code{axis.line} element of the set theme. Requires
+Draws a full line at one or more floating positions, with style defaults
+taken from the \code{axis.line} element of the set theme. Requires
 \code{coord_cartesian(clip = "off")}.
+}
+\details{
+The arrow (if any) points in the positive direction by default — rightward
+for \code{xintercept} lines, upward for \code{yintercept} lines.
 }
 \seealso{
 \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_text]{axis_text()}},
-\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
+\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_shade]{panel_shade()}}
 }

@@ -5,138 +5,82 @@
 \title{Annotate axis text}
 \usage{
 axis_text(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
   labels = NULL,
+  length = ggplot2::rel(1),
+  angle = 0,
+  hjust = NULL,
+  vjust = NULL,
   colour = NULL,
   size = NULL,
   family = NULL,
-  hjust = NULL,
-  vjust = NULL,
-  angle = 0,
-  length = ggplot2::rel(1),
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 }
 \arguments{
-\item{...}{Not used. Forces named arguments.}
+\item{xintercept}{One or more x positions for vertical axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate axis.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
-from \code{xintercept} or \code{yintercept} if not provided.}
+\item{yintercept}{One or more y positions for horizontal axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate axis.}
 
 \item{breaks}{A numeric vector of break positions in data coordinates, or
-wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
-is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.}
+wrapped in \code{\link[=I]{I()}} for npc. Pass a list the same length as the total number
+of axes to use different breaks per axis.}
 
 \item{labels}{One of:
 \itemize{
 \item \code{NULL} (default) to use break values as labels
 \item A character vector the same length as \code{breaks}
 \item A function taking break values and returning labels
+\item A list the same length as the number of axes, each element being one
+of the above
 }}
 
-\item{colour}{Inherits from \code{axis.text} in the set theme. May be a vector
-the same length as \code{breaks} to style each label individually.}
-
-\item{size}{Inherits from \code{axis.text} in the set theme. May be a vector
-the same length as \code{breaks}.}
-
-\item{family}{Inherits from \code{axis.text} in the set theme. May be a vector
-the same length as \code{breaks}.}
-
-\item{hjust, vjust}{Justification. Auto-calculated from \code{position} and
-\code{angle} if \code{NULL}. Text always anchors to the tick end — the label edge
-facing the tick aligns to it, rotating naturally with \code{angle}. Negative
-\code{length} flips the anchor to the opposite edge. May be a vector the same
-length as \code{breaks}.}
+\item{length}{Offset from the axis line including tick length and margin.
+Supports \code{rel()}. Negative values place text on the opposite side.
+Defaults to \code{rel(1)}. May be a vector the same length as the number of
+axes.}
 
 \item{angle}{Text rotation angle. Defaults to \code{0}. May be a vector the same
-length as \code{breaks}.}
+length as the number of axes.}
 
-\item{length}{Offset from the axis edge including tick length and margin.
-Supports \code{rel()}. Negative values flip the tick direction. Defaults to
-\code{rel(1)}. May be a vector the same length as \code{breaks}.}
+\item{hjust, vjust}{Justification. Auto-calculated from axis direction and
+\code{angle} if \code{NULL}. Text always anchors to the tick end. May be a vector
+the same length as the number of axes.}
+
+\item{colour}{Inherits from \code{axis.text} in the set theme. May be a vector
+the same length as the number of axes.}
+
+\item{size}{Inherits from \code{axis.text} in the set theme. May be a vector
+the same length as the number of axes.}
+
+\item{family}{Inherits from \code{axis.text} in the set theme. May be a vector
+the same length as the number of axes.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
-
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to these x
-positions in data coordinates instead of the panel edge. Paired 1:1 with
-\code{breaks} — each break gets its own intercept, recycling applies.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to these y
-positions in data coordinates instead of the panel edge. Paired 1:1 with
-\code{breaks} — each break gets its own intercept, recycling applies.}
 }
 \value{
 A list of ggplot2 annotation layers.
 }
 \description{
-Draws text labels at specified break positions along an axis, with style
-defaults taken from the \code{axis.text} element of the set theme. Requires
-\code{coord_cartesian(clip = "off")}.
+Draws text labels at specified break positions along a floating axis line,
+with style defaults taken from the \code{axis.text} element of the set theme.
+Requires \code{coord_cartesian(clip = "off")}.
 }
-\examples{
-library(ggplot2)
-library(dplyr)
-
-set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-  )
-)
-
-mtcars |>
-  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
-  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
-  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
-  coord_cartesian(clip = "off") +
-  #reference lines and shade
-  ggscribe::reference_line(xintercept = 2.4) +
-  ggscribe::reference_line(yintercept = 12)  +
-  ggscribe::panel_shade(
-    xmin = 4,
-    xmax = 5,
-  ) +
-  #top axis
-  scale_x_continuous(
-    sec.axis = ggscribe::sec_axis_text(
-      breaks = c(mean(c(4, 5))),
-      labels = c("Range"),
-      guide = ggscribe::guide_sec_axis_text(
-        angle = 90,
-      )
-    )
-  ) +
-  ggscribe::axis_bracket(
-    position = "top",
-    breaks = c(4, 5),
-  ) +
-  ggscribe::axis_text(
-    position = "top",
-    breaks = c(2.4),
-    labels = c("Threshold"),
-  ) +
-  #right axis
-  ggscribe::axis_text(
-    position = "right",
-    breaks = 12,
-    labels = "Threshold",
-  ) +
-  #geom
-  geom_point() +
-  #annotations fit plot
-  theme(plot.background = element_rect(colour = "grey92"))
-
+\details{
+Text always sits on the positive side of the axis by default (right of
+\code{xintercept} lines, above \code{yintercept} lines). Use a negative \code{length}
+(e.g. \code{length = -rel(1)}) to place text on the opposite side.
 }
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
-\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
+\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_shade]{panel_shade()}}
 }

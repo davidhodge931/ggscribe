@@ -2,134 +2,84 @@
 
 #' Annotate axis ticks
 #'
-#' Draws axis ticks at specified break positions, with style defaults taken from
-#' the `axis.ticks` element of the set theme. Requires
-#' `coord_cartesian(clip = "off")`.
+#' Draws axis ticks at specified break positions along a floating axis line.
+#' Requires `coord_cartesian(clip = "off")`.
 #'
-#' @param ... Not used. Forces named arguments.
-#' @param position One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred
-#'   from `xintercept` or `yintercept` if not provided.
+#' Ticks always point in the positive direction by default (right for
+#' `xintercept`, up for `yintercept`). Use a negative `length` (e.g.
+#' `length = -rel(1)`) to flip them left or down.
+#'
+#' @param xintercept One or more x positions for vertical axis lines, in data
+#'   coordinates or wrapped in [I()] for normalised panel coordinates (npc).
+#'   May be a vector; each value produces a separate axis.
+#' @param yintercept One or more y positions for horizontal axis lines, in data
+#'   coordinates or wrapped in [I()] for normalised panel coordinates (npc).
+#'   May be a vector; each value produces a separate axis.
 #' @param breaks A numeric vector of break positions in data coordinates, or
-#'   wrapped in [I()] for normalised panel coordinates (npc), where `I(0)`
-#'   is the left/bottom edge and `I(1)` is the right/top edge of the panel.
-#' @param colour Inherits from `axis.ticks` in the set theme. May be a vector
-#'   the same length as `breaks` to style each tick individually.
-#' @param linewidth Inherits from `axis.ticks` in the set theme. Supports
-#'   `rel()`. May be a vector the same length as `breaks`.
-#' @param linetype Inherits from `axis.ticks` in the set theme. May be a vector
-#'   the same length as `breaks`.
+#'   wrapped in [I()] for npc. Pass a list the same length as the total number
+#'   of axes (xintercept + yintercept combined) to use different breaks per
+#'   axis.
 #' @param length Total tick length. Supports `rel()`. Negative values flip the
-#'   tick direction (inward). Defaults to `rel(1)`. May be a vector the same
-#'   length as `breaks`.
-#' @param arrow A [grid::arrow()] specification, or a list of such
-#'   specifications. The arrowhead points toward the axis line. Must use
+#'   tick direction. Defaults to `rel(1)` (theme tick length). May be a vector
+#'   the same length as the number of axes.
+#' @param colour Inherits from `axis.ticks` in the set theme. May be a vector
+#'   the same length as the number of axes — one style per axis, applied to
+#'   all breaks on that axis.
+#' @param linewidth Inherits from `axis.ticks` in the set theme. Supports
+#'   `rel()`. May be a vector the same length as the number of axes.
+#' @param linetype Inherits from `axis.ticks` in the set theme. May be a
+#'   vector the same length as the number of axes.
+#' @param arrow A [grid::arrow()] specification, or a list the same length as
+#'   the number of axes. The arrowhead points toward the axis line. Must use
 #'   `list()` not `c()` when supplying multiple values.
 #'   E.g. `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
 #' @param layout Controls which panels the annotation appears in. `NULL`
 #'   (default) repeats in all panels. An integer targets a specific panel.
 #'   `"fixed"` repeats in all panels ignoring faceting variables. See
 #'   [ggplot2::layer()] for full details.
-#' @param xintercept For `"left"`/`"right"` axes: float the axis to these x
-#'   positions in data coordinates instead of the panel edge. Paired 1:1 with
-#'   `breaks` — each break gets its own intercept, recycling applies.
-#' @param yintercept For `"top"`/`"bottom"` axes: float the axis to these y
-#'   positions in data coordinates instead of the panel edge. Paired 1:1 with
-#'   `breaks` — each break gets its own intercept, recycling applies.
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @seealso [axis_line()], [axis_text()],
-#'   [axis_bracket()], [reference_line()],
-#'   [panel_shade()], [sec_axis_text()]
+#'   [axis_bracket()], [reference_line()], [panel_shade()]
 #' @export
 axis_ticks <- function(
-    ...,
-    position     = NULL,
+    xintercept = NULL,
+    yintercept = NULL,
     breaks,
-    colour       = NULL,
-    linewidth    = NULL,
-    linetype     = NULL,
-    length       = ggplot2::rel(1),
-    arrow        = NULL,
-    layout       = NULL,
-    xintercept   = NULL,
-    yintercept   = NULL
+    length     = ggplot2::rel(1),
+    colour     = NULL,
+    linewidth  = NULL,
+    linetype   = NULL,
+    arrow      = NULL,
+    layout     = NULL
 ) {
-  
+  groups   <- .build_axis_groups(xintercept, yintercept)
+  n_groups <- length(groups)
 
-  position <- .infer_position(position, xintercept, yintercept)
-  axis     <- if (position %in% c("top", "bottom")) "x" else "y"
-
-  .validate_intercept(axis, position, xintercept, yintercept)
-
-  if (length(breaks) == 0) return(list())
-
-  if (is.list(breaks)) breaks <- unlist(breaks)
-
-  npc_breaks <- inherits(breaks, "AsIs")
-  breaks     <- as.numeric(breaks)
-
-  # Resolve raw intercepts (default = panel edge)
-  raw_intercepts <- if (axis == "x") {
-    if (is.null(yintercept)) if (position == "bottom") -Inf else Inf
-    else as.numeric(yintercept)
-  } else {
-    if (is.null(xintercept)) if (position == "left") -Inf else Inf
-    else as.numeric(xintercept)
-  }
-
-  # 1:1 pairing — recycle both to the longer
-  n <- max(length(breaks), length(raw_intercepts))
-  breaks     <- rep_len(breaks, n)
-  intercepts <- rep_len(raw_intercepts, n)
+  rec         <- .reconcile(groups, breaks)
+  groups      <- rec$groups
+  breaks_list <- rec$breaks_list
+  n_groups    <- rec$n
 
   current_theme <- ggplot2::theme_get()
 
-  tick_hierarchy <- c(
-    paste0("axis.ticks.", axis, ".", position),
-    paste0("axis.ticks.", axis),
-    "axis.ticks"
-  )
-  resolved_tick_element    <- NULL
-  tick_intentionally_blank <- FALSE
-  for (nm in tick_hierarchy) {
-    el_raw <- ggplot2::calc_element(nm, current_theme, skip_blank = FALSE)
-    if (!is.null(el_raw)) {
-      if (inherits(el_raw, "element_blank")) { tick_intentionally_blank <- TRUE; break }
-      el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
-      if (!is.null(el) && !inherits(el, "element_blank")) { resolved_tick_element <- el; break }
-    }
-  }
-  if (is.null(colour) && (tick_intentionally_blank || is.null(resolved_tick_element$colour))) {
-    rlang::warn("The set theme does not define an `axis.ticks` colour. Defaulting to \"black\".")
-  }
-  if (is.null(linewidth) && (tick_intentionally_blank || is.null(resolved_tick_element$linewidth))) {
-    rlang::warn("The set theme does not define an `axis.ticks` linewidth. Defaulting to `0.5`.")
-  }
-  if (is.null(resolved_tick_element)) {
-    resolved_tick_element <- list(colour = "black", linewidth = 0.5, linetype = 1)
+  # Theme resolution — use axis.ticks.{break_axis} since breaks mark that scale
+  .get_tick_theme <- function(int_axis) {
+    break_axis <- if (int_axis == "x") "y" else "x"
+    hierarchy  <- c(paste0("axis.ticks.", break_axis), "axis.ticks")
+    el <- .resolve_theme_el(hierarchy, current_theme)
+    el %||% list(colour = "black", linewidth = 0.5, linetype = 1)
   }
 
-  length_hierarchy <- c(
-    paste0("axis.ticks.length.", axis, ".", position),
-    paste0("axis.ticks.length.", axis),
-    "axis.ticks.length"
-  )
-  resolved_length_element <- NULL
-  for (nm in length_hierarchy) {
-    el <- ggplot2::calc_element(nm, current_theme, skip_blank = TRUE)
-    if (!is.null(el) && !inherits(el, "element_blank")) { resolved_length_element <- el; break }
-  }
-
-  theme_colour    <- resolved_tick_element$colour   %||% "black"
-  theme_linewidth <- resolved_tick_element$linewidth %||% 0.5
-  theme_linetype  <- resolved_tick_element$linetype  %||% 1
-
-  theme_length_pts <- {
-    tl <- resolved_length_element
+  .get_length_theme_pts <- function(int_axis) {
+    break_axis <- if (int_axis == "x") "y" else "x"
+    hierarchy  <- c(paste0("axis.ticks.length.", break_axis), "axis.ticks.length")
+    tl <- .resolve_theme_el(hierarchy, current_theme)
     if (is.null(tl)) {
       0.5 * (current_theme$text$size %||% 11)
     } else if (inherits(tl, "rel")) {
-      spacing_pts <- as.numeric(grid::convertUnit(current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
+      spacing_pts <- as.numeric(grid::convertUnit(
+        current_theme$spacing %||% grid::unit(5.5, "pt"), "pt"))
       as.numeric(tl) * spacing_pts
     } else if (!inherits(tl, "unit")) {
       if (is.numeric(tl)) tl else 0.5 * (current_theme$text$size %||% 11)
@@ -138,116 +88,69 @@ axis_ticks <- function(
     }
   }
 
-  # Style args recycle to n
-  colour_vec <- if (is.null(colour)) rep_len(theme_colour, n) else rep_len(colour, n)
+  # Use first group's int_axis for theme length (or average — both fine for rel)
+  theme_length_pts <- .get_length_theme_pts(groups[[1]]$int_axis)
+  len              <- .resolve_length(length, n_groups, theme_length_pts)
 
+  # Style args — one per group
+  th1 <- .get_tick_theme(groups[[1]]$int_axis)
+  colour_vec    <- rep_len(colour    %||% th1$colour,   n_groups)
   linewidth_vec <- if (is.null(linewidth)) {
-    rep_len(theme_linewidth, n)
+    rep_len(th1$linewidth %||% 0.5, n_groups)
   } else if (inherits(linewidth, "rel")) {
-    rep_len(as.numeric(linewidth), n) * theme_linewidth
+    rep_len(as.numeric(linewidth), n_groups) * (th1$linewidth %||% 0.5)
   } else {
-    rep_len(linewidth, n)
+    rep_len(linewidth, n_groups)
   }
-
-  linetype_vec <- if (is.null(linetype)) rep_len(theme_linetype, n) else rep_len(linetype, n)
-
-  length_pts_vec <- if (inherits(length, "rel")) {
-    abs(rep_len(as.numeric(length), n)) * theme_length_pts
-  } else if (inherits(length, "unit")) {
-    rep_len(abs(as.numeric(grid::convertUnit(length, "pt"))), n)
-  } else {
-    rep_len(abs(as.numeric(length)), n)
-  }
-
-  flip_vec <- if (inherits(length, "rel")) {
-    rep_len(as.numeric(length) < 0, n)
-  } else if (inherits(length, "unit")) {
-    rep_len(as.numeric(grid::convertUnit(length, "pt")) < 0, n)
-  } else {
-    rep_len(as.numeric(length) < 0, n)
-  }
+  linetype_vec  <- rep_len(linetype  %||% th1$linetype %||% 1, n_groups)
 
   arrow_list <- if (inherits(arrow, "arrow")) {
-    rep_len(list(arrow), n)
+    rep_len(list(arrow), n_groups)
   } else if (is.list(arrow)) {
-    rep_len(arrow, n)
+    rep_len(arrow, n_groups)
   } else {
-    rep_len(list(NULL), n)
+    rep_len(list(NULL), n_groups)
   }
 
-  # Single loop over paired (break, intercept) values
-  lapply(seq_len(n), \(i) {
-    break_val      <- breaks[[i]]
-    intercept      <- intercepts[[i]]
-    tick_colour    <- colour_vec[[i]]
-    tick_linewidth <- linewidth_vec[[i]]
-    tick_linetype  <- linetype_vec[[i]]
-    tick_length    <- grid::unit(length_pts_vec[[i]], "pt")
-    flip_direction <- flip_vec[[i]]
-    tick_arrow     <- arrow_list[[i]]
+  unlist(lapply(seq_len(n_groups), \(g) {
+    grp        <- groups[[g]]
+    brks       <- breaks_list[[g]]
+    flip       <- len$flip[[g]]
+    tick_len   <- grid::unit(len$pts[[g]], "pt")
+    perp       <- .perp_unit(grp)
 
     gp <- grid::gpar(
-      col     = tick_colour,
-      fill    = tick_colour,
-      lwd     = tick_linewidth * ggplot2::.pt,
-      lty     = tick_linetype,
+      col     = colour_vec[[g]],
+      fill    = colour_vec[[g]],
+      lwd     = linewidth_vec[[g]] * ggplot2::.pt,
+      lty     = linetype_vec[[g]],
       lineend = "butt"
     )
+    tick_arrow <- arrow_list[[g]]
 
-    grob_along <- if (npc_breaks) grid::unit(break_val, "npc") else grid::unit(0.5, "npc")
+    lapply(seq_along(brks$vals), \(i) {
+      bv    <- brks$vals[[i]]
+      along <- .along_unit(bv, brks$npc)
 
-    tick_grob <- if (position == "bottom") {
-      grid::segmentsGrob(
-        x0 = grob_along, x1 = grob_along,
-        y0 = if (flip_direction) grid::unit(0, "npc") + tick_length
-        else                grid::unit(0, "npc") - tick_length,
-        y1 = grid::unit(0, "npc"),
-        gp = gp, arrow = tick_arrow
-      )
-    } else if (position == "top") {
-      grid::segmentsGrob(
-        x0 = grob_along, x1 = grob_along,
-        y0 = if (flip_direction) grid::unit(1, "npc") - tick_length
-        else                grid::unit(1, "npc") + tick_length,
-        y1 = grid::unit(1, "npc"),
-        gp = gp, arrow = tick_arrow
-      )
-    } else if (position == "left") {
-      grid::segmentsGrob(
-        x0 = if (flip_direction) grid::unit(0, "npc") + tick_length
-        else                grid::unit(0, "npc") - tick_length,
-        x1 = grid::unit(0, "npc"),
-        y0 = grob_along, y1 = grob_along,
-        gp = gp, arrow = tick_arrow
-      )
-    } else {
-      grid::segmentsGrob(
-        x0 = if (flip_direction) grid::unit(1, "npc") - tick_length
-        else                grid::unit(1, "npc") + tick_length,
-        x1 = grid::unit(1, "npc"),
-        y0 = grob_along, y1 = grob_along,
-        gp = gp, arrow = tick_arrow
-      )
-    }
+      # Tip is always in the positive direction; flip reverses it.
+      # Segment drawn tip → base so arrow points at axis line.
+      tick_grob <- if (grp$int_axis == "x") {
+        tip_x <- if (flip) perp - tick_len else perp + tick_len
+        grid::segmentsGrob(
+          x0 = tip_x, x1 = perp,
+          y0 = along,  y1 = along,
+          gp = gp, arrow = tick_arrow
+        )
+      } else {
+        tip_y <- if (flip) perp - tick_len else perp + tick_len
+        grid::segmentsGrob(
+          x0 = along,  x1 = along,
+          y0 = tip_y,  y1 = perp,
+          gp = gp, arrow = tick_arrow
+        )
+      }
 
-    annotation_position <- if (npc_breaks && axis == "x") {
-      list(xmin = -Inf, xmax = Inf, ymin = intercept, ymax = intercept)
-    } else if (npc_breaks && axis == "y") {
-      list(xmin = intercept, xmax = intercept, ymin = -Inf, ymax = Inf)
-    } else if (axis == "x") {
-      list(xmin = break_val, xmax = break_val, ymin = intercept, ymax = intercept)
-    } else {
-      list(xmin = intercept, xmax = intercept, ymin = break_val, ymax = break_val)
-    }
-
-    ggplot2::layer(
-      geom     = ggplot2::GeomCustomAnn,
-      stat     = "identity",
-      data     = NULL,
-      mapping  = ggplot2::aes(),
-      position = "identity",
-      params   = c(list(grob = tick_grob, na.rm = FALSE), annotation_position),
-      layout   = layout
-    )
-  })
+      .make_ann_layer(tick_grob, .anno_pos(grp, bv, brks$npc), layout)
+    })
+  }), recursive = FALSE)
 }

@@ -5,44 +5,47 @@
 \title{Annotate axis ticks}
 \usage{
 axis_ticks(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
+  length = ggplot2::rel(1),
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  length = ggplot2::rel(1),
   arrow = NULL,
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 }
 \arguments{
-\item{...}{Not used. Forces named arguments.}
+\item{xintercept}{One or more x positions for vertical axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate axis.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
-from \code{xintercept} or \code{yintercept} if not provided.}
+\item{yintercept}{One or more y positions for horizontal axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate axis.}
 
 \item{breaks}{A numeric vector of break positions in data coordinates, or
-wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
-is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.}
-
-\item{colour}{Inherits from \code{axis.ticks} in the set theme. May be a vector
-the same length as \code{breaks} to style each tick individually.}
-
-\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
-\code{rel()}. May be a vector the same length as \code{breaks}.}
-
-\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a vector
-the same length as \code{breaks}.}
+wrapped in \code{\link[=I]{I()}} for npc. Pass a list the same length as the total number
+of axes (xintercept + yintercept combined) to use different breaks per
+axis.}
 
 \item{length}{Total tick length. Supports \code{rel()}. Negative values flip the
-tick direction (inward). Defaults to \code{rel(1)}. May be a vector the same
-length as \code{breaks}.}
+tick direction. Defaults to \code{rel(1)} (theme tick length). May be a vector
+the same length as the number of axes.}
 
-\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list of such
-specifications. The arrowhead points toward the axis line. Must use
+\item{colour}{Inherits from \code{axis.ticks} in the set theme. May be a vector
+the same length as the number of axes — one style per axis, applied to
+all breaks on that axis.}
+
+\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
+\code{rel()}. May be a vector the same length as the number of axes.}
+
+\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a
+vector the same length as the number of axes.}
+
+\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list the same length as
+the number of axes. The arrowhead points toward the axis line. Must use
 \code{list()} not \code{c()} when supplying multiple values.
 E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 
@@ -50,25 +53,20 @@ E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 (default) repeats in all panels. An integer targets a specific panel.
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
-
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the axis to these x
-positions in data coordinates instead of the panel edge. Paired 1:1 with
-\code{breaks} — each break gets its own intercept, recycling applies.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the axis to these y
-positions in data coordinates instead of the panel edge. Paired 1:1 with
-\code{breaks} — each break gets its own intercept, recycling applies.}
 }
 \value{
 A list of ggplot2 annotation layers.
 }
 \description{
-Draws axis ticks at specified break positions, with style defaults taken from
-the \code{axis.ticks} element of the set theme. Requires
-\code{coord_cartesian(clip = "off")}.
+Draws axis ticks at specified break positions along a floating axis line.
+Requires \code{coord_cartesian(clip = "off")}.
+}
+\details{
+Ticks always point in the positive direction by default (right for
+\code{xintercept}, up for \code{yintercept}). Use a negative \code{length} (e.g.
+\code{length = -rel(1)}) to flip them left or down.
 }
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_text]{axis_text()}},
-\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
+\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_shade]{panel_shade()}}
 }

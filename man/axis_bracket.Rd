@@ -5,124 +5,62 @@
 \title{Annotate an axis bracket}
 \usage{
 axis_bracket(
-  ...,
-  position = NULL,
+  xintercept = NULL,
+  yintercept = NULL,
   breaks,
+  length = ggplot2::rel(1),
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  length = ggplot2::rel(1),
-  layout = NULL,
-  xintercept = NULL,
-  yintercept = NULL
+  layout = NULL
 )
 }
 \arguments{
-\item{...}{Not used. Forces named arguments.}
+\item{xintercept}{One or more x positions for vertical axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate axis.}
 
-\item{position}{One of \code{"top"}, \code{"bottom"}, \code{"left"}, or \code{"right"}. Inferred
-from \code{xintercept} or \code{yintercept} if not provided.}
+\item{yintercept}{One or more y positions for horizontal axis lines, in data
+coordinates or wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc).
+May be a vector; each value produces a separate axis.}
 
 \item{breaks}{A numeric vector of length >= 2 in data coordinates, or
-wrapped in \code{\link[=I]{I()}} for normalised panel coordinates (npc), where \code{I(0)}
-is the left/bottom edge and \code{I(1)} is the right/top edge of the panel.
-The bar spans \code{min(breaks)} to \code{max(breaks)}; caps are drawn at every
-break value. Pass a list of such vectors to draw multiple brackets in one
-call — e.g. \code{breaks = list(c(2, 4), c(6, 8))} draws two brackets. Style
-args and intercepts are recycled to the number of brackets.}
-
-\item{colour}{Inherits from \code{axis.ticks} in the set theme. May be a vector
-the same length as the number of brackets.}
-
-\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
-\code{rel()}. May be a vector the same length as the number of brackets.}
-
-\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a
-vector the same length as the number of brackets.}
+wrapped in \code{\link[=I]{I()}} for npc. The bar spans \code{min(breaks)} to \code{max(breaks)};
+caps are drawn at every break value. Pass a list the same length as the
+total number of axes to use different breaks per axis.}
 
 \item{length}{Length of the bracket caps. Supports \code{rel()}. Negative values
 flip the cap direction. Defaults to \code{rel(1)}. May be a vector the same
-length as the number of brackets.}
+length as the number of axes.}
+
+\item{colour}{Inherits from \code{axis.ticks} in the set theme (falling back
+through \code{axis.line} and \code{line}). May be a vector the same length as the
+number of axes.}
+
+\item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
+\code{rel()}. May be a vector the same length as the number of axes.}
+
+\item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a
+vector the same length as the number of axes.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
 \code{"fixed"} repeats in all panels ignoring faceting variables. See
 \code{\link[ggplot2:layer]{ggplot2::layer()}} for full details.}
-
-\item{xintercept}{For \code{"left"}/\code{"right"} axes: float the bracket to these x
-positions in data coordinates. Paired 1:1 with brackets — each bracket
-gets its own intercept, recycling applies.}
-
-\item{yintercept}{For \code{"top"}/\code{"bottom"} axes: float the bracket to these y
-positions in data coordinates. Paired 1:1 with brackets — each bracket
-gets its own intercept, recycling applies.}
 }
 \value{
 A list of ggplot2 annotation layers.
 }
 \description{
-Draws one or more brackets along an axis edge or at a floating data
-position. Each bracket spans \code{min(breaks)} to \code{max(breaks)} with caps at
-every break value. The bar uses the same rendering path as \code{\link[=axis_line]{axis_line()}};
-the caps use the same path as \code{\link[=axis_ticks]{axis_ticks()}}.
+Draws one or more brackets along a floating axis line. Each bracket spans
+\code{min(breaks)} to \code{max(breaks)} with caps at every break value.
 Requires \code{coord_cartesian(clip = "off")}.
 }
-\examples{
-library(ggplot2)
-library(dplyr)
-
-set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-  )
-)
-
-mtcars |>
-  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
-  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
-  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
-  coord_cartesian(clip = "off") +
-  #reference lines and shade
-  ggscribe::reference_line(xintercept = 2.4) +
-  ggscribe::reference_line(yintercept = 12)  +
-  ggscribe::panel_shade(
-    xmin = 4,
-    xmax = 5,
-  ) +
-  #top axis
-  scale_x_continuous(
-    sec.axis = ggscribe::sec_axis_text(
-      breaks = c(mean(c(4, 5))),
-      labels = c("Range"),
-      guide = ggscribe::guide_sec_axis_text(
-        angle = 90,
-      )
-    )
-  ) +
-  ggscribe::axis_bracket(
-    position = "top",
-    breaks = c(4, 5),
-  ) +
-  ggscribe::axis_text(
-    position = "top",
-    breaks = c(2.4),
-    labels = c("Threshold"),
-  ) +
-  #right axis
-  ggscribe::axis_text(
-    position = "right",
-    breaks = 12,
-    labels = "Threshold",
-  ) +
-  #geom
-  geom_point() +
-  #annotations fit plot
-  theme(plot.background = element_rect(colour = "grey92"))
-
+\details{
+Caps always point in the positive direction by default (right for
+\code{xintercept}, up for \code{yintercept}). Use a negative \code{length} to flip them.
 }
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
-\code{\link[=axis_text]{axis_text()}}, \code{\link[=reference_line]{reference_line()}},
-\code{\link[=panel_shade]{panel_shade()}}, \code{\link[=sec_axis_text]{sec_axis_text()}}
+\code{\link[=axis_text]{axis_text()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_shade]{panel_shade()}}
 }
