@@ -2,19 +2,19 @@
 
 #' Annotate a shaded panel region
 #'
-#' Draws filled rectangles over the panel with colour defaults taken from the
-#' set theme. Defaults to a subtle overlay across the full panel. Should be
-#' placed before geom layers.
+#' Draws filled rectangles over the panel. Defaults to a subtle overlay across
+#' the full panel. Should be placed before geom layers.
 #'
 #' @param xmin,xmax Left and right edges of the rectangle in data coordinates.
 #'   Defaults to `-Inf` and `Inf`. Use [I()] for normalised coordinates (0-1).
-#'   May be a vector for multiple rectangles.
+#'   May be a vector for multiple rectangles. Bounds may be mixed freely —
+#'   e.g. `xmin = I(0.5), xmax = Inf` shades from 50% to the right panel edge.
 #' @param ymin,ymax Bottom and top edges of the rectangle in data coordinates.
 #'   Defaults to `-Inf` and `Inf`. Use [I()] for normalised coordinates (0-1).
 #'   May be a vector for multiple rectangles.
 #' @param fill Fill colour. Defaults to a neutral grey. May be a vector the
 #'   same length as the bounds to style each rectangle individually.
-#' @param alpha Opacity of the rectangle. Defaults to `0.25`. May be a vector.
+#' @param alpha Opacity. Defaults to `0.25`. May be a vector.
 #' @param colour Border colour. Defaults to `"transparent"`. May be a vector.
 #' @param linewidth Inherits from `panel.border` in the set theme. Supports
 #'   `rel()`. May be a vector.
@@ -41,34 +41,11 @@ panel_shade <- function(
     linetype  = NULL,
     layout    = NULL
 ) {
-  xmin_is_normalized <- inherits(xmin, "AsIs")
-  xmax_is_normalized <- inherits(xmax, "AsIs")
-  ymin_is_normalized <- inherits(ymin, "AsIs")
-  ymax_is_normalized <- inherits(ymax, "AsIs")
-
-  x_uses_normalized <- xmin_is_normalized || xmax_is_normalized
-  y_uses_normalized <- ymin_is_normalized || ymax_is_normalized
-
-  if (x_uses_normalized) {
-    if (
-      !((xmin_is_normalized || all(is.infinite(xmin))) &&
-        (xmax_is_normalized || all(is.infinite(xmax))))
-    ) {
-      rlang::abort(
-        "Cannot mix normalized (I()) and data coordinates for x. Use I() for both xmin and xmax, or neither."
-      )
-    }
-  }
-  if (y_uses_normalized) {
-    if (
-      !((ymin_is_normalized || all(is.infinite(ymin))) &&
-        (ymax_is_normalized || all(is.infinite(ymax))))
-    ) {
-      rlang::abort(
-        "Cannot mix normalized (I()) and data coordinates for y. Use I() for both ymin and ymax, or neither."
-      )
-    }
-  }
+  # Detect npc per bound before stripping AsIs
+  xmin_npc <- inherits(xmin, "AsIs")
+  xmax_npc <- inherits(xmax, "AsIs")
+  ymin_npc <- inherits(ymin, "AsIs")
+  ymax_npc <- inherits(ymax, "AsIs")
 
   xmin <- as.numeric(xmin)
   xmax <- as.numeric(xmax)
@@ -92,10 +69,9 @@ panel_shade <- function(
     0.5
   }
 
-  fill_vec   <- rep_len(fill,        n)
-  alpha_vec  <- rep_len(alpha %||% 1, n)
-  colour_vec <- rep_len(colour,      n)
-
+  fill_vec      <- rep_len(fill,        n)
+  alpha_vec     <- rep_len(alpha %||% 1, n)
+  colour_vec    <- rep_len(colour,      n)
   linewidth_vec <- if (is.null(linewidth)) {
     rep_len(base_linewidth, n)
   } else if (inherits(linewidth, "rel")) {
@@ -103,20 +79,33 @@ panel_shade <- function(
   } else {
     rep_len(linewidth, n)
   }
+  linetype_vec  <- rep_len(linetype %||% 1, n)
 
-  linetype_vec <- rep_len(linetype %||% 1, n)
+  # Helper: resolve one bound to a grob unit and an annotation_custom value.
+  # npc (I()) → unit(val, "npc") in grob, ±Inf in anno (grob handles position)
+  # ±Inf      → unit(0/1, "npc") in grob, ±Inf in anno (panel edge, grob handles)
+  # data      → unit(0/1, "npc") in grob, data val in anno (anno_custom pins it)
+  .bound <- function(val, is_npc, lo) {
+    if (is_npc) {
+      list(grob = grid::unit(val, "npc"), anno = if (lo) -Inf else Inf)
+    } else if (is.infinite(val)) {
+      list(grob = grid::unit(if (lo) 0 else 1, "npc"), anno = val)
+    } else {
+      list(grob = grid::unit(if (lo) 0 else 1, "npc"), anno = val)
+    }
+  }
 
   lapply(seq_len(n), \(i) {
-    x_left   <- if (x_uses_normalized) grid::unit(xmin[[i]], "npc") else grid::unit(0, "npc")
-    x_right  <- if (x_uses_normalized) grid::unit(xmax[[i]], "npc") else grid::unit(1, "npc")
-    y_bottom <- if (y_uses_normalized) grid::unit(ymin[[i]], "npc") else grid::unit(0, "npc")
-    y_top    <- if (y_uses_normalized) grid::unit(ymax[[i]], "npc") else grid::unit(1, "npc")
+    x1 <- .bound(xmin[[i]], xmin_npc, lo = TRUE)
+    x2 <- .bound(xmax[[i]], xmax_npc, lo = FALSE)
+    y1 <- .bound(ymin[[i]], ymin_npc, lo = TRUE)
+    y2 <- .bound(ymax[[i]], ymax_npc, lo = FALSE)
 
     rect_grob <- grid::rectGrob(
-      x      = x_left,
-      y      = y_bottom,
-      width  = x_right - x_left,
-      height = y_top - y_bottom,
+      x      = x1$grob,
+      y      = y1$grob,
+      width  = x2$grob - x1$grob,
+      height = y2$grob - y1$grob,
       just   = c("left", "bottom"),
       gp     = grid::gpar(
         fill = scales::alpha(fill_vec[[i]], alpha_vec[[i]]),
@@ -127,10 +116,8 @@ panel_shade <- function(
     )
 
     anno_pos <- list(
-      xmin = if (x_uses_normalized) -Inf else xmin[[i]],
-      xmax = if (x_uses_normalized) Inf  else xmax[[i]],
-      ymin = if (y_uses_normalized) -Inf else ymin[[i]],
-      ymax = if (y_uses_normalized) Inf  else ymax[[i]]
+      xmin = x1$anno, xmax = x2$anno,
+      ymin = y1$anno, ymax = y2$anno
     )
 
     .make_ann_layer(rect_grob, anno_pos, layout)

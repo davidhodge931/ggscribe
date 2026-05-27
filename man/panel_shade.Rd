@@ -5,7 +5,6 @@
 \title{Annotate a shaded panel region}
 \usage{
 panel_shade(
-  ...,
   xmin = -Inf,
   xmax = Inf,
   ymin = -Inf,
@@ -19,20 +18,19 @@ panel_shade(
 )
 }
 \arguments{
-\item{...}{Not used. Allows trailing commas and named-argument style calls.}
-
 \item{xmin, xmax}{Left and right edges of the rectangle in data coordinates.
-Defaults to \code{-Inf} and \code{Inf}. Use \code{I()} for normalised coordinates (0-1).
-May be a vector for multiple rectangles.}
+Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
+May be a vector for multiple rectangles. Bounds may be mixed freely —
+e.g. \verb{xmin = I(0.5), xmax = Inf} shades from 50\% to the right panel edge.}
 
 \item{ymin, ymax}{Bottom and top edges of the rectangle in data coordinates.
-Defaults to \code{-Inf} and \code{Inf}. Use \code{I()} for normalised coordinates (0-1).
+Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
 May be a vector for multiple rectangles.}
 
 \item{fill}{Fill colour. Defaults to a neutral grey. May be a vector the
 same length as the bounds to style each rectangle individually.}
 
-\item{alpha}{Opacity of the rectangle. Defaults to \code{0.25}. May be a vector.}
+\item{alpha}{Opacity. Defaults to \code{0.25}. May be a vector.}
 
 \item{colour}{Border colour. Defaults to \code{"transparent"}. May be a vector.}
 
@@ -50,10 +48,8 @@ same length as the bounds to style each rectangle individually.}
 A list containing annotation layers.
 }
 \description{
-Draws filled rectangles over the panel with colour defaults taken from the
-set theme. Defaults to a subtle overlay across the full panel, with the fill
-automatically adapting to light or dark panel backgrounds. Should be placed
-before geom layers.
+Draws filled rectangles over the panel. Defaults to a subtle overlay across
+the full panel. Should be placed before geom layers.
 }
 \examples{
 library(ggplot2)
