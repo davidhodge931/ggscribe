@@ -4,6 +4,7 @@
 * Made bracket corners join neatly.
 * Supported As Is normalised coordinates (e.g. `xintercept = I(0.5)`).
 * Supported vectorised style arguments.
+* Removed `position` argument from `axis_*`.
 * Removed `minor` argument from `axis_ticks`.
 * Added `layout` argument to support panel annotations on facet plots.
 * Added `sec_axis_spacer` and `guide_sec_axis_spacer` functions to provide space.
