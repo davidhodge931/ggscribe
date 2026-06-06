@@ -7,7 +7,8 @@
 #' Requires `coord_cartesian(clip = "off")`.
 #'
 #' Caps always point in the positive direction by default (right for
-#' `xintercept`, up for `yintercept`). Use a negative `length` to flip them.
+#' `xintercept`, up for `yintercept`). Use a negative `length` to flip them
+#' (e.g. `length = -rel(1)`).
 #'
 #' @param xintercept One or more x positions for vertical axis lines, in data
 #'   coordinates or wrapped in [I()] for normalised panel coordinates (npc).

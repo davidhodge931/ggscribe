@@ -16,11 +16,15 @@
 #' @param xmin,xmax Left and right crop bounds. Vertical gridlines outside
 #'   `[xmin, xmax]` are not drawn; horizontal gridlines run only from `xmin`
 #'   to `xmax`. Defaults to `-Inf` and `Inf` (full panel). Use [I()] for
-#'   normalised coordinates (npc).
+#'   normalised coordinates (npc). Note: filtering (removing lines outside the
+#'   range) only works when both the crop bound and the intercept are in data
+#'   coordinates. npc bounds affect extent only.
 #' @param ymin,ymax Bottom and top crop bounds. Horizontal gridlines outside
 #'   `[ymin, ymax]` are not drawn; vertical gridlines run only from `ymin` to
 #'   `ymax`. Defaults to `-Inf` and `Inf` (full panel). Use [I()] for
-#'   normalised coordinates (npc).
+#'   normalised coordinates (npc). Note: filtering only works when both the
+#'   crop bound and the intercept are in data coordinates. npc bounds affect
+#'   extent only.
 #' @param colour Inherits from `panel.grid.major` in the set theme. May be a
 #'   vector the same length as the total number of lines.
 #' @param linewidth Inherits from `panel.grid.major` in the set theme. Supports
@@ -100,8 +104,10 @@ panel_grid <- function(
     npc_int   <- grp$npc
 
     # ---- Filter: skip lines outside the relevant crop range ----------------
-    # Filtering only applies when the crop bound is a finite data value and
-    # the intercept is also a data value (can't compare npc to data).
+    # Filtering only applies when BOTH the crop bound and the intercept are
+    # finite data values. npc crop bounds (I()) affect line extent only —
+    # comparing a data intercept to an npc bound requires scale knowledge not
+    # available at call time. Use data coordinates for filtering.
     if (grp$int_axis == "x") {
       # Vertical line: filter by xmin/xmax
       if (!npc_int && !xmin_npc && is.finite(xmin) && intercept < xmin) return(NULL)

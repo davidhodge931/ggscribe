@@ -4,11 +4,13 @@
 \alias{guide_sec_axis_text}
 \title{Guide optimised for secondary axis text annotations}
 \usage{
-guide_sec_axis_text(...)
+guide_sec_axis_text(..., theme = NULL)
 }
 \arguments{
 \item{...}{Additional arguments passed to \code{\link[ggplot2:guide_axis]{ggplot2::guide_axis()}}, such as
 \code{title}, \code{check.overlap}, or \code{angle}.}
+
+\item{theme}{A theme object to style the secondary axis.}
 }
 \value{
 A \code{guide} object to be used in a scale's \code{guide} argument or within

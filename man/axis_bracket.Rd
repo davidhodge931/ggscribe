@@ -58,7 +58,8 @@ Requires \code{coord_cartesian(clip = "off")}.
 }
 \details{
 Caps always point in the positive direction by default (right for
-\code{xintercept}, up for \code{yintercept}). Use a negative \code{length} to flip them.
+\code{xintercept}, up for \code{yintercept}). Use a negative \code{length} to flip them
+(e.g. \code{length = -rel(1)}).
 }
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},

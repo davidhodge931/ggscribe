@@ -29,12 +29,16 @@ May be a vector.}
 \item{xmin, xmax}{Left and right crop bounds. Vertical gridlines outside
 \verb{[xmin, xmax]} are not drawn; horizontal gridlines run only from \code{xmin}
 to \code{xmax}. Defaults to \code{-Inf} and \code{Inf} (full panel). Use \code{\link[=I]{I()}} for
-normalised coordinates (npc).}
+normalised coordinates (npc). Note: filtering (removing lines outside the
+range) only works when both the crop bound and the intercept are in data
+coordinates. npc bounds affect extent only.}
 
 \item{ymin, ymax}{Bottom and top crop bounds. Horizontal gridlines outside
 \verb{[ymin, ymax]} are not drawn; vertical gridlines run only from \code{ymin} to
 \code{ymax}. Defaults to \code{-Inf} and \code{Inf} (full panel). Use \code{\link[=I]{I()}} for
-normalised coordinates (npc).}
+normalised coordinates (npc). Note: filtering only works when both the
+crop bound and the intercept are in data coordinates. npc bounds affect
+extent only.}
 
 \item{colour}{Inherits from \code{panel.grid.major} in the set theme. May be a
 vector the same length as the total number of lines.}

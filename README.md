@@ -67,31 +67,31 @@ mtcars |>
     )
   ) +
   ggscribe::axis_bracket(
-    position = "top",
+    yintercept = I(1),
     breaks = c(4, 5),
   ) +
   ggscribe::axis_text(
-    position = "top",
+    yintercept = I(1),
     breaks = c(2.4),
     labels = c("Threshold"),
   ) +
   #right axis
   ggscribe::axis_text(
-    position = "right",
+    xintercept = I(1),
     breaks = 12,
     labels = "Threshold",
   ) +
   #bottom axis
   ggscribe::axis_ticks(
-    position = "bottom",
+    yintercept = I(0),
     breaks = 3.8,
-    length = rel(4.5),
+    length = rel(-4.5),
   ) +
   ggscribe::axis_text(
-    position = "bottom",
+    yintercept = I(0),
     breaks = 3.8,
     labels = "Threshold",
-    length = rel(4.5),
+    length = rel(-4.5),
   ) +
   labs(x = "\nWeight") +
   #geom

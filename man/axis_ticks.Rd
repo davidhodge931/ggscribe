@@ -27,26 +27,24 @@ May be a vector; each value produces a separate axis.}
 
 \item{breaks}{A numeric vector of break positions in data coordinates, or
 wrapped in \code{\link[=I]{I()}} for npc. Pass a list the same length as the total number
-of axes (xintercept + yintercept combined) to use different breaks per
-axis.}
+of axes to use different breaks per axis.}
 
 \item{length}{Total tick length. Supports \code{rel()}. Negative values flip the
-tick direction. Defaults to \code{rel(1)} (theme tick length). May be a vector
-the same length as the number of axes.}
+tick direction. Defaults to \code{rel(1)}. May be a vector recycled across all
+breaks in order.}
 
 \item{colour}{Inherits from \code{axis.ticks} in the set theme. May be a vector
-the same length as the number of axes — one style per axis, applied to
-all breaks on that axis.}
+recycled across all breaks in order.}
 
 \item{linewidth}{Inherits from \code{axis.ticks} in the set theme. Supports
-\code{rel()}. May be a vector the same length as the number of axes.}
+\code{rel()}. May be a vector recycled across all breaks in order.}
 
 \item{linetype}{Inherits from \code{axis.ticks} in the set theme. May be a
-vector the same length as the number of axes.}
+vector recycled across all breaks in order.}
 
-\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list the same length as
-the number of axes. The arrowhead points toward the axis line. Must use
-\code{list()} not \code{c()} when supplying multiple values.
+\item{arrow}{A \code{\link[grid:arrow]{grid::arrow()}} specification, or a list recycled across all
+breaks. The arrowhead points toward the axis line. Must use \code{list()} not
+\code{c()} when supplying multiple values.
 E.g. \code{grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")}.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
@@ -63,8 +61,8 @@ Requires \code{coord_cartesian(clip = "off")}.
 }
 \details{
 Ticks always point in the positive direction by default (right for
-\code{xintercept}, up for \code{yintercept}). Use a negative \code{length} (e.g.
-\code{length = -rel(1)}) to flip them left or down.
+\code{xintercept}, up for \code{yintercept}). Use a negative \code{length} to flip them
+(e.g. \code{length = -rel(1)}).
 }
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_text]{axis_text()}},

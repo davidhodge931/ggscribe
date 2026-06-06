@@ -35,7 +35,7 @@ of axes to use different breaks per axis.}
 \item{labels}{One of:
 \itemize{
 \item \code{NULL} (default) to use break values as labels
-\item A character vector the same length as \code{breaks}
+\item A character vector recycled across all breaks in order
 \item A function taking break values and returning labels
 \item A list the same length as the number of axes, each element being one
 of the above
@@ -43,24 +43,22 @@ of the above
 
 \item{length}{Offset from the axis line including tick length and margin.
 Supports \code{rel()}. Negative values place text on the opposite side.
-Defaults to \code{rel(1)}. May be a vector the same length as the number of
-axes.}
+Defaults to \code{rel(1)}. May be a vector recycled across all breaks in order.}
 
-\item{angle}{Text rotation angle. Defaults to \code{0}. May be a vector the same
-length as the number of axes.}
+\item{angle}{Text rotation angle. Defaults to \code{0}. May be a vector recycled
+across all breaks in order.}
 
 \item{hjust, vjust}{Justification. Auto-calculated from axis direction and
-\code{angle} if \code{NULL}. Text always anchors to the tick end. May be a vector
-the same length as the number of axes.}
+\code{angle} if \code{NULL}. May be a vector recycled across all breaks in order.}
 
 \item{colour}{Inherits from \code{axis.text} in the set theme. May be a vector
-the same length as the number of axes.}
+recycled across all breaks in order.}
 
 \item{size}{Inherits from \code{axis.text} in the set theme. May be a vector
-the same length as the number of axes.}
+recycled across all breaks in order.}
 
 \item{family}{Inherits from \code{axis.text} in the set theme. May be a vector
-the same length as the number of axes.}
+recycled across all breaks in order.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
@@ -78,7 +76,7 @@ Requires \code{coord_cartesian(clip = "off")}.
 \details{
 Text always sits on the positive side of the axis by default (right of
 \code{xintercept} lines, above \code{yintercept} lines). Use a negative \code{length}
-(e.g. \code{length = -rel(1)}) to place text on the opposite side.
+to place text on the opposite side (e.g. \code{length = -rel(1)}).
 }
 \seealso{
 \code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
