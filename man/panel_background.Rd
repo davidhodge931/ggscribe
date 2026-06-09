@@ -13,21 +13,23 @@ panel_background(
   alpha = 1,
   colour = NULL,
   linewidth = NULL,
-  linetype = NULL,
+  linetype = 0,
   layout = NULL
 )
 }
 \arguments{
 \item{xmin, xmax}{Left and right edges of the rectangle in data coordinates.
 Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
-May be a vector for multiple rectangles.}
+May be a vector for multiple rectangles. Bounds may be mixed freely,
+e.g. \verb{xmin = I(0.5), xmax = Inf} fills from 50\% to the right panel edge.}
 
 \item{ymin, ymax}{Bottom and top edges of the rectangle in data coordinates.
 Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
 May be a vector for multiple rectangles.}
 
 \item{fill}{Fill colour. Defaults to the \code{panel.background} fill from the
-set theme. May be a vector the same length as the bounds.}
+set theme, falling back to \code{"white"}. May be a vector the same length as
+the bounds to style each rectangle individually.}
 
 \item{alpha}{Opacity. Defaults to \code{1} (fully opaque). May be a vector.}
 
@@ -37,7 +39,7 @@ a seamless border. May be a vector.}
 \item{linewidth}{Inherits from \code{panel.border} in the set theme. Supports
 \code{rel()}. May be a vector.}
 
-\item{linetype}{Border linetype. Defaults to \code{1}. May be a vector.}
+\item{linetype}{Border linetype. Defaults to \code{0} (none). May be a vector.}
 
 \item{layout}{Controls which panels the annotation appears in. \code{NULL}
 (default) repeats in all panels. An integer targets a specific panel.
@@ -48,10 +50,9 @@ a seamless border. May be a vector.}
 A list containing annotation layers.
 }
 \description{
-Draws filled rectangles over the panel using the \code{panel.background} fill
-from the set theme as the default colour. Unlike \code{\link[=panel_shade]{panel_shade()}}, opacity
-defaults to \code{1} (fully opaque), making it useful for layering a solid
-background over existing content. Should be placed before geom layers.
+Draws filled rectangles over the panel. Defaults to the \code{panel.background}
+fill from the set theme at full opacity, making it useful for layering a
+solid background over existing content. Should be placed before geom layers.
 }
 \seealso{
 \code{\link[=panel_shade]{panel_shade()}}, \code{\link[=axis_line]{axis_line()}}, \code{\link[=reference_line]{reference_line()}}

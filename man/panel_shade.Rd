@@ -13,22 +13,22 @@ panel_shade(
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
-  linetype = NULL,
+  linetype = 1,
   layout = NULL
 )
 }
 \arguments{
 \item{xmin, xmax}{Left and right edges of the rectangle in data coordinates.
 Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
-May be a vector for multiple rectangles. Bounds may be mixed freely —
-e.g. \verb{xmin = I(0.5), xmax = Inf} shades from 50\% to the right panel edge.}
+May be a vector for multiple rectangles. Bounds may be mixed freely,
+e.g. \verb{xmin = I(0.5), xmax = Inf} fills from 50\% to the right panel edge.}
 
 \item{ymin, ymax}{Bottom and top edges of the rectangle in data coordinates.
 Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
 May be a vector for multiple rectangles.}
 
 \item{fill}{Fill colour. Defaults to a neutral grey. May be a vector the
-same length as the bounds to style each rectangle individually.}
+same length as the bounds.}
 
 \item{alpha}{Opacity. Defaults to \code{0.25}. May be a vector.}
 
@@ -48,60 +48,10 @@ same length as the bounds to style each rectangle individually.}
 A list containing annotation layers.
 }
 \description{
-Draws filled rectangles over the panel. Defaults to a subtle overlay across
-the full panel. Should be placed before geom layers.
+A convenience wrapper around \code{\link[=panel_background]{panel_background()}} with defaults suited to
+subtle overlays: a neutral grey fill at 25\% opacity with no border. Should
+be placed before geom layers.
 }
-\examples{
-library(ggplot2)
-library(dplyr)
-
-set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-  )
-)
-
-mtcars |>
-  ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
-  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
-  #clip = "off" is required for axis_text, axis_ticks and axis_bracket
-  coord_cartesian(clip = "off") +
-  #reference lines and shade
-  ggscribe::reference_line(xintercept = 2.4) +
-  ggscribe::reference_line(yintercept = 12)  +
-  ggscribe::panel_shade(
-    xmin = 4,
-    xmax = 5,
-  ) +
-  #top axis
-  scale_x_continuous(
-    sec.axis = ggscribe::sec_axis_text(
-      breaks = c(mean(c(4, 5))),
-      labels = c("Range"),
-      guide = ggscribe::guide_sec_axis_text(
-        angle = 90,
-      )
-    )
-  ) +
-  ggscribe::axis_bracket(
-    position = "top",
-    breaks = c(4, 5),
-  ) +
-  ggscribe::axis_text(
-    position = "top",
-    breaks = c(2.4),
-    labels = c("Threshold"),
-  ) +
-  #right axis
-  ggscribe::axis_text(
-    position = "right",
-    breaks = 12,
-    labels = "Threshold",
-  ) +
-  #geom
-  geom_point() +
-  #annotations fit plot
-  theme(plot.background = element_rect(colour = "grey92"))
-
+\seealso{
+\code{\link[=panel_background]{panel_background()}}, \code{\link[=axis_line]{axis_line()}}, \code{\link[=reference_line]{reference_line()}}
 }
