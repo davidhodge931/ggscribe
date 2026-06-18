@@ -18,10 +18,10 @@ Depends:
 Imports: 
     farver,
     ggplot2 (>= 4.0.0),
-    glue,
     grid,
     rlang,
-    scales
+    scales,
+    vctrs
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
