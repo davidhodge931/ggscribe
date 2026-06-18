@@ -8,17 +8,22 @@
 #' annotations added with [axis_text()], [axis_ticks()], or [axis_bracket()].
 #'
 #' @param breaks A function or numeric vector giving the break position(s) used
-#'   to anchor the text. Defaults to `NULL`, which places a single label at the
-#'   midpoint of the scale — the mean of the limits for continuous scales.
-#' @param labels A character string used as the spacer. Defaults to `""`. Use
-#'   repeated newlines (e.g. `"\n"`) or a word to fit.
+#'   to anchor the text. Defaults to `\(x) mean(x)`, which places a single label
+#'   at the midpoint of the scale limits for continuous scales.
+#' @param labels A character string, character vector, or labelling function
+#'   used as the spacer. Defaults to `""`. The spacer works by drawing text that
+#'   is hidden by the guide theme while still taking up layout space. Use
+#'   repeated newlines (e.g. `"\n"`) or words to create the desired amount of
+#'   space.
 #' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
 #'   derive the name from the primary axis, or `NULL` (default) for no name.
 #' @param guide A guide object used to render the axis. Defaults to
 #'   [guide_sec_axis_spacer()], which makes transparent ticks and lines.
 #' @param ... Additional arguments passed to [ggplot2::dup_axis()].
 #'
-#' @return A [ggplot2::sec_axis()] object.
+#' @returns An `AxisSecondary` object for use in the `sec.axis` argument of
+#'   `scale_x_continuous()` or `scale_y_continuous()`.
+#'
 #' @seealso [guide_sec_axis_spacer()], [axis_text()], [axis_ticks()], [axis_bracket()]
 #' @export
 sec_axis_spacer <- function(
@@ -43,14 +48,14 @@ sec_axis_spacer <- function(
 #' Guide optimised for secondary axis space adjustments
 #'
 #' A wrapper around [ggplot2::guide_axis()] that defaults to making transparent
-#' ticks and lines and making the text the same colour as the plot background fill
-#' from the set theme.
+#' ticks and lines and hiding text while preserving its layout space, making it
+#' useful for reserving room for annotations.
 #'
 #' @param ... Additional arguments passed to [ggplot2::guide_axis()], such as
 #'   `title`, `check.overlap`, or `angle`.
 #'
 #' @returns A `guide` object to be used in a scale's `guide` argument or within
-#'   [sec_axis_text()].
+#'   [sec_axis_spacer()].
 #'
 #' @seealso [sec_axis_spacer()], [axis_text()], [axis_ticks()], [axis_bracket()]
 #'
@@ -72,10 +77,8 @@ guide_sec_axis_spacer <- function(...) {
 #' @returns A ggplot2 theme object.
 #' @noRd
 #'
-#' @seealso [sec_axis_text()], [guide_sec_axis_text()]
-#'
-#' @seealso [axis_ticks()], [axis_line()],
-#' [axis_text()], [reference_line()]
+#' @seealso [sec_axis_spacer()], [guide_sec_axis_spacer()], [axis_ticks()],
+#'   [axis_line()], [axis_text()], [reference_line()]
 #'
 theme_sec_axis_spacer <- function() {
   plot_background_fill <- scales::alpha(ggplot2::get_theme()$plot.background@fill %||% "white", alpha = 0)

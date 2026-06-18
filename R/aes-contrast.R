@@ -1,187 +1,188 @@
+# aes_contrast -------------------------------------------------------------
+
 #' A mapped aesthetic for text colour on fill
 #'
-#' @description Modifies a mapped colour (or fill) aesthetic for contrast against the fill (or colour) aesthetic.
+#' @description Modifies a mapped colour (or fill) aesthetic for contrast against
+#' the fill (or colour) aesthetic.
 #'
 #' Function can be spliced into [ggplot2::aes] with [rlang::!!!].
 #'
-#' @param ... Require named arguments (and support trailing commas).
+#' @param ... Unused. Included to support a trailing comma.
 #' @param dark A dark colour. If NULL, derived from theme text or panel background.
 #' @param light A light colour. If NULL, derived from theme text or panel background.
-#' @param aesthetic The aesthetic to be modified for contrast. Either "colour" (default) or "fill".
+#' @param aesthetic The aesthetic to be modified for contrast. Either `"colour"`
+#'   (default) or `"fill"`.
 #'
-#' @return A ggplot2 aesthetic in [ggplot2::aes].
+#' @return A ggplot2 mapping object suitable for use in `ggplot2::aes()` or as a
+#'   `mapping =` argument in a layer.
 #'
 #' @seealso
 #' \code{\link[rlang]{splice}}
 #'
 #' @export
-#'
-#' @examples
-#' library(ggplot2)
-#' library(dplyr)
-#' library(stringr)
-#'
-#' set_theme(
-#'  ggrefine::theme_light(
-#'     panel_heights = rep(unit(50, "mm"), 100),
-#'     panel_widths = rep(unit(75, "mm"), 100),
-#'  )
-#' )
-#'
-#' ggwidth::set_equiwidth(equiwidth = 1.75)
-#'
-#' mtcars |>
-#'   count(cyl, am) |>
-#'   mutate(
-#'     am = if_else(am == 0, "Automatic", "Manual"),
-#'     cyl = as.factor(cyl)
-#'   ) |>
-#'   ggplot(aes(x = am, y = n, colour = cyl, fill = cyl, label = n)) +
-#'   geom_col(
-#'     position = position_dodge2(preserve = "single", padding = 0.05),
-#'     width = ggwidth::get_width(n = 2, n_dodge = 3),
-#'   ) +
-#'   scale_fill_discrete(palette = jumble::jumble) +
-#'   scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
-#'   geom_text(
-#'     mapping = ggscribe::aes_contrast(), # or aes(!!!ggscribe::aes_contrast()),
-#'     position = position_dodge2(
-#'       width = ggwidth::get_width(n = 2, n_dodge = 3),
-#'       padding = 0.05,
-#'       preserve = "single"),
-#'     vjust = 1.33,
-#'     show.legend = FALSE,
-#'   ) +
-#'   scale_y_continuous(expand = expansion(c(0, 0.05))) +
-#'   ggrefine::modern(x_type = "discrete")
-#'
-#' mtcars |>
-#'   count(cyl, am) |>
-#'   mutate(
-#'     am = if_else(am == 0, "automatic", "manual"),
-#'     am = stringr::str_to_sentence(am),
-#'     cyl = as.factor(cyl)
-#'   ) |>
-#'   ggplot(aes(y = am, x = n, colour = cyl, fill = cyl, label = n)) +
-#'   geom_col(
-#'     position = position_dodge2(preserve = "single", padding = 0.05),
-#'     width = ggwidth::get_width(n = 2, n_dodge = 3, orientation = "y"),
-#'   ) +
-#'   scale_fill_discrete(palette = jumble::jumble) +
-#'   scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
-#'   geom_text(
-#'     mapping = ggscribe::aes_contrast(), # or aes(!!!ggscribe::aes_contrast()),
-#'     position = position_dodge2(
-#'       width = ggwidth::get_width(n = 2, n_dodge = 3, orientation = "y"),
-#'       preserve = "single",
-#'       padding = 0.05,
-#'     ),
-#'     hjust = 1.25,
-#'     show.legend = FALSE,
-#'   ) +
-#'   scale_x_continuous(expand = expansion(c(0, 0.05))) +
-#'   ggrefine::modern(y_type = "discrete")
-#'
 aes_contrast <- function(..., dark = NULL, light = NULL, aesthetic = "colour") {
-  # Only get theme if we need it
-  if (rlang::is_null(dark) || rlang::is_null(light)) {
-    # Get current theme
-    current_theme <- ggplot2::get_theme()
+  aesthetic <- rlang::arg_match(aesthetic, c("colour", "fill"))
 
-    # Get text colour from theme
-    theme_text <- current_theme$axis.text.x@colour %||%
-      current_theme$axis.text.y@colour %||%
-      current_theme$axis.text@colour %||%
-      current_theme$text@colour %||%
-      "black"
+  defaults <- .contrast_defaults(dark = dark, light = light)
+  dark <- defaults$dark
+  light <- defaults$light
 
-    # Get panel background from theme
-    theme_panel <- current_theme$panel.background@fill %||%
-      "white"
-
-    # Determine which is dark and which is light using .is_col_dark
-    if (.is_col_dark(theme_text)) {
-      # Dark text theme (light mode)
-      dark <- dark %||% theme_text
-      light <- light %||% theme_panel
-    } else {
-      # Light text theme (dark mode)
-      dark <- dark %||% theme_panel
-      light <- light %||% theme_text
-    }
-  }
-
-  if (aesthetic == "colour") {
+  if (identical(aesthetic, "colour")) {
     ggplot2::aes(
       colour = ggplot2::after_scale(
         .get_contrast(col = .data$fill, dark = dark, light = light)
       )
     )
-  } else if (aesthetic == "fill") {
+  } else {
     ggplot2::aes(
       fill = ggplot2::after_scale(
         .get_contrast(col = .data$colour, dark = dark, light = light)
       )
     )
-  } else {
-    rlang::abort("aesthetic must be either 'colour' or 'fill'")
   }
 }
 
-# .get_contrast ------------------------------------------------------------------
+# internal helpers ---------------------------------------------------------
 
 #' Get a dark/light colour for contrast
 #'
 #' @description Get a dark/light colour based on contrast.
 #'
-#' @param ... Require named arguments (and support trailing commas).
-#' @param col A vector of colours from which to determine a contrast vector of light/dark colours.
+#' @param ... Unused. Included to support a trailing comma.
+#' @param col A vector of colours from which to determine a contrast vector of
+#'   light/dark colours.
 #' @param dark A dark colour. If NULL, derived from theme text or panel background.
 #' @param light A light colour. If NULL, derived from theme text or panel background.
 #'
-#' @return A character vector of colours, the same length as the `col` vector, containing either
-#'         the dark or light colour determined for contrast.
+#' @return A character vector of colours, the same length as the `col` vector,
+#'   containing either the dark or light colour determined for contrast.
 #'
 #' @noRd
-#'
-#' @examples
-#' .get_contrast(col = c("#000000", "#FFFFFF", "#808080"))  # Uses theme colours
-#' .get_contrast(col = c("navy", "yellow", "orange"), dark = "navy", light = "lightblue")
-#'
 .get_contrast <- function(..., col, dark = NULL, light = NULL) {
-  # Only get theme if we need it
-  if (rlang::is_null(dark) || rlang::is_null(light)) {
-    # Get current theme
-    current_theme <- ggplot2::get_theme()
+  defaults <- .contrast_defaults(dark = dark, light = light)
+  dark <- defaults$dark
+  light <- defaults$light
 
-    # Get text colour from theme
-    theme_text <- current_theme$axis.text.x@colour %||%
-      current_theme$axis.text.y@colour %||%
-      current_theme$axis.text@colour %||%
-      current_theme$text@colour %||%
-      "black"
+  is_dark <- .is_col_dark(col)
 
-    # Get panel background from theme
-    theme_panel <- current_theme$panel.background@fill %||%
-      "white"
+  out <- rep_len(dark, length(col))
+  light_vals <- rep_len(light, length(col))
+  out[is_dark] <- light_vals[is_dark]
 
-    # Determine which is dark and which is light using .is_col_dark
-    if (.is_col_dark(theme_text)) {
-      # Dark text theme (light mode)
-      dark <- dark %||% theme_text
-      light <- light %||% theme_panel
-    } else {
-      # Light text theme (dark mode)
-      dark <- dark %||% theme_panel
-      light <- light %||% theme_text
+  out
+}
+
+.contrast_defaults <- function(dark = NULL, light = NULL) {
+  if (!rlang::is_null(dark) && !rlang::is_null(light)) {
+    return(list(dark = dark, light = light))
+  }
+
+  current_theme <- ggplot2::get_theme()
+
+  theme_text <- .first_theme_colour(
+    current_theme,
+    c(
+      "axis.text.x.bottom",
+      "axis.text.x.top",
+      "axis.text.y.left",
+      "axis.text.y.right",
+      "axis.text.x",
+      "axis.text.y",
+      "axis.text",
+      "text"
+    )
+  )
+
+  if (is.null(theme_text)) {
+    theme_text <- "black"
+  }
+
+  theme_panel <- .first_theme_fill(
+    current_theme,
+    c(
+      "panel.background",
+      "plot.background"
+    )
+  )
+
+  if (is.null(theme_panel)) {
+    theme_panel <- "white"
+  }
+
+  if (.is_col_dark(theme_text)) {
+    list(
+      dark = if (is.null(dark)) theme_text else dark,
+      light = if (is.null(light)) theme_panel else light
+    )
+  } else {
+    list(
+      dark = if (is.null(dark)) theme_panel else dark,
+      light = if (is.null(light)) theme_text else light
+    )
+  }
+}
+
+# utils -------------------------------------------------------------------
+
+.first_theme_colour <- function(theme, elements) {
+  for (element in elements) {
+    value <- .theme_colour(theme, element)
+    if (!is.null(value)) {
+      return(value)
     }
   }
 
-  # Use .is_col_dark to determine which colour to return
-  ifelse(!.is_col_dark(col), dark, light)
+  NULL
 }
 
-# .is_col_dark ------------------------------------------------------------------
+.first_theme_fill <- function(theme, elements) {
+  for (element in elements) {
+    value <- .theme_fill(theme, element)
+    if (!is.null(value)) {
+      return(value)
+    }
+  }
+
+  NULL
+}
+
+.theme_colour <- function(theme, element) {
+  el <- tryCatch(
+    ggplot2::calc_element(element, theme),
+    error = function(...) NULL
+  )
+
+  if (is.null(el)) {
+    return(NULL)
+  }
+
+  value <- el$colour
+
+  if (is.null(value)) {
+    return(NULL)
+  }
+
+  value
+}
+
+.theme_fill <- function(theme, element) {
+  el <- tryCatch(
+    ggplot2::calc_element(element, theme),
+    error = function(...) NULL
+  )
+
+  if (is.null(el)) {
+    return(NULL)
+  }
+
+  value <- el$fill
+
+  if (is.null(value)) {
+    return(NULL)
+  }
+
+  value
+}
 
 #' Check if a colour is dark
 #'
@@ -189,29 +190,22 @@ aes_contrast <- function(..., dark = NULL, light = NULL, aesthetic = "colour") {
 #' Determines whether a colour is dark by examining its luminance value.
 #'
 #' @param col A colour value. Can be a hex code, colour name, or any format
-#'        accepted by farver. If NULL, returns FALSE.
+#'   accepted by farver. If NULL, returns FALSE.
 #'
 #' @return TRUE if dark (luminance <= 50) and FALSE otherwise.
 #'
 #' @noRd
-#'
 .is_col_dark <- function(col) {
-  # Handle NULL or missing input
   if (rlang::is_null(col) || length(col) == 0) {
     return(FALSE)
   }
 
-  # Calculate luminance of the colour
   col_luminance <- farver::get_channel(
     colour = col,
     channel = "l",
     space = "hcl"
   )
 
-  # Return TRUE if low luminance
   col_luminance <= 50
 }
-
-
-
 

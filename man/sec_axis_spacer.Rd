@@ -14,11 +14,14 @@ sec_axis_spacer(
 }
 \arguments{
 \item{breaks}{A function or numeric vector giving the break position(s) used
-to anchor the text. Defaults to \code{NULL}, which places a single label at the
-midpoint of the scale — the mean of the limits for continuous scales.}
+to anchor the text. Defaults to \verb{\\(x) mean(x)}, which places a single label
+at the midpoint of the scale limits for continuous scales.}
 
-\item{labels}{A character string used as the spacer. Defaults to \code{""}. Use
-repeated newlines (e.g. \code{"\\n"}) or a word to fit.}
+\item{labels}{A character string, character vector, or labelling function
+used as the spacer. Defaults to \code{""}. The spacer works by drawing text that
+is hidden by the guide theme while still taking up layout space. Use
+repeated newlines (e.g. \code{"\\n"}) or words to create the desired amount of
+space.}
 
 \item{name}{The name of the secondary axis. Use \code{\link[ggplot2:waiver]{ggplot2::waiver()}} to
 derive the name from the primary axis, or \code{NULL} (default) for no name.}
@@ -29,7 +32,8 @@ derive the name from the primary axis, or \code{NULL} (default) for no name.}
 \item{...}{Additional arguments passed to \code{\link[ggplot2:dup_axis]{ggplot2::dup_axis()}}.}
 }
 \value{
-A \code{\link[ggplot2:sec_axis]{ggplot2::sec_axis()}} object.
+An \code{AxisSecondary} object for use in the \code{sec.axis} argument of
+\code{scale_x_continuous()} or \code{scale_y_continuous()}.
 }
 \description{
 A convenience wrapper around \code{\link[=sec_axis_text]{sec_axis_text()}} that reserves vertical (or

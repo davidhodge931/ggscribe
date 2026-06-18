@@ -12,12 +12,12 @@ guide_sec_axis_spacer(...)
 }
 \value{
 A \code{guide} object to be used in a scale's \code{guide} argument or within
-\code{\link[=sec_axis_text]{sec_axis_text()}}.
+\code{\link[=sec_axis_spacer]{sec_axis_spacer()}}.
 }
 \description{
 A wrapper around \code{\link[ggplot2:guide_axis]{ggplot2::guide_axis()}} that defaults to making transparent
-ticks and lines and making the text the same colour as the plot background fill
-from the set theme.
+ticks and lines and hiding text while preserving its layout space, making it
+useful for reserving room for annotations.
 }
 \seealso{
 \code{\link[=sec_axis_spacer]{sec_axis_spacer()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}

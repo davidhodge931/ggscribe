@@ -14,13 +14,15 @@ sec_axis_text(
 }
 \arguments{
 \item{breaks}{A function or numeric vector giving the break position(s) used
-to anchor the text. Defaults to \code{NULL}, which places a single label at the
-midpoint of the scale — the mean of the limits for continuous scales.}
+to anchor the text. Defaults to \verb{\\(x) mean(x)}, which places a single label
+at the midpoint of the scale limits for continuous scales.}
 
 \item{labels}{One of:
 \itemize{
 \item A character vector of labels, the same length as \code{breaks}
 \item A function that takes break positions as input and returns labels
+If left as \code{\link[ggplot2:waiver]{ggplot2::waiver()}}, labels are derived from the break positions
+and may be numeric.
 }}
 
 \item{name}{The name of the secondary axis. Use \code{\link[ggplot2:waiver]{ggplot2::waiver()}} to

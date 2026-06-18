@@ -3,11 +3,13 @@
 #' Secondary axis for text annotations
 #'
 #' @param breaks A function or numeric vector giving the break position(s) used
-#'   to anchor the text. Defaults to `NULL`, which places a single label at the
-#'   midpoint of the scale — the mean of the limits for continuous scales.
+#'   to anchor the text. Defaults to `\(x) mean(x)`, which places a single label
+#'   at the midpoint of the scale limits for continuous scales.
 #' @param labels One of:
 #'   - A character vector of labels, the same length as `breaks`
 #'   - A function that takes break positions as input and returns labels
+#'   If left as [ggplot2::waiver()], labels are derived from the break positions
+#'   and may be numeric.
 #' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
 #'   derive the name from the primary axis, or `NULL` (default) for no name.
 #' @param guide A guide object used to render the axis. Defaults to
@@ -50,7 +52,6 @@ sec_axis_text <- function(
 #'   [sec_axis_text()].
 #'
 #' @seealso [sec_axis_text()], [axis_text()], [axis_ticks()], [axis_bracket()]
-#'
 #' @export
 #'
 #' @inherit sec_axis_text examples
@@ -72,15 +73,13 @@ guide_sec_axis_text <- function(..., theme = NULL) {
 
 # theme_sec_axis_text ------------------------------------------------------------------
 
-#' Theme adjustment for secondary axis text annotations.
+#' Theme adjustment for secondary axis text annotations
 #'
 #' @returns A ggplot2 theme object.
 #' @noRd
 #'
-#' @seealso [sec_axis_text()], [guide_sec_axis_text()]
-#'
-#' @seealso [axis_ticks()], [axis_line()],
-#' [axis_text()], [reference_line()]
+#' @seealso [sec_axis_text()], [guide_sec_axis_text()], [axis_ticks()],
+#'   [axis_line()], [axis_text()], [reference_line()]
 #'
 theme_sec_axis_text <- function() {
   ggplot2::theme(
@@ -95,4 +94,3 @@ theme_sec_axis_text <- function() {
     axis.ticks.y.left = ggplot2::element_line(linetype = 0)
   )
 }
-
