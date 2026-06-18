@@ -38,7 +38,7 @@ Requires coord_cartesian(clip = "off").'><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Annotate an axis bracket</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis-bracket.R" class="external-link"><code>R/axis-bracket.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis-panel-reference.R" class="external-link"><code>R/axis-panel-reference.R</code></a></small>
       <div class="d-none name"><code>axis_bracket.Rd</code></div>
     </div>
 
@@ -121,12 +121,13 @@ vector the same length as the number of axes.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Caps always point in the positive direction by default (right for
-<code>xintercept</code>, up for <code>yintercept</code>). Use a negative <code>length</code> to flip them.</p>
+<code>xintercept</code>, up for <code>yintercept</code>). Use a negative <code>length</code> to flip them
+(e.g. <code>length = -rel(1)</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="axis_line.html">axis_line()</a></code>, <code><a href="axis_ticks.html">axis_ticks()</a></code>,
-<code><a href="axis_text.html">axis_text()</a></code>, <code><a href="reference_line.html">reference_line()</a></code>, <code><a href="panel_shade.html">panel_shade()</a></code></p></div>
+<code><a href="axis_text.html">axis_text()</a></code>, <code><a href="reference_line.html">reference_line()</a></code>, <code><a href="panel_background.html">panel_background()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

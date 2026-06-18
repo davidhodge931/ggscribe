@@ -74,8 +74,6 @@
 <li>Use the secondary axis, subtitle, or axis titles to adjust space.</li>
 <li>
 <code>axis_*</code> functions placed outside the panel require <code>clip = "off"</code> in the coord space.</li>
-<li>
-<code>panel_shade</code> should be before geoms.</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -105,7 +103,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">scale_colour_discrete</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="fu">blends</span><span class="fu">::</span><span class="fu"><a href="https://davidhodge931.github.io/blends/reference/multiply.html" class="external-link">multiply</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">get_theme</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">palette.colour.discrete</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#clip = "off" is required for axis_text, axis_ticks and axis_bracket</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>clip <span class="op">=</span> <span class="st">"off"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co">#reference lines and shade</span></span>
+<span>  <span class="co">#reference lines and background</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/reference_line.html">reference_line</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">2.4</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/reference_line.html">reference_line</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>  <span class="op">+</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/panel_shade.html">panel_shade</a></span><span class="op">(</span></span>
@@ -123,31 +121,31 @@
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/axis_bracket.html">axis_bracket</a></span><span class="op">(</span></span>
-<span>    position <span class="op">=</span> <span class="st">"top"</span>,</span>
+<span>    yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/axis_text.html">axis_text</a></span><span class="op">(</span></span>
-<span>    position <span class="op">=</span> <span class="st">"top"</span>,</span>
+<span>    yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.4</span><span class="op">)</span>,</span>
 <span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Threshold"</span><span class="op">)</span>,</span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#right axis</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/axis_text.html">axis_text</a></span><span class="op">(</span></span>
-<span>    position <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>    xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>    breaks <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>    labels <span class="op">=</span> <span class="st">"Threshold"</span>,</span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#bottom axis</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/axis_ticks.html">axis_ticks</a></span><span class="op">(</span></span>
-<span>    position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
+<span>    yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>,</span>
 <span>    breaks <span class="op">=</span> <span class="fl">3.8</span>,</span>
-<span>    length <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">4.5</span><span class="op">)</span>,</span>
+<span>    length <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4.5</span><span class="op">)</span>,</span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggscribe</span><span class="fu">::</span><span class="fu"><a href="reference/axis_text.html">axis_text</a></span><span class="op">(</span></span>
-<span>    position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
+<span>    yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>,</span>
 <span>    breaks <span class="op">=</span> <span class="fl">3.8</span>,</span>
 <span>    labels <span class="op">=</span> <span class="st">"Threshold"</span>,</span>
-<span>    length <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">4.5</span><span class="op">)</span>,</span>
+<span>    length <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4.5</span><span class="op">)</span>,</span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"\nWeight"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#geom</span></span>

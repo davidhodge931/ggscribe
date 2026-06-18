@@ -39,39 +39,37 @@ axis_ticks(
 
   A numeric vector of break positions in data coordinates, or wrapped in
   [`I()`](https://rdrr.io/r/base/AsIs.html) for npc. Pass a list the
-  same length as the total number of axes (xintercept + yintercept
-  combined) to use different breaks per axis.
+  same length as the total number of axes to use different breaks per
+  axis.
 
 - length:
 
   Total tick length. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the tick direction. Defaults to `rel(1)` (theme
-  tick length). May be a vector the same length as the number of axes.
+  Negative values flip the tick direction. Defaults to `rel(1)`. May be
+  a vector recycled across all breaks in order.
 
 - colour:
 
-  Inherits from `axis.ticks` in the set theme. May be a vector the same
-  length as the number of axes — one style per axis, applied to all
-  breaks on that axis.
+  Inherits from `axis.ticks` in the set theme. May be a vector recycled
+  across all breaks in order.
 
 - linewidth:
 
   Inherits from `axis.ticks` in the set theme. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html). May
-  be a vector the same length as the number of axes.
+  be a vector recycled across all breaks in order.
 
 - linetype:
 
-  Inherits from `axis.ticks` in the set theme. May be a vector the same
-  length as the number of axes.
+  Inherits from `axis.ticks` in the set theme. May be a vector recycled
+  across all breaks in order.
 
 - arrow:
 
   A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
-  or a list the same length as the number of axes. The arrowhead points
-  toward the axis line. Must use
-  [`list()`](https://rdrr.io/r/base/list.html) not
+  or a list recycled across all breaks. The arrowhead points toward the
+  axis line. Must use [`list()`](https://rdrr.io/r/base/list.html) not
   [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
   E.g.
   `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
@@ -91,8 +89,8 @@ A list of ggplot2 annotation layers.
 ## Details
 
 Ticks always point in the positive direction by default (right for
-`xintercept`, up for `yintercept`). Use a negative `length` (e.g.
-`length = -rel(1)`) to flip them left or down.
+`xintercept`, up for `yintercept`). Use a negative `length` to flip them
+(e.g. `length = -rel(1)`).
 
 ## See also
 
@@ -100,4 +98,4 @@ Ticks always point in the positive direction by default (right for
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
+[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)

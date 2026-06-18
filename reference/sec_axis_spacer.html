@@ -68,13 +68,16 @@ annotations added with <code><a href="axis_text.html">axis_text()</a></code>, <c
 
 <dl><dt id="arg-breaks">breaks<a class="anchor" aria-label="anchor" href="#arg-breaks"></a></dt>
 <dd><p>A function or numeric vector giving the break position(s) used
-to anchor the text. Defaults to <code>NULL</code>, which places a single label at the
-midpoint of the scale — the mean of the limits for continuous scales.</p></dd>
+to anchor the text. Defaults to <code>\(x) mean(x)</code>, which places a single label
+at the midpoint of the scale limits for continuous scales.</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
-<dd><p>A character string used as the spacer. Defaults to <code>""</code>. Use
-repeated newlines (e.g. <code>"\n"</code>) or a word to fit.</p></dd>
+<dd><p>A character string, character vector, or labelling function
+used as the spacer. Defaults to <code>""</code>. The spacer works by drawing text that
+is hidden by the guide theme while still taking up layout space. Use
+repeated newlines (e.g. <code>"\n"</code>) or words to create the desired amount of
+space.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
@@ -93,7 +96,8 @@ derive the name from the primary axis, or <code>NULL</code> (default) for no nam
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code><a href="https://ggplot2.tidyverse.org/reference/sec_axis.html" class="external-link">ggplot2::sec_axis()</a></code> object.</p>
+    <p>An <code>AxisSecondary</code> object for use in the <code>sec.axis</code> argument of
+<code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous()</a></code> or <code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

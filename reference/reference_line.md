@@ -81,4 +81,4 @@ rightward for `xintercept` lines, upward for `yintercept` lines.
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
+[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)

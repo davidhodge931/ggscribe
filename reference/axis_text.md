@@ -52,7 +52,7 @@ axis_text(
 
   - `NULL` (default) to use break values as labels
 
-  - A character vector the same length as `breaks`
+  - A character vector recycled across all breaks in order
 
   - A function taking break values and returning labels
 
@@ -64,33 +64,32 @@ axis_text(
   Offset from the axis line including tick length and margin. Supports
   [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
   Negative values place text on the opposite side. Defaults to `rel(1)`.
-  May be a vector the same length as the number of axes.
+  May be a vector recycled across all breaks in order.
 
 - angle:
 
-  Text rotation angle. Defaults to `0`. May be a vector the same length
-  as the number of axes.
+  Text rotation angle. Defaults to `0`. May be a vector recycled across
+  all breaks in order.
 
 - hjust, vjust:
 
   Justification. Auto-calculated from axis direction and `angle` if
-  `NULL`. Text always anchors to the tick end. May be a vector the same
-  length as the number of axes.
+  `NULL`. May be a vector recycled across all breaks in order.
 
 - colour:
 
-  Inherits from `axis.text` in the set theme. May be a vector the same
-  length as the number of axes.
+  Inherits from `axis.text` in the set theme. May be a vector recycled
+  across all breaks in order.
 
 - size:
 
-  Inherits from `axis.text` in the set theme. May be a vector the same
-  length as the number of axes.
+  Inherits from `axis.text` in the set theme. May be a vector recycled
+  across all breaks in order.
 
 - family:
 
-  Inherits from `axis.text` in the set theme. May be a vector the same
-  length as the number of axes.
+  Inherits from `axis.text` in the set theme. May be a vector recycled
+  across all breaks in order.
 
 - layout:
 
@@ -108,7 +107,7 @@ A list of ggplot2 annotation layers.
 
 Text always sits on the positive side of the axis by default (right of
 `xintercept` lines, above `yintercept` lines). Use a negative `length`
-(e.g. `length = -rel(1)`) to place text on the opposite side.
+to place text on the opposite side (e.g. `length = -rel(1)`).
 
 ## See also
 
@@ -116,4 +115,4 @@ Text always sits on the positive side of the axis by default (right of
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
 [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
+[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)

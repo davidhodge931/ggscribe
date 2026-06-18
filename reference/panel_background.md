@@ -1,23 +1,23 @@
-# Annotate a shaded panel region
+# Annotate a panel background region
 
-A convenience wrapper around
-[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)
-with defaults suited to subtle overlays: a neutral grey fill at 25%
-opacity with no border. Should be placed before geom layers.
+Draws filled rectangles over the panel. Defaults to the
+`panel.background` fill from the set theme at full opacity, making it
+useful for layering a solid background over existing content. Should be
+placed before geom layers.
 
 ## Usage
 
 ``` r
-panel_shade(
+panel_background(
   xmin = -Inf,
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = "#878580",
-  alpha = 0.25,
-  colour = "transparent",
+  fill = NULL,
+  alpha = 1,
+  colour = NULL,
   linewidth = NULL,
-  linetype = 1,
+  linetype = 0,
   layout = NULL
 )
 ```
@@ -40,16 +40,18 @@ panel_shade(
 
 - fill:
 
-  Fill colour. Defaults to a neutral grey. May be a vector the same
-  length as the bounds.
+  Fill colour. Defaults to the `panel.background` fill from the set
+  theme, falling back to `"white"`. May be a vector the same length as
+  the bounds to style each rectangle individually.
 
 - alpha:
 
-  Opacity. Defaults to `0.25`. May be a vector.
+  Opacity. Defaults to `1` (fully opaque). May be a vector.
 
 - colour:
 
-  Border colour. Defaults to `"transparent"`. May be a vector.
+  Border colour. Defaults to the resolved `fill` value, giving a
+  seamless border. May be a vector.
 
 - linewidth:
 
@@ -59,7 +61,7 @@ panel_shade(
 
 - linetype:
 
-  Border linetype. Defaults to `1`. May be a vector.
+  Border linetype. Defaults to `0` (none). May be a vector.
 
 - layout:
 
@@ -75,6 +77,6 @@ A list containing annotation layers.
 
 ## See also
 
-[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md),
+`panel_background()`,
 [`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md)

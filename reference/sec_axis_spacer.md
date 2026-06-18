@@ -27,14 +27,16 @@ sec_axis_spacer(
 - breaks:
 
   A function or numeric vector giving the break position(s) used to
-  anchor the text. Defaults to `NULL`, which places a single label at
-  the midpoint of the scale — the mean of the limits for continuous
-  scales.
+  anchor the text. Defaults to `\(x) mean(x)`, which places a single
+  label at the midpoint of the scale limits for continuous scales.
 
 - labels:
 
-  A character string used as the spacer. Defaults to `""`. Use repeated
-  newlines (e.g. `"\n"`) or a word to fit.
+  A character string, character vector, or labelling function used as
+  the spacer. Defaults to `""`. The spacer works by drawing text that is
+  hidden by the guide theme while still taking up layout space. Use
+  repeated newlines (e.g. `"\n"`) or words to create the desired amount
+  of space.
 
 - name:
 
@@ -56,9 +58,10 @@ sec_axis_spacer(
 
 ## Value
 
-A
-[`ggplot2::sec_axis()`](https://ggplot2.tidyverse.org/reference/sec_axis.html)
-object.
+An `AxisSecondary` object for use in the `sec.axis` argument of
+[`scale_x_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html)
+or
+[`scale_y_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html).
 
 ## See also
 

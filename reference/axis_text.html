@@ -38,7 +38,7 @@ Requires coord_cartesian(clip = "off").'><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Annotate axis text</h1>
-      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis-text.R" class="external-link"><code>R/axis-text.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/davidhodge931/ggscribe/blob/main/R/axis-panel-reference.R" class="external-link"><code>R/axis-panel-reference.R</code></a></small>
       <div class="d-none name"><code>axis_text.Rd</code></div>
     </div>
 
@@ -90,7 +90,7 @@ of axes to use different breaks per axis.</p></dd>
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
 <dd><p>One of:</p><ul><li><p><code>NULL</code> (default) to use break values as labels</p></li>
-<li><p>A character vector the same length as <code>breaks</code></p></li>
+<li><p>A character vector recycled across all breaks in order</p></li>
 <li><p>A function taking break values and returning labels</p></li>
 <li><p>A list the same length as the number of axes, each element being one
 of the above</p></li>
@@ -100,34 +100,32 @@ of the above</p></li>
 <dt id="arg-length">length<a class="anchor" aria-label="anchor" href="#arg-length"></a></dt>
 <dd><p>Offset from the axis line including tick length and margin.
 Supports <code><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel()</a></code>. Negative values place text on the opposite side.
-Defaults to <code>rel(1)</code>. May be a vector the same length as the number of
-axes.</p></dd>
+Defaults to <code>rel(1)</code>. May be a vector recycled across all breaks in order.</p></dd>
 
 
 <dt id="arg-angle">angle<a class="anchor" aria-label="anchor" href="#arg-angle"></a></dt>
-<dd><p>Text rotation angle. Defaults to <code>0</code>. May be a vector the same
-length as the number of axes.</p></dd>
+<dd><p>Text rotation angle. Defaults to <code>0</code>. May be a vector recycled
+across all breaks in order.</p></dd>
 
 
 <dt id="arg-hjust-vjust">hjust, vjust<a class="anchor" aria-label="anchor" href="#arg-hjust-vjust"></a></dt>
 <dd><p>Justification. Auto-calculated from axis direction and
-<code>angle</code> if <code>NULL</code>. Text always anchors to the tick end. May be a vector
-the same length as the number of axes.</p></dd>
+<code>angle</code> if <code>NULL</code>. May be a vector recycled across all breaks in order.</p></dd>
 
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
 <dd><p>Inherits from <code>axis.text</code> in the set theme. May be a vector
-the same length as the number of axes.</p></dd>
+recycled across all breaks in order.</p></dd>
 
 
 <dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
 <dd><p>Inherits from <code>axis.text</code> in the set theme. May be a vector
-the same length as the number of axes.</p></dd>
+recycled across all breaks in order.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>Inherits from <code>axis.text</code> in the set theme. May be a vector
-the same length as the number of axes.</p></dd>
+recycled across all breaks in order.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -145,12 +143,12 @@ the same length as the number of axes.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Text always sits on the positive side of the axis by default (right of
 <code>xintercept</code> lines, above <code>yintercept</code> lines). Use a negative <code>length</code>
-(e.g. <code>length = -rel(1)</code>) to place text on the opposite side.</p>
+to place text on the opposite side (e.g. <code>length = -rel(1)</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="axis_line.html">axis_line()</a></code>, <code><a href="axis_ticks.html">axis_ticks()</a></code>,
-<code><a href="axis_bracket.html">axis_bracket()</a></code>, <code><a href="reference_line.html">reference_line()</a></code>, <code><a href="panel_shade.html">panel_shade()</a></code></p></div>
+<code><a href="axis_bracket.html">axis_bracket()</a></code>, <code><a href="reference_line.html">reference_line()</a></code>, <code><a href="panel_background.html">panel_background()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

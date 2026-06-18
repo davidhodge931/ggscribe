@@ -8,7 +8,6 @@ Note:
 - Use the secondary axis, subtitle, or axis titles to adjust space.
 - `axis_*` functions placed outside the panel require `clip = "off"` in
   the coord space.
-- `panel_shade` should be before geoms.
 
 ## Installation
 
@@ -42,7 +41,7 @@ mtcars |>
   scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
   #clip = "off" is required for axis_text, axis_ticks and axis_bracket
   coord_cartesian(clip = "off") +
-  #reference lines and shade
+  #reference lines and background
   ggscribe::reference_line(xintercept = 2.4) +
   ggscribe::reference_line(yintercept = 12)  +
   ggscribe::panel_shade(
@@ -60,31 +59,31 @@ mtcars |>
     )
   ) +
   ggscribe::axis_bracket(
-    position = "top",
+    yintercept = I(1),
     breaks = c(4, 5),
   ) +
   ggscribe::axis_text(
-    position = "top",
+    yintercept = I(1),
     breaks = c(2.4),
     labels = c("Threshold"),
   ) +
   #right axis
   ggscribe::axis_text(
-    position = "right",
+    xintercept = I(1),
     breaks = 12,
     labels = "Threshold",
   ) +
   #bottom axis
   ggscribe::axis_ticks(
-    position = "bottom",
+    yintercept = I(0),
     breaks = 3.8,
-    length = rel(4.5),
+    length = rel(-4.5),
   ) +
   ggscribe::axis_text(
-    position = "bottom",
+    yintercept = I(0),
     breaks = 3.8,
     labels = "Threshold",
-    length = rel(4.5),
+    length = rel(-4.5),
   ) +
   labs(x = "\nWeight") +
   #geom

@@ -82,8 +82,8 @@ A list of ggplot2 annotation layers.
 ## Details
 
 Caps always point in the positive direction by default (right for
-`xintercept`, up for `yintercept`). Use a negative `length` to flip
-them.
+`xintercept`, up for `yintercept`). Use a negative `length` to flip them
+(e.g. `length = -rel(1)`).
 
 ## See also
 
@@ -91,4 +91,4 @@ them.
 [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
 [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
 [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
+[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)
