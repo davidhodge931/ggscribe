@@ -16,6 +16,7 @@ reference:
   - axis_bracket
   - axis_text
   - panel_background
+  - panel_grid
   - panel_shade
   - reference_line
 - title: Aesthetic
