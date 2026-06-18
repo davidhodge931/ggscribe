@@ -129,8 +129,7 @@ mtcars |>
     vjust = 1.33,
     show.legend = FALSE,
   ) +
-  scale_y_continuous(expand = expansion(c(0, 0.05))) +
-  ggrefine::modern(x_type = "discrete")
+  scale_y_continuous(expand = expansion(c(0, 0.05))) 
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="100%" />
