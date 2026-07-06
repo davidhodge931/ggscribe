@@ -48,35 +48,38 @@
 #'   [axis_bracket()], [reference_line()], [panel_background()]
 #' @export
 axis_text <- function(
-    xintercept = NULL,
-    yintercept = NULL,
-    breaks,
-    labels     = NULL,
-    length     = ggplot2::rel(1),
-    angle      = 0,
-    hjust      = NULL,
-    vjust      = NULL,
-    colour     = NULL,
-    size       = NULL,
-    family     = NULL,
-    layout     = NULL
+  xintercept = NULL,
+  yintercept = NULL,
+  breaks,
+  labels = NULL,
+  length = ggplot2::rel(1),
+  angle = 0,
+  hjust = NULL,
+  vjust = NULL,
+  colour = NULL,
+  size = NULL,
+  family = NULL,
+  layout = NULL
 ) {
   axis_specs <- .build_axis_specs(xintercept, yintercept)
 
   aligned <- .align_axis_breaks(axis_specs, breaks)
-  axis_specs  <- aligned$axis_specs
+  axis_specs <- aligned$axis_specs
   break_specs <- aligned$break_specs
-  n_axes      <- aligned$n_axes
+  n_axes <- aligned$n_axes
 
   current_theme <- ggplot2::get_theme()
 
   n_per_axis <- vapply(break_specs, function(x) length(x$vals), integer(1))
-  n_total    <- sum(n_per_axis)
-  offsets    <- c(0L, cumsum(n_per_axis[-length(n_per_axis)]))
+  n_total <- sum(n_per_axis)
+  offsets <- c(0L, cumsum(n_per_axis[-length(n_per_axis)]))
 
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     text_el <- .default(
-      .calc_theme_element(.axis_text_hierarchy(axis_spec$int_axis), current_theme),
+      .calc_theme_element(
+        .axis_text_hierarchy(axis_spec$int_axis),
+        current_theme
+      ),
       ggplot2::element_text(colour = "black", size = 11, family = "")
     )
 
@@ -86,10 +89,10 @@ axis_text <- function(
     )
 
     list(
-      text_el         = text_el,
-      colour          = .theme_value(text_el, "colour", "black"),
-      size            = .theme_value(text_el, "size", 11),
-      family          = .theme_value(text_el, "family", ""),
+      text_el = text_el,
+      colour = .theme_value(text_el, "colour", "black"),
+      size = .theme_value(text_el, "size", 11),
+      family = .theme_value(text_el, "family", ""),
       theme_length_pt = .theme_length_to_pt(ticks_length_el, current_theme)
     )
   })
@@ -111,10 +114,22 @@ axis_text <- function(
     use.names = FALSE
   )
 
-  colour_vec <- if (is.null(colour)) default_colour else .recycle_values(colour, n_total, "colour")
-  size_vec   <- if (is.null(size))   default_size   else .recycle_values(size, n_total, "size")
-  family_vec <- if (is.null(family)) default_family else .recycle_values(family, n_total, "family")
-  angle_vec  <- .recycle_values(angle, n_total, "angle")
+  colour_vec <- if (is.null(colour)) {
+    default_colour
+  } else {
+    .recycle_values(colour, n_total, "colour")
+  }
+  size_vec <- if (is.null(size)) {
+    default_size
+  } else {
+    .recycle_values(size, n_total, "size")
+  }
+  family_vec <- if (is.null(family)) {
+    default_family
+  } else {
+    .recycle_values(family, n_total, "family")
+  }
+  angle_vec <- .recycle_values(angle, n_total, "angle")
 
   offset <- .resolve_offset(length, n_total, default_theme_length, "length")
 
@@ -126,10 +141,14 @@ axis_text <- function(
     SIMPLIFY = TRUE
   )
 
-  margin_vec <- vapply(seq_len(n_total), function(i) {
-    axis_i <- axis_index[[i]]
-    .text_margin_pt(axis_defaults[[axis_i]]$text_el, side_vec[[i]])
-  }, numeric(1))
+  margin_vec <- vapply(
+    seq_len(n_total),
+    function(i) {
+      axis_i <- axis_index[[i]]
+      .text_margin_pt(axis_defaults[[axis_i]]$text_el, side_vec[[i]])
+    },
+    numeric(1)
+  )
 
   hjust_vec <- if (is.null(hjust)) {
     mapply(function(side, angle) .get_hjust(side, angle), side_vec, angle_vec)
@@ -145,44 +164,72 @@ axis_text <- function(
 
   label_specs <- .normalise_label_specs(labels, break_specs, n_axes)
 
-  unlist(lapply(seq_len(n_axes), function(g) {
-    axis_spec  <- axis_specs[[g]]
-    break_spec <- break_specs[[g]]
-    labels_g   <- label_specs[[g]]
-    offset_g   <- offsets[[g]]
-    intercept  <- .intercept_unit(axis_spec)
+  unlist(
+    lapply(seq_len(n_axes), function(g) {
+      axis_spec <- axis_specs[[g]]
+      break_spec <- break_specs[[g]]
+      labels_g <- label_specs[[g]]
+      offset_g <- offsets[[g]]
+      intercept <- .intercept_unit(axis_spec)
 
-    lapply(seq_along(break_spec$vals), function(i) {
-      global_i <- offset_g + i
-      break_i  <- break_spec$vals[[i]]
-      along    <- .break_unit(break_i, break_spec$npc)
+      lapply(seq_along(break_spec$vals), function(i) {
+        global_i <- offset_g + i
+        break_i <- break_spec$vals[[i]]
+        along <- .break_unit(break_i, break_spec$npc)
 
-      total_offset <- grid::unit(offset$pts[[global_i]] + margin_vec[[global_i]], "pt")
+        total_offset <- grid::unit(
+          offset$pts[[global_i]] + margin_vec[[global_i]],
+          "pt"
+        )
 
-      gp <- grid::gpar(
-        col        = colour_vec[[global_i]],
-        fontsize   = size_vec[[global_i]],
-        fontfamily = family_vec[[global_i]]
-      )
+        gp <- grid::gpar(
+          col = colour_vec[[global_i]],
+          fontsize = size_vec[[global_i]],
+          fontfamily = family_vec[[global_i]]
+        )
 
-      just <- c(hjust = hjust_vec[[global_i]], vjust = vjust_vec[[global_i]])
-      rot  <- angle_vec[[global_i]]
+        just <- c(hjust = hjust_vec[[global_i]], vjust = vjust_vec[[global_i]])
+        rot <- angle_vec[[global_i]]
 
-      text_grob <- if (axis_spec$int_axis == "x") {
-        x_text <- if (offset$flip[[global_i]]) intercept - total_offset else intercept + total_offset
-        grid::textGrob(labels_g[[i]], x = x_text, y = along, just = just, rot = rot, gp = gp)
-      } else {
-        y_text <- if (offset$flip[[global_i]]) intercept - total_offset else intercept + total_offset
-        grid::textGrob(labels_g[[i]], x = along, y = y_text, just = just, rot = rot, gp = gp)
-      }
+        text_grob <- if (axis_spec$int_axis == "x") {
+          x_text <- if (offset$flip[[global_i]]) {
+            intercept - total_offset
+          } else {
+            intercept + total_offset
+          }
+          grid::textGrob(
+            labels_g[[i]],
+            x = x_text,
+            y = along,
+            just = just,
+            rot = rot,
+            gp = gp
+          )
+        } else {
+          y_text <- if (offset$flip[[global_i]]) {
+            intercept - total_offset
+          } else {
+            intercept + total_offset
+          }
+          grid::textGrob(
+            labels_g[[i]],
+            x = along,
+            y = y_text,
+            just = just,
+            rot = rot,
+            gp = gp
+          )
+        }
 
-      .new_annotation_layer(
-        text_grob,
-        .annotation_bounds(axis_spec, break_i, break_spec$npc),
-        layout
-      )
-    })
-  }), recursive = FALSE)
+        .new_annotation_layer(
+          text_grob,
+          .annotation_bounds(axis_spec, break_i, break_spec$npc),
+          layout
+        )
+      })
+    }),
+    recursive = FALSE
+  )
 }
 
 # axis_ticks ------------------------------------------------------------------
@@ -228,32 +275,35 @@ axis_text <- function(
 #'   [axis_bracket()], [reference_line()], [panel_background()]
 #' @export
 axis_ticks <- function(
-    xintercept = NULL,
-    yintercept = NULL,
-    breaks,
-    length     = ggplot2::rel(1),
-    colour     = NULL,
-    linewidth  = NULL,
-    linetype   = NULL,
-    arrow      = NULL,
-    layout     = NULL
+  xintercept = NULL,
+  yintercept = NULL,
+  breaks,
+  length = ggplot2::rel(1),
+  colour = NULL,
+  linewidth = NULL,
+  linetype = NULL,
+  arrow = NULL,
+  layout = NULL
 ) {
   axis_specs <- .build_axis_specs(xintercept, yintercept)
 
   aligned <- .align_axis_breaks(axis_specs, breaks)
-  axis_specs  <- aligned$axis_specs
+  axis_specs <- aligned$axis_specs
   break_specs <- aligned$break_specs
-  n_axes      <- aligned$n_axes
+  n_axes <- aligned$n_axes
 
   current_theme <- ggplot2::get_theme()
 
   n_per_axis <- vapply(break_specs, function(x) length(x$vals), integer(1))
-  n_total    <- sum(n_per_axis)
-  offsets    <- c(0L, cumsum(n_per_axis[-length(n_per_axis)]))
+  n_total <- sum(n_per_axis)
+  offsets <- c(0L, cumsum(n_per_axis[-length(n_per_axis)]))
 
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     ticks_el <- .default(
-      .calc_theme_element(.axis_ticks_hierarchy(axis_spec$int_axis), current_theme),
+      .calc_theme_element(
+        .axis_ticks_hierarchy(axis_spec$int_axis),
+        current_theme
+      ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
     )
 
@@ -263,9 +313,9 @@ axis_ticks <- function(
     )
 
     list(
-      colour          = .theme_value(ticks_el, "colour", "black"),
-      linewidth       = .theme_value(ticks_el, "linewidth", 0.5),
-      linetype        = .theme_value(ticks_el, "linetype", 1),
+      colour = .theme_value(ticks_el, "colour", "black"),
+      linewidth = .theme_value(ticks_el, "linewidth", 0.5),
+      linetype = .theme_value(ticks_el, "linetype", 1),
       theme_length_pt = .theme_length_to_pt(ticks_length_el, current_theme)
     )
   })
@@ -287,55 +337,85 @@ axis_ticks <- function(
     use.names = FALSE
   )
 
-  colour_vec   <- if (is.null(colour))   default_colour   else .recycle_values(colour, n_total, "colour")
-  linetype_vec <- if (is.null(linetype)) default_linetype else .recycle_values(linetype, n_total, "linetype")
-  linewidth_vec <- .resolve_linewidth(linewidth, n_total, default_linewidth, "linewidth")
+  colour_vec <- if (is.null(colour)) {
+    default_colour
+  } else {
+    .recycle_values(colour, n_total, "colour")
+  }
+  linetype_vec <- if (is.null(linetype)) {
+    default_linetype
+  } else {
+    .recycle_values(linetype, n_total, "linetype")
+  }
+  linewidth_vec <- .resolve_linewidth(
+    linewidth,
+    n_total,
+    default_linewidth,
+    "linewidth"
+  )
   offset <- .resolve_offset(length, n_total, default_theme_length, "length")
   arrow_list <- .recycle_arrow_spec(arrow, n_total, "arrow")
 
-  unlist(lapply(seq_len(n_axes), function(g) {
-    axis_spec  <- axis_specs[[g]]
-    break_spec <- break_specs[[g]]
-    offset_g   <- offsets[[g]]
-    intercept  <- .intercept_unit(axis_spec)
+  unlist(
+    lapply(seq_len(n_axes), function(g) {
+      axis_spec <- axis_specs[[g]]
+      break_spec <- break_specs[[g]]
+      offset_g <- offsets[[g]]
+      intercept <- .intercept_unit(axis_spec)
 
-    lapply(seq_along(break_spec$vals), function(i) {
-      global_i <- offset_g + i
-      break_i  <- break_spec$vals[[i]]
-      along    <- .break_unit(break_i, break_spec$npc)
-      tick_len <- grid::unit(offset$pts[[global_i]], "pt")
+      lapply(seq_along(break_spec$vals), function(i) {
+        global_i <- offset_g + i
+        break_i <- break_spec$vals[[i]]
+        along <- .break_unit(break_i, break_spec$npc)
+        tick_len <- grid::unit(offset$pts[[global_i]], "pt")
 
-      gp <- grid::gpar(
-        col     = colour_vec[[global_i]],
-        fill    = colour_vec[[global_i]],
-        lwd     = linewidth_vec[[global_i]] * ggplot2::.pt,
-        lty     = linetype_vec[[global_i]],
-        lineend = "butt"
-      )
-
-      tick_grob <- if (axis_spec$int_axis == "x") {
-        x_tip <- if (offset$flip[[global_i]]) intercept - tick_len else intercept + tick_len
-        grid::segmentsGrob(
-          x0 = x_tip, x1 = intercept,
-          y0 = along, y1 = along,
-          gp = gp, arrow = arrow_list[[global_i]]
+        gp <- grid::gpar(
+          col = colour_vec[[global_i]],
+          fill = colour_vec[[global_i]],
+          lwd = linewidth_vec[[global_i]] * ggplot2::.pt,
+          lty = linetype_vec[[global_i]],
+          lineend = "butt"
         )
-      } else {
-        y_tip <- if (offset$flip[[global_i]]) intercept - tick_len else intercept + tick_len
-        grid::segmentsGrob(
-          x0 = along, x1 = along,
-          y0 = y_tip, y1 = intercept,
-          gp = gp, arrow = arrow_list[[global_i]]
-        )
-      }
 
-      .new_annotation_layer(
-        tick_grob,
-        .annotation_bounds(axis_spec, break_i, break_spec$npc),
-        layout
-      )
-    })
-  }), recursive = FALSE)
+        tick_grob <- if (axis_spec$int_axis == "x") {
+          x_tip <- if (offset$flip[[global_i]]) {
+            intercept - tick_len
+          } else {
+            intercept + tick_len
+          }
+          grid::segmentsGrob(
+            x0 = x_tip,
+            x1 = intercept,
+            y0 = along,
+            y1 = along,
+            gp = gp,
+            arrow = arrow_list[[global_i]]
+          )
+        } else {
+          y_tip <- if (offset$flip[[global_i]]) {
+            intercept - tick_len
+          } else {
+            intercept + tick_len
+          }
+          grid::segmentsGrob(
+            x0 = along,
+            x1 = along,
+            y0 = y_tip,
+            y1 = intercept,
+            gp = gp,
+            arrow = arrow_list[[global_i]]
+          )
+        }
+
+        .new_annotation_layer(
+          tick_grob,
+          .annotation_bounds(axis_spec, break_i, break_spec$npc),
+          layout
+        )
+      })
+    }),
+    recursive = FALSE
+  )
 }
 
 # axis_bracket ----------------------------------------------------------------
@@ -380,21 +460,21 @@ axis_ticks <- function(
 #'   [axis_text()], [reference_line()], [panel_background()]
 #' @export
 axis_bracket <- function(
-    xintercept = NULL,
-    yintercept = NULL,
-    breaks,
-    length     = ggplot2::rel(1),
-    colour     = NULL,
-    linewidth  = NULL,
-    linetype   = NULL,
-    layout     = NULL
+  xintercept = NULL,
+  yintercept = NULL,
+  breaks,
+  length = ggplot2::rel(1),
+  colour = NULL,
+  linewidth = NULL,
+  linetype = NULL,
+  layout = NULL
 ) {
   axis_specs <- .build_axis_specs(xintercept, yintercept)
 
   aligned <- .align_axis_breaks(axis_specs, breaks)
-  axis_specs  <- aligned$axis_specs
+  axis_specs <- aligned$axis_specs
   break_specs <- aligned$break_specs
-  n_axes      <- aligned$n_axes
+  n_axes <- aligned$n_axes
 
   for (g in seq_len(n_axes)) {
     if (length(break_specs[[g]]$vals) < 2) {
@@ -412,7 +492,10 @@ axis_bracket <- function(
 
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     line_el <- .default(
-      .calc_theme_element(.axis_bracket_hierarchy(axis_spec$int_axis), current_theme),
+      .calc_theme_element(
+        .axis_bracket_hierarchy(axis_spec$int_axis),
+        current_theme
+      ),
       ggplot2::element_line(colour = "#333333FF", linewidth = 0.5, linetype = 1)
     )
 
@@ -422,144 +505,184 @@ axis_bracket <- function(
     )
 
     list(
-      colour          = .theme_value(line_el, "colour", "#333333FF"),
-      linewidth       = .theme_value(line_el, "linewidth", 0.5),
-      linetype        = .theme_value(line_el, "linetype", 1),
+      colour = .theme_value(line_el, "colour", "#333333FF"),
+      linewidth = .theme_value(line_el, "linewidth", 0.5),
+      linetype = .theme_value(line_el, "linetype", 1),
       theme_length_pt = .theme_length_to_pt(ticks_length_el, current_theme)
     )
   })
 
   default_colour <- vapply(axis_defaults, function(x) x$colour, character(1))
-  default_linewidth <- vapply(axis_defaults, function(x) x$linewidth, numeric(1))
+  default_linewidth <- vapply(
+    axis_defaults,
+    function(x) x$linewidth,
+    numeric(1)
+  )
   default_linetype <- vapply(axis_defaults, function(x) x$linetype, numeric(1))
-  default_theme_length <- vapply(axis_defaults, function(x) x$theme_length_pt, numeric(1))
+  default_theme_length <- vapply(
+    axis_defaults,
+    function(x) x$theme_length_pt,
+    numeric(1)
+  )
 
-  colour_vec   <- if (is.null(colour))   default_colour   else .recycle_values(colour, n_axes, "colour")
-  linetype_vec <- if (is.null(linetype)) default_linetype else .recycle_values(linetype, n_axes, "linetype")
-  linewidth_vec <- .resolve_linewidth(linewidth, n_axes, default_linewidth, "linewidth")
+  colour_vec <- if (is.null(colour)) {
+    default_colour
+  } else {
+    .recycle_values(colour, n_axes, "colour")
+  }
+  linetype_vec <- if (is.null(linetype)) {
+    default_linetype
+  } else {
+    .recycle_values(linetype, n_axes, "linetype")
+  }
+  linewidth_vec <- .resolve_linewidth(
+    linewidth,
+    n_axes,
+    default_linewidth,
+    "linewidth"
+  )
   offset <- .resolve_offset(length, n_axes, default_theme_length, "length")
 
-  unlist(lapply(seq_len(n_axes), function(g) {
-    axis_spec  <- axis_specs[[g]]
-    break_spec <- break_specs[[g]]
-    intercept  <- .intercept_unit(axis_spec)
-    cap_len    <- grid::unit(offset$pts[[g]], "pt")
-    bracket_from <- min(break_spec$vals)
-    bracket_to   <- max(break_spec$vals)
+  unlist(
+    lapply(seq_len(n_axes), function(g) {
+      axis_spec <- axis_specs[[g]]
+      break_spec <- break_specs[[g]]
+      intercept <- .intercept_unit(axis_spec)
+      cap_len <- grid::unit(offset$pts[[g]], "pt")
+      bracket_from <- min(break_spec$vals)
+      bracket_to <- max(break_spec$vals)
 
-    gp <- grid::gpar(
-      col     = colour_vec[[g]],
-      lwd     = linewidth_vec[[g]] * ggplot2::.pt,
-      lty     = linetype_vec[[g]],
-      lineend = "square"
-    )
-
-    bar_layer <- if (axis_spec$int_axis == "x") {
-      if (break_spec$npc) {
-        bar_grob <- grid::segmentsGrob(
-          x0 = intercept, x1 = intercept,
-          y0 = grid::unit(bracket_from, "npc"),
-          y1 = grid::unit(bracket_to, "npc"),
-          gp = gp
-        )
-
-        .new_annotation_layer(
-          bar_grob,
-          list(
-            xmin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-            xmax = if (axis_spec$npc)  Inf else axis_spec$intercept,
-            ymin = -Inf,
-            ymax = Inf
-          ),
-          layout
-        )
-      } else {
-        bar_grob <- grid::segmentsGrob(
-          x0 = intercept, x1 = intercept,
-          y0 = grid::unit(0, "npc"),
-          y1 = grid::unit(1, "npc"),
-          gp = gp
-        )
-
-        .new_annotation_layer(
-          bar_grob,
-          list(
-            xmin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-            xmax = if (axis_spec$npc)  Inf else axis_spec$intercept,
-            ymin = bracket_from,
-            ymax = bracket_to
-          ),
-          layout
-        )
-      }
-    } else {
-      if (break_spec$npc) {
-        bar_grob <- grid::segmentsGrob(
-          x0 = grid::unit(bracket_from, "npc"),
-          x1 = grid::unit(bracket_to, "npc"),
-          y0 = intercept, y1 = intercept,
-          gp = gp
-        )
-
-        .new_annotation_layer(
-          bar_grob,
-          list(
-            xmin = -Inf,
-            xmax = Inf,
-            ymin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-            ymax = if (axis_spec$npc)  Inf else axis_spec$intercept
-          ),
-          layout
-        )
-      } else {
-        bar_grob <- grid::segmentsGrob(
-          x0 = grid::unit(0, "npc"),
-          x1 = grid::unit(1, "npc"),
-          y0 = intercept, y1 = intercept,
-          gp = gp
-        )
-
-        .new_annotation_layer(
-          bar_grob,
-          list(
-            xmin = bracket_from,
-            xmax = bracket_to,
-            ymin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-            ymax = if (axis_spec$npc)  Inf else axis_spec$intercept
-          ),
-          layout
-        )
-      }
-    }
-
-    cap_layers <- lapply(break_spec$vals, function(break_i) {
-      along <- .break_unit(break_i, break_spec$npc)
-
-      cap_grob <- if (axis_spec$int_axis == "x") {
-        x_tip <- if (offset$flip[[g]]) intercept - cap_len else intercept + cap_len
-        grid::segmentsGrob(
-          x0 = x_tip, x1 = intercept,
-          y0 = along, y1 = along,
-          gp = gp
-        )
-      } else {
-        y_tip <- if (offset$flip[[g]]) intercept - cap_len else intercept + cap_len
-        grid::segmentsGrob(
-          x0 = along, x1 = along,
-          y0 = y_tip, y1 = intercept,
-          gp = gp
-        )
-      }
-
-      .new_annotation_layer(
-        cap_grob,
-        .annotation_bounds(axis_spec, break_i, break_spec$npc),
-        layout
+      gp <- grid::gpar(
+        col = colour_vec[[g]],
+        lwd = linewidth_vec[[g]] * ggplot2::.pt,
+        lty = linetype_vec[[g]],
+        lineend = "square"
       )
-    })
 
-    c(list(bar_layer), cap_layers)
-  }), recursive = FALSE)
+      bar_layer <- if (axis_spec$int_axis == "x") {
+        if (break_spec$npc) {
+          bar_grob <- grid::segmentsGrob(
+            x0 = intercept,
+            x1 = intercept,
+            y0 = grid::unit(bracket_from, "npc"),
+            y1 = grid::unit(bracket_to, "npc"),
+            gp = gp
+          )
+
+          .new_annotation_layer(
+            bar_grob,
+            list(
+              xmin = if (axis_spec$npc) -Inf else axis_spec$intercept,
+              xmax = if (axis_spec$npc) Inf else axis_spec$intercept,
+              ymin = -Inf,
+              ymax = Inf
+            ),
+            layout
+          )
+        } else {
+          bar_grob <- grid::segmentsGrob(
+            x0 = intercept,
+            x1 = intercept,
+            y0 = grid::unit(0, "npc"),
+            y1 = grid::unit(1, "npc"),
+            gp = gp
+          )
+
+          .new_annotation_layer(
+            bar_grob,
+            list(
+              xmin = if (axis_spec$npc) -Inf else axis_spec$intercept,
+              xmax = if (axis_spec$npc) Inf else axis_spec$intercept,
+              ymin = bracket_from,
+              ymax = bracket_to
+            ),
+            layout
+          )
+        }
+      } else {
+        if (break_spec$npc) {
+          bar_grob <- grid::segmentsGrob(
+            x0 = grid::unit(bracket_from, "npc"),
+            x1 = grid::unit(bracket_to, "npc"),
+            y0 = intercept,
+            y1 = intercept,
+            gp = gp
+          )
+
+          .new_annotation_layer(
+            bar_grob,
+            list(
+              xmin = -Inf,
+              xmax = Inf,
+              ymin = if (axis_spec$npc) -Inf else axis_spec$intercept,
+              ymax = if (axis_spec$npc) Inf else axis_spec$intercept
+            ),
+            layout
+          )
+        } else {
+          bar_grob <- grid::segmentsGrob(
+            x0 = grid::unit(0, "npc"),
+            x1 = grid::unit(1, "npc"),
+            y0 = intercept,
+            y1 = intercept,
+            gp = gp
+          )
+
+          .new_annotation_layer(
+            bar_grob,
+            list(
+              xmin = bracket_from,
+              xmax = bracket_to,
+              ymin = if (axis_spec$npc) -Inf else axis_spec$intercept,
+              ymax = if (axis_spec$npc) Inf else axis_spec$intercept
+            ),
+            layout
+          )
+        }
+      }
+
+      cap_layers <- lapply(break_spec$vals, function(break_i) {
+        along <- .break_unit(break_i, break_spec$npc)
+
+        cap_grob <- if (axis_spec$int_axis == "x") {
+          x_tip <- if (offset$flip[[g]]) {
+            intercept - cap_len
+          } else {
+            intercept + cap_len
+          }
+          grid::segmentsGrob(
+            x0 = x_tip,
+            x1 = intercept,
+            y0 = along,
+            y1 = along,
+            gp = gp
+          )
+        } else {
+          y_tip <- if (offset$flip[[g]]) {
+            intercept - cap_len
+          } else {
+            intercept + cap_len
+          }
+          grid::segmentsGrob(
+            x0 = along,
+            x1 = along,
+            y0 = y_tip,
+            y1 = intercept,
+            gp = gp
+          )
+        }
+
+        .new_annotation_layer(
+          cap_grob,
+          .annotation_bounds(axis_spec, break_i, break_spec$npc),
+          layout
+        )
+      })
+
+      c(list(bar_layer), cap_layers)
+    }),
+    recursive = FALSE
+  )
 }
 
 # axis_line -------------------------------------------------------------------
@@ -599,13 +722,13 @@ axis_bracket <- function(
 #'   [axis_bracket()], [reference_line()], [panel_background()]
 #' @export
 axis_line <- function(
-    xintercept = NULL,
-    yintercept = NULL,
-    colour     = NULL,
-    linewidth  = NULL,
-    linetype   = NULL,
-    arrow      = NULL,
-    layout     = NULL
+  xintercept = NULL,
+  yintercept = NULL,
+  colour = NULL,
+  linewidth = NULL,
+  linetype = NULL,
+  arrow = NULL,
+  layout = NULL
 ) {
   axis_specs <- .build_axis_specs(xintercept, yintercept)
   n_axes <- length(axis_specs)
@@ -613,24 +736,44 @@ axis_line <- function(
 
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     line_el <- .default(
-      .calc_theme_element(.axis_line_hierarchy(axis_spec$int_axis), current_theme),
+      .calc_theme_element(
+        .axis_line_hierarchy(axis_spec$int_axis),
+        current_theme
+      ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
     )
 
     list(
-      colour    = .theme_value(line_el, "colour", "black"),
+      colour = .theme_value(line_el, "colour", "black"),
       linewidth = .theme_value(line_el, "linewidth", 0.5),
-      linetype  = .theme_value(line_el, "linetype", 1)
+      linetype = .theme_value(line_el, "linetype", 1)
     )
   })
 
   default_colour <- vapply(axis_defaults, function(x) x$colour, character(1))
-  default_linewidth <- vapply(axis_defaults, function(x) x$linewidth, numeric(1))
+  default_linewidth <- vapply(
+    axis_defaults,
+    function(x) x$linewidth,
+    numeric(1)
+  )
   default_linetype <- vapply(axis_defaults, function(x) x$linetype, numeric(1))
 
-  colour_vec   <- if (is.null(colour))   default_colour   else .recycle_values(colour, n_axes, "colour")
-  linetype_vec <- if (is.null(linetype)) default_linetype else .recycle_values(linetype, n_axes, "linetype")
-  linewidth_vec <- .resolve_linewidth(linewidth, n_axes, default_linewidth, "linewidth")
+  colour_vec <- if (is.null(colour)) {
+    default_colour
+  } else {
+    .recycle_values(colour, n_axes, "colour")
+  }
+  linetype_vec <- if (is.null(linetype)) {
+    default_linetype
+  } else {
+    .recycle_values(linetype, n_axes, "linetype")
+  }
+  linewidth_vec <- .resolve_linewidth(
+    linewidth,
+    n_axes,
+    default_linewidth,
+    "linewidth"
+  )
   arrow_list <- .recycle_arrow_spec(arrow, n_axes, "arrow")
 
   lapply(seq_len(n_axes), function(g) {
@@ -638,31 +781,37 @@ axis_line <- function(
     intercept <- .intercept_unit(axis_spec)
 
     gp <- grid::gpar(
-      col     = colour_vec[[g]],
-      fill    = colour_vec[[g]],
-      lwd     = linewidth_vec[[g]] * ggplot2::.pt,
-      lty     = linetype_vec[[g]],
+      col = colour_vec[[g]],
+      fill = colour_vec[[g]],
+      lwd = linewidth_vec[[g]] * ggplot2::.pt,
+      lty = linetype_vec[[g]],
       lineend = "butt"
     )
 
     line_grob <- if (axis_spec$int_axis == "x") {
       grid::segmentsGrob(
-        x0 = intercept, x1 = intercept,
-        y0 = grid::unit(0, "npc"), y1 = grid::unit(1, "npc"),
-        gp = gp, arrow = arrow_list[[g]]
+        x0 = intercept,
+        x1 = intercept,
+        y0 = grid::unit(0, "npc"),
+        y1 = grid::unit(1, "npc"),
+        gp = gp,
+        arrow = arrow_list[[g]]
       )
     } else {
       grid::segmentsGrob(
-        x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
-        y0 = intercept, y1 = intercept,
-        gp = gp, arrow = arrow_list[[g]]
+        x0 = grid::unit(0, "npc"),
+        x1 = grid::unit(1, "npc"),
+        y0 = intercept,
+        y1 = intercept,
+        gp = gp,
+        arrow = arrow_list[[g]]
       )
     }
 
     bounds <- if (axis_spec$int_axis == "x") {
       list(
         xmin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-        xmax = if (axis_spec$npc)  Inf else axis_spec$intercept,
+        xmax = if (axis_spec$npc) Inf else axis_spec$intercept,
         ymin = -Inf,
         ymax = Inf
       )
@@ -671,7 +820,7 @@ axis_line <- function(
         xmin = -Inf,
         xmax = Inf,
         ymin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-        ymax = if (axis_spec$npc)  Inf else axis_spec$intercept
+        ymax = if (axis_spec$npc) Inf else axis_spec$intercept
       )
     }
 
@@ -715,13 +864,13 @@ axis_line <- function(
 #'   [axis_text()], [axis_bracket()], [panel_background()]
 #' @export
 reference_line <- function(
-    xintercept = NULL,
-    yintercept = NULL,
-    colour     = NULL,
-    linewidth  = NULL,
-    linetype   = "dashed",
-    arrow      = NULL,
-    layout     = NULL
+  xintercept = NULL,
+  yintercept = NULL,
+  colour = NULL,
+  linewidth = NULL,
+  linetype = "dashed",
+  arrow = NULL,
+  layout = NULL
 ) {
   axis_specs <- .build_axis_specs(xintercept, yintercept)
   n_axes <- length(axis_specs)
@@ -729,22 +878,38 @@ reference_line <- function(
 
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     line_el <- .default(
-      .calc_theme_element(.axis_line_hierarchy(axis_spec$int_axis), current_theme),
+      .calc_theme_element(
+        .axis_line_hierarchy(axis_spec$int_axis),
+        current_theme
+      ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
     )
 
     list(
-      colour    = .theme_value(line_el, "colour", "black"),
+      colour = .theme_value(line_el, "colour", "black"),
       linewidth = .theme_value(line_el, "linewidth", 0.5)
     )
   })
 
   default_colour <- vapply(axis_defaults, function(x) x$colour, character(1))
-  default_linewidth <- vapply(axis_defaults, function(x) x$linewidth, numeric(1))
+  default_linewidth <- vapply(
+    axis_defaults,
+    function(x) x$linewidth,
+    numeric(1)
+  )
 
-  colour_vec   <- if (is.null(colour)) default_colour else .recycle_values(colour, n_axes, "colour")
+  colour_vec <- if (is.null(colour)) {
+    default_colour
+  } else {
+    .recycle_values(colour, n_axes, "colour")
+  }
   linetype_vec <- .recycle_values(linetype, n_axes, "linetype")
-  linewidth_vec <- .resolve_linewidth(linewidth, n_axes, default_linewidth, "linewidth")
+  linewidth_vec <- .resolve_linewidth(
+    linewidth,
+    n_axes,
+    default_linewidth,
+    "linewidth"
+  )
   arrow_list <- .recycle_arrow_spec(arrow, n_axes, "arrow")
 
   lapply(seq_len(n_axes), function(g) {
@@ -752,31 +917,37 @@ reference_line <- function(
     intercept <- .intercept_unit(axis_spec)
 
     gp <- grid::gpar(
-      col     = colour_vec[[g]],
-      fill    = colour_vec[[g]],
-      lwd     = linewidth_vec[[g]] * ggplot2::.pt,
-      lty     = linetype_vec[[g]],
+      col = colour_vec[[g]],
+      fill = colour_vec[[g]],
+      lwd = linewidth_vec[[g]] * ggplot2::.pt,
+      lty = linetype_vec[[g]],
       lineend = "butt"
     )
 
     line_grob <- if (axis_spec$int_axis == "x") {
       grid::segmentsGrob(
-        x0 = intercept, x1 = intercept,
-        y0 = grid::unit(0, "npc"), y1 = grid::unit(1, "npc"),
-        gp = gp, arrow = arrow_list[[g]]
+        x0 = intercept,
+        x1 = intercept,
+        y0 = grid::unit(0, "npc"),
+        y1 = grid::unit(1, "npc"),
+        gp = gp,
+        arrow = arrow_list[[g]]
       )
     } else {
       grid::segmentsGrob(
-        x0 = grid::unit(0, "npc"), x1 = grid::unit(1, "npc"),
-        y0 = intercept, y1 = intercept,
-        gp = gp, arrow = arrow_list[[g]]
+        x0 = grid::unit(0, "npc"),
+        x1 = grid::unit(1, "npc"),
+        y0 = intercept,
+        y1 = intercept,
+        gp = gp,
+        arrow = arrow_list[[g]]
       )
     }
 
     bounds <- if (axis_spec$int_axis == "x") {
       list(
         xmin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-        xmax = if (axis_spec$npc)  Inf else axis_spec$intercept,
+        xmax = if (axis_spec$npc) Inf else axis_spec$intercept,
         ymin = -Inf,
         ymax = Inf
       )
@@ -785,7 +956,7 @@ reference_line <- function(
         xmin = -Inf,
         xmax = Inf,
         ymin = if (axis_spec$npc) -Inf else axis_spec$intercept,
-        ymax = if (axis_spec$npc)  Inf else axis_spec$intercept
+        ymax = if (axis_spec$npc) Inf else axis_spec$intercept
       )
     }
 
@@ -835,47 +1006,71 @@ reference_line <- function(
 #' @seealso [axis_line()], [reference_line()], [panel_background()]
 #' @export
 panel_grid <- function(
-    xintercept = NULL,
-    yintercept = NULL,
-    xmin       = -Inf,
-    xmax       = Inf,
-    ymin       = -Inf,
-    ymax       = Inf,
-    colour     = NULL,
-    linewidth  = NULL,
-    linetype   = NULL,
-    layout     = NULL
+  xintercept = NULL,
+  yintercept = NULL,
+  xmin = -Inf,
+  xmax = Inf,
+  ymin = -Inf,
+  ymax = Inf,
+  colour = NULL,
+  linewidth = NULL,
+  linetype = NULL,
+  layout = NULL
 ) {
   axis_specs <- .build_axis_specs(xintercept, yintercept)
   n_axes <- length(axis_specs)
 
-  xmin_npc <- inherits(xmin, "AsIs"); xmin <- as.numeric(xmin)
-  xmax_npc <- inherits(xmax, "AsIs"); xmax <- as.numeric(xmax)
-  ymin_npc <- inherits(ymin, "AsIs"); ymin <- as.numeric(ymin)
-  ymax_npc <- inherits(ymax, "AsIs"); ymax <- as.numeric(ymax)
+  xmin_npc <- inherits(xmin, "AsIs")
+  xmin <- as.numeric(xmin)
+  xmax_npc <- inherits(xmax, "AsIs")
+  xmax <- as.numeric(xmax)
+  ymin_npc <- inherits(ymin, "AsIs")
+  ymin <- as.numeric(ymin)
+  ymax_npc <- inherits(ymax, "AsIs")
+  ymax <- as.numeric(ymax)
 
   current_theme <- ggplot2::get_theme()
 
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     grid_el <- .default(
-      .calc_theme_element(.panel_grid_hierarchy(axis_spec$int_axis), current_theme),
+      .calc_theme_element(
+        .panel_grid_hierarchy(axis_spec$int_axis),
+        current_theme
+      ),
       ggplot2::element_line(colour = "grey92", linewidth = 1, linetype = 1)
     )
 
     list(
-      colour    = .theme_value(grid_el, "colour", "grey92"),
+      colour = .theme_value(grid_el, "colour", "grey92"),
       linewidth = .theme_value(grid_el, "linewidth", 1),
-      linetype  = .theme_value(grid_el, "linetype", 1)
+      linetype = .theme_value(grid_el, "linetype", 1)
     )
   })
 
   default_colour <- vapply(axis_defaults, function(x) x$colour, character(1))
-  default_linewidth <- vapply(axis_defaults, function(x) x$linewidth, numeric(1))
+  default_linewidth <- vapply(
+    axis_defaults,
+    function(x) x$linewidth,
+    numeric(1)
+  )
   default_linetype <- vapply(axis_defaults, function(x) x$linetype, numeric(1))
 
-  colour_vec   <- if (is.null(colour))   default_colour   else .recycle_values(colour, n_axes, "colour")
-  linetype_vec <- if (is.null(linetype)) default_linetype else .recycle_values(linetype, n_axes, "linetype")
-  linewidth_vec <- .resolve_linewidth(linewidth, n_axes, default_linewidth, "linewidth")
+  colour_vec <- if (is.null(colour)) {
+    default_colour
+  } else {
+    .recycle_values(colour, n_axes, "colour")
+  }
+  linetype_vec <- if (is.null(linetype)) {
+    default_linetype
+  } else {
+    .recycle_values(linetype, n_axes, "linetype")
+  }
+  linewidth_vec <- .resolve_linewidth(
+    linewidth,
+    n_axes,
+    default_linewidth,
+    "linewidth"
+  )
 
   extent_bound <- function(value, is_npc, lower) {
     if (is_npc) {
@@ -888,15 +1083,23 @@ panel_grid <- function(
   layers <- lapply(seq_len(n_axes), function(g) {
     axis_spec <- axis_specs[[g]]
     intercept <- axis_spec$intercept
-    npc_int   <- axis_spec$npc
+    npc_int <- axis_spec$npc
 
     # Filter only when both intercept and crop bounds are finite data values
     if (axis_spec$int_axis == "x") {
-      if (!npc_int && !xmin_npc && is.finite(xmin) && intercept < xmin) return(NULL)
-      if (!npc_int && !xmax_npc && is.finite(xmax) && intercept > xmax) return(NULL)
+      if (!npc_int && !xmin_npc && is.finite(xmin) && intercept < xmin) {
+        return(NULL)
+      }
+      if (!npc_int && !xmax_npc && is.finite(xmax) && intercept > xmax) {
+        return(NULL)
+      }
     } else {
-      if (!npc_int && !ymin_npc && is.finite(ymin) && intercept < ymin) return(NULL)
-      if (!npc_int && !ymax_npc && is.finite(ymax) && intercept > ymax) return(NULL)
+      if (!npc_int && !ymin_npc && is.finite(ymin) && intercept < ymin) {
+        return(NULL)
+      }
+      if (!npc_int && !ymax_npc && is.finite(ymax) && intercept > ymax) {
+        return(NULL)
+      }
     }
 
     if (axis_spec$int_axis == "x") {
@@ -910,22 +1113,26 @@ panel_grid <- function(
     intercept_unit <- .intercept_unit(axis_spec)
 
     gp <- grid::gpar(
-      col     = colour_vec[[g]],
-      lwd     = linewidth_vec[[g]] * ggplot2::.pt,
-      lty     = linetype_vec[[g]],
+      col = colour_vec[[g]],
+      lwd = linewidth_vec[[g]] * ggplot2::.pt,
+      lty = linetype_vec[[g]],
       lineend = "butt"
     )
 
     line_grob <- if (axis_spec$int_axis == "x") {
       grid::segmentsGrob(
-        x0 = intercept_unit, x1 = intercept_unit,
-        y0 = lower$grob, y1 = upper$grob,
+        x0 = intercept_unit,
+        x1 = intercept_unit,
+        y0 = lower$grob,
+        y1 = upper$grob,
         gp = gp
       )
     } else {
       grid::segmentsGrob(
-        x0 = lower$grob, x1 = upper$grob,
-        y0 = intercept_unit, y1 = intercept_unit,
+        x0 = lower$grob,
+        x1 = upper$grob,
+        y0 = intercept_unit,
+        y1 = intercept_unit,
         gp = gp
       )
     }
@@ -933,7 +1140,7 @@ panel_grid <- function(
     bounds <- if (axis_spec$int_axis == "x") {
       list(
         xmin = if (npc_int) -Inf else intercept,
-        xmax = if (npc_int)  Inf else intercept,
+        xmax = if (npc_int) Inf else intercept,
         ymin = lower$data,
         ymax = upper$data
       )
@@ -942,7 +1149,7 @@ panel_grid <- function(
         xmin = lower$data,
         xmax = upper$data,
         ymin = if (npc_int) -Inf else intercept,
-        ymax = if (npc_int)  Inf else intercept
+        ymax = if (npc_int) Inf else intercept
       )
     }
 
@@ -985,21 +1192,29 @@ panel_grid <- function(
 #' @seealso [panel_background()], [axis_line()], [reference_line()]
 #' @export
 panel_background <- function(
-    xmin      = -Inf,
-    xmax      = Inf,
-    ymin      = -Inf,
-    ymax      = Inf,
-    fill      = NULL,
-    alpha     = 1,
-    colour    = NULL,
-    linewidth = NULL,
-    linetype  = 0,
-    layout    = NULL
+  xmin = -Inf,
+  xmax = Inf,
+  ymin = -Inf,
+  ymax = Inf,
+  fill = NULL,
+  alpha = 1,
+  colour = NULL,
+  linewidth = NULL,
+  linetype = 0,
+  layout = NULL
 ) {
   current_theme <- ggplot2::get_theme()
 
-  panel_bg <- ggplot2::calc_element("panel.background", current_theme, skip_blank = TRUE)
-  panel_border <- ggplot2::calc_element("panel.border", current_theme, skip_blank = TRUE)
+  panel_bg <- ggplot2::calc_element(
+    "panel.background",
+    current_theme,
+    skip_blank = TRUE
+  )
+  panel_border <- ggplot2::calc_element(
+    "panel.border",
+    current_theme,
+    skip_blank = TRUE
+  )
 
   default_fill <- .theme_value(panel_bg, "fill", "white")
   default_linewidth <- .theme_value(panel_border, "linewidth", 0.5)
@@ -1037,7 +1252,12 @@ panel_background <- function(
   alpha_vec <- .recycle_values(alpha, n, "alpha")
   colour_vec <- .recycle_values(colour, n, "colour")
   linetype_vec <- .recycle_values(linetype, n, "linetype")
-  linewidth_vec <- .resolve_linewidth(linewidth, n, rep(default_linewidth, n), "linewidth")
+  linewidth_vec <- .resolve_linewidth(
+    linewidth,
+    n,
+    rep(default_linewidth, n),
+    "linewidth"
+  )
 
   bounds_to_units <- function(value, is_npc, lower) {
     if (is_npc) {
@@ -1054,16 +1274,16 @@ panel_background <- function(
     y2 <- bounds_to_units(ymax_vec[[i]], ymax_npc, FALSE)
 
     rect_grob <- grid::rectGrob(
-      x      = x1$grob,
-      y      = y1$grob,
-      width  = x2$grob - x1$grob,
+      x = x1$grob,
+      y = y1$grob,
+      width = x2$grob - x1$grob,
       height = y2$grob - y1$grob,
-      just   = c("left", "bottom"),
-      gp     = grid::gpar(
+      just = c("left", "bottom"),
+      gp = grid::gpar(
         fill = scales::alpha(fill_vec[[i]], alpha_vec[[i]]),
-        col  = colour_vec[[i]],
-        lwd  = linewidth_vec[[i]] * ggplot2::.pt,
-        lty  = linetype_vec[[i]]
+        col = colour_vec[[i]],
+        lwd = linewidth_vec[[i]] * ggplot2::.pt,
+        lty = linetype_vec[[i]]
       )
     )
 
@@ -1099,28 +1319,28 @@ panel_background <- function(
 #' @seealso [panel_background()], [axis_line()], [reference_line()]
 #' @export
 panel_shade <- function(
-    xmin      = -Inf,
-    xmax      = Inf,
-    ymin      = -Inf,
-    ymax      = Inf,
-    fill      = "#878580",
-    alpha     = 0.25,
-    colour    = "transparent",
-    linewidth = NULL,
-    linetype  = 1,
-    layout    = NULL
+  xmin = -Inf,
+  xmax = Inf,
+  ymin = -Inf,
+  ymax = Inf,
+  fill = "#878580",
+  alpha = 0.25,
+  colour = "transparent",
+  linewidth = NULL,
+  linetype = 1,
+  layout = NULL
 ) {
   panel_background(
-    xmin      = xmin,
-    xmax      = xmax,
-    ymin      = ymin,
-    ymax      = ymax,
-    fill      = fill,
-    alpha     = alpha,
-    colour    = colour,
+    xmin = xmin,
+    xmax = xmax,
+    ymin = ymin,
+    ymax = ymax,
+    fill = fill,
+    alpha = alpha,
+    colour = colour,
     linewidth = linewidth,
-    linetype  = linetype,
-    layout    = layout
+    linetype = linetype,
+    layout = layout
   )
 }
 
@@ -1148,7 +1368,7 @@ panel_shade <- function(
   }
 
   x_specs <- if (!is.null(xintercept)) {
-    npc  <- inherits(xintercept, "AsIs")
+    npc <- inherits(xintercept, "AsIs")
     vals <- as.numeric(xintercept)
     lapply(vals, function(v) list(int_axis = "x", intercept = v, npc = npc))
   } else {
@@ -1156,7 +1376,7 @@ panel_shade <- function(
   }
 
   y_specs <- if (!is.null(yintercept)) {
-    npc  <- inherits(yintercept, "AsIs")
+    npc <- inherits(yintercept, "AsIs")
     vals <- as.numeric(yintercept)
     lapply(vals, function(v) list(int_axis = "y", intercept = v, npc = npc))
   } else {
@@ -1170,7 +1390,7 @@ panel_shade <- function(
 .new_break_spec <- function(x) {
   list(
     vals = as.numeric(x),
-    npc  = inherits(x, "AsIs")
+    npc = inherits(x, "AsIs")
   )
 }
 
@@ -1179,7 +1399,12 @@ panel_shade <- function(
   x_size <- vctrs::vec_size(x)
 
   if (!(x_size %in% c(1L, size))) {
-    rlang::abort(sprintf("`%s` must have size 1 or %d, not %d.", arg, size, x_size))
+    rlang::abort(sprintf(
+      "`%s` must have size 1 or %d, not %d.",
+      arg,
+      size,
+      x_size
+    ))
   }
 
   vctrs::vec_recycle(x, size = size)
@@ -1191,7 +1416,12 @@ panel_shade <- function(
     x_size <- vctrs::vec_size(x)
 
     if (!(x_size %in% c(1L, size))) {
-      rlang::abort(sprintf("`%s` must have size 1 or %d, not %d.", arg, size, x_size))
+      rlang::abort(sprintf(
+        "`%s` must have size 1 or %d, not %d.",
+        arg,
+        size,
+        x_size
+      ))
     }
 
     return(vctrs::vec_recycle(x, size = size))
@@ -1240,18 +1470,27 @@ panel_shade <- function(
     rep(list(labels), n_axes)
   }
 
-  Map(function(lbl, brk, i) {
-    out <- if (is.null(lbl)) {
-      as.character(brk$vals)
-    } else if (is.function(lbl)) {
-      lbl(brk$vals)
-    } else {
-      lbl
-    }
+  Map(
+    function(lbl, brk, i) {
+      out <- if (is.null(lbl)) {
+        as.character(brk$vals)
+      } else if (is.function(lbl)) {
+        lbl(brk$vals)
+      } else {
+        lbl
+      }
 
-    out <- .recycle_values(out, length(brk$vals), sprintf("labels (group %d)", i))
-    as.character(out)
-  }, label_specs, break_specs, seq_len(n_axes))
+      out <- .recycle_values(
+        out,
+        length(brk$vals),
+        sprintf("labels (group %d)", i)
+      )
+      as.character(out)
+    },
+    label_specs,
+    break_specs,
+    seq_len(n_axes)
+  )
 }
 
 # Reconcile axis specs and break specs
@@ -1259,9 +1498,9 @@ panel_shade <- function(
   break_specs <- .normalise_break_specs(breaks, length(axis_specs))
 
   list(
-    axis_specs  = axis_specs,
+    axis_specs = axis_specs,
     break_specs = break_specs,
-    n_axes      = length(axis_specs)
+    n_axes = length(axis_specs)
   )
 }
 
@@ -1275,7 +1514,7 @@ panel_shade <- function(
 #
 # npc intercept / break -> use ±Inf so the grob's own npc coordinates apply
 .annotation_bounds <- function(axis_spec, break_value, break_npc) {
-  npc_int   <- axis_spec$npc
+  npc_int <- axis_spec$npc
   intercept <- axis_spec$intercept
 
   if (axis_spec$int_axis == "x") {
@@ -1310,13 +1549,13 @@ panel_shade <- function(
 # Wrap a grob in a ggplot2 annotation layer
 .new_annotation_layer <- function(grob, bounds, layout) {
   ggplot2::layer(
-    geom     = ggplot2::GeomCustomAnn,
-    stat     = "identity",
-    data     = NULL,
-    mapping  = ggplot2::aes(),
+    geom = ggplot2::GeomCustomAnn,
+    stat = "identity",
+    data = NULL,
+    mapping = ggplot2::aes(),
     position = "identity",
-    params   = c(list(grob = grob, na.rm = FALSE), bounds),
-    layout   = layout
+    params = c(list(grob = grob, na.rm = FALSE), bounds),
+    layout = layout
   )
 }
 
@@ -1324,7 +1563,11 @@ panel_shade <- function(
 # npc intercept -> use intercept directly
 # data intercept -> use 0.5 npc because annotation bounds pin the data position
 .intercept_unit <- function(axis_spec) {
-  if (axis_spec$npc) grid::unit(axis_spec$intercept, "npc") else grid::unit(0.5, "npc")
+  if (axis_spec$npc) {
+    grid::unit(axis_spec$intercept, "npc")
+  } else {
+    grid::unit(0.5, "npc")
+  }
 }
 
 # NPC coordinate for the break direction
@@ -1396,16 +1639,18 @@ panel_shade <- function(
 .text_margin_pt <- function(text_el, side) {
   margin <- .theme_value(text_el, "margin", NULL)
 
-  if (is.null(margin) || !(inherits(margin, "margin") || inherits(margin, "unit"))) {
+  if (
+    is.null(margin) || !(inherits(margin, "margin") || inherits(margin, "unit"))
+  ) {
     return(2)
   }
 
   idx <- switch(
     side,
-    top    = 1L,
-    right  = 2L,
+    top = 1L,
+    right = 2L,
     bottom = 3L,
-    left   = 4L,
+    left = 4L,
     1L
   )
 
@@ -1454,15 +1699,15 @@ panel_shade <- function(
 .deg2rad <- function(deg) deg * pi / 180
 
 .get_hjust <- function(side, angle, flip = FALSE) {
-  rad    <- .deg2rad(angle)
+  rad <- .deg2rad(angle)
   cosine <- sign(round(cos(rad), 3)) / 2 + 0.5
-  sine   <- sign(round(sin(rad), 3)) / 2 + 0.5
+  sine <- sign(round(sin(rad), 3)) / 2 + 0.5
 
   h <- switch(
     side,
-    left   = cosine,
-    right  = 1 - cosine,
-    top    = 1 - sine,
+    left = cosine,
+    right = 1 - cosine,
+    top = 1 - sine,
     bottom = sine
   )
 
@@ -1470,15 +1715,15 @@ panel_shade <- function(
 }
 
 .get_vjust <- function(side, angle, flip = FALSE) {
-  rad    <- .deg2rad(angle)
+  rad <- .deg2rad(angle)
   cosine <- sign(round(cos(rad), 3)) / 2 + 0.5
-  sine   <- sign(round(sin(rad), 3)) / 2 + 0.5
+  sine <- sign(round(sin(rad), 3)) / 2 + 0.5
 
   v <- switch(
     side,
-    left   = 1 - sine,
-    right  = sine,
-    top    = 1 - cosine,
+    left = 1 - sine,
+    right = sine,
+    top = 1 - cosine,
     bottom = cosine
   )
 
@@ -1488,23 +1733,35 @@ panel_shade <- function(
 # Theme hierarchies by axis direction
 # int_axis == "x" means xintercept -> vertical line -> y-axis styling
 .axis_text_hierarchy <- function(int_axis) {
-  if (int_axis == "x") c("axis.text.y", "axis.text")
-  else                 c("axis.text.x", "axis.text")
+  if (int_axis == "x") {
+    c("axis.text.y", "axis.text")
+  } else {
+    c("axis.text.x", "axis.text")
+  }
 }
 
 .axis_ticks_hierarchy <- function(int_axis) {
-  if (int_axis == "x") c("axis.ticks.y", "axis.ticks")
-  else                 c("axis.ticks.x", "axis.ticks")
+  if (int_axis == "x") {
+    c("axis.ticks.y", "axis.ticks")
+  } else {
+    c("axis.ticks.x", "axis.ticks")
+  }
 }
 
 .axis_ticks_length_hierarchy <- function(int_axis) {
-  if (int_axis == "x") c("axis.ticks.length.y", "axis.ticks.length")
-  else                 c("axis.ticks.length.x", "axis.ticks.length")
+  if (int_axis == "x") {
+    c("axis.ticks.length.y", "axis.ticks.length")
+  } else {
+    c("axis.ticks.length.x", "axis.ticks.length")
+  }
 }
 
 .axis_line_hierarchy <- function(int_axis) {
-  if (int_axis == "x") c("axis.line.y", "axis.line")
-  else                 c("axis.line.x", "axis.line")
+  if (int_axis == "x") {
+    c("axis.line.y", "axis.line")
+  } else {
+    c("axis.line.x", "axis.line")
+  }
 }
 
 .axis_bracket_hierarchy <- function(int_axis) {
@@ -1516,7 +1773,9 @@ panel_shade <- function(
 }
 
 .panel_grid_hierarchy <- function(int_axis) {
-  if (int_axis == "x") c("panel.grid.major.x", "panel.grid.major", "panel.grid")
-  else                 c("panel.grid.major.y", "panel.grid.major", "panel.grid")
+  if (int_axis == "x") {
+    c("panel.grid.major.x", "panel.grid.major", "panel.grid")
+  } else {
+    c("panel.grid.major.y", "panel.grid.major", "panel.grid")
+  }
 }
-

@@ -208,4 +208,3 @@ aes_contrast <- function(..., dark = NULL, light = NULL, aesthetic = "colour") {
 
   col_luminance <= 50
 }
-

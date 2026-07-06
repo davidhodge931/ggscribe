@@ -22,17 +22,17 @@
 #' @seealso [guide_sec_axis_text()], [axis_text()], [axis_ticks()], [axis_bracket()]
 #' @export
 sec_axis_text <- function(
-    breaks = \(x) mean(x),
-    labels = ggplot2::waiver(),
-    name   = NULL,
-    guide  = guide_sec_axis_text(),
-    ...
+  breaks = \(x) mean(x),
+  labels = ggplot2::waiver(),
+  name = NULL,
+  guide = guide_sec_axis_text(),
+  ...
 ) {
   ggplot2::dup_axis(
     breaks = breaks,
     labels = labels,
-    name   = name,
-    guide  = guide,
+    name = name,
+    guide = guide,
     ...
   )
 }
