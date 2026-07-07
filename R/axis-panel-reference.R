@@ -1298,7 +1298,7 @@ panel_background <- function(
 #'
 #' @inheritParams panel_background
 #' @param fill Fill colour.
-#' @param alpha Opacity. Defaults to `0.25`. May be a vector.
+#' @param alpha Opacity. Defaults to `0.2`. May be a vector.
 #' @param colour Border colour. Defaults to `"transparent"`. May be a vector.
 #' @param linetype Border linetype. Defaults to `1`. May be a vector.
 #'
@@ -1310,7 +1310,7 @@ panel_shade <- function(
   ymin = -Inf,
   ymax = Inf,
   fill = NULL,
-  alpha = 0.25,
+  alpha = 0.2,
   colour = "transparent",
   linewidth = NULL,
   linetype = 1,

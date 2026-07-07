@@ -10,7 +10,7 @@ panel_shade(
   ymin = -Inf,
   ymax = Inf,
   fill = NULL,
-  alpha = 0.25,
+  alpha = 0.2,
   colour = "transparent",
   linewidth = NULL,
   linetype = 1,
@@ -29,7 +29,7 @@ May be a vector for multiple rectangles.}
 
 \item{fill}{Fill colour.}
 
-\item{alpha}{Opacity. Defaults to \code{0.25}. May be a vector.}
+\item{alpha}{Opacity. Defaults to \code{0.2}. May be a vector.}
 
 \item{colour}{Border colour. Defaults to \code{"transparent"}. May be a vector.}
 
