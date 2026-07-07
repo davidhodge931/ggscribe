@@ -16,9 +16,6 @@
 #' @return A ggplot2 mapping object suitable for use in `ggplot2::aes()` or as a
 #'   `mapping =` argument in a layer.
 #'
-#' @seealso
-#' \code{\link[rlang]{splice}}
-#'
 #' @export
 aes_contrast <- function(..., dark = NULL, light = NULL, aesthetic = "colour") {
   aesthetic <- rlang::arg_match(aesthetic, c("colour", "fill"))

@@ -9,7 +9,7 @@ panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = "#878580",
+  fill = flexoki::flexoki$blue["blue200"],
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -48,10 +48,7 @@ same length as the bounds.}
 A list containing annotation layers.
 }
 \description{
-A convenience wrapper around \code{\link[=panel_background]{panel_background()}} with defaults suited to
-subtle overlays: a neutral grey fill at 25\% opacity with no border. Should
+A convenience wrapper around \code{panel_background()} with defaults suited to
+subtle overlays: a blue shade at 25\% opacity with no border. Should
 be placed before geom layers.
-}
-\seealso{
-\code{\link[=panel_background]{panel_background()}}, \code{\link[=axis_line]{axis_line()}}, \code{\link[=reference_line]{reference_line()}}
 }

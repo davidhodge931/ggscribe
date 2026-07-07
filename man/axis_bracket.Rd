@@ -61,7 +61,3 @@ Caps always point in the positive direction by default (right for
 \code{xintercept}, up for \code{yintercept}). Use a negative \code{length} to flip them
 (e.g. \code{length = -rel(1)}).
 }
-\seealso{
-\code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
-\code{\link[=axis_text]{axis_text()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_background]{panel_background()}}
-}

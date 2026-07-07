@@ -53,7 +53,3 @@ taken from the \code{axis.line} element of the set theme.
 The arrow (if any) points in the positive direction by default — rightward
 for \code{xintercept} lines, upward for \code{yintercept} lines.
 }
-\seealso{
-\code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
-\code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=panel_background]{panel_background()}}
-}

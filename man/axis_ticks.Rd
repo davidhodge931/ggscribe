@@ -64,7 +64,3 @@ Ticks always point in the positive direction by default (right for
 \code{xintercept}, up for \code{yintercept}). Use a negative \code{length} to flip them
 (e.g. \code{length = -rel(1)}).
 }
-\seealso{
-\code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_text]{axis_text()}},
-\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_background]{panel_background()}}
-}

@@ -44,8 +44,6 @@
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_line()], [axis_ticks()],
-#'   [axis_bracket()], [reference_line()], [panel_background()]
 #' @export
 axis_text <- function(
   xintercept = NULL,
@@ -271,8 +269,6 @@ axis_text <- function(
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_line()], [axis_text()],
-#'   [axis_bracket()], [reference_line()], [panel_background()]
 #' @export
 axis_ticks <- function(
   xintercept = NULL,
@@ -456,8 +452,6 @@ axis_ticks <- function(
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_line()], [axis_ticks()],
-#'   [axis_text()], [reference_line()], [panel_background()]
 #' @export
 axis_bracket <- function(
   xintercept = NULL,
@@ -496,7 +490,7 @@ axis_bracket <- function(
         .axis_bracket_hierarchy(axis_spec$int_axis),
         current_theme
       ),
-      ggplot2::element_line(colour = "#333333FF", linewidth = 0.5, linetype = 1)
+      ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
     )
 
     ticks_length_el <- .calc_theme_element(
@@ -505,7 +499,7 @@ axis_bracket <- function(
     )
 
     list(
-      colour = .theme_value(line_el, "colour", "#333333FF"),
+      colour = .theme_value(line_el, "colour", "black"),
       linewidth = .theme_value(line_el, "linewidth", 0.5),
       linetype = .theme_value(line_el, "linetype", 1),
       theme_length_pt = .theme_length_to_pt(ticks_length_el, current_theme)
@@ -718,8 +712,6 @@ axis_bracket <- function(
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_ticks()], [axis_text()],
-#'   [axis_bracket()], [reference_line()], [panel_background()]
 #' @export
 axis_line <- function(
   xintercept = NULL,
@@ -860,8 +852,6 @@ axis_line <- function(
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_line()], [axis_ticks()],
-#'   [axis_text()], [axis_bracket()], [panel_background()]
 #' @export
 reference_line <- function(
   xintercept = NULL,
@@ -1003,7 +993,6 @@ reference_line <- function(
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list of ggplot2 annotation layers.
-#' @seealso [axis_line()], [reference_line()], [panel_background()]
 #' @export
 panel_grid <- function(
   xintercept = NULL,
@@ -1189,7 +1178,6 @@ panel_grid <- function(
 #'   [ggplot2::layer()] for full details.
 #'
 #' @return A list containing annotation layers.
-#' @seealso [panel_background()], [axis_line()], [reference_line()]
 #' @export
 panel_background <- function(
   xmin = -Inf,
@@ -1304,8 +1292,8 @@ panel_background <- function(
 
 #' Annotate a shaded panel region
 #'
-#' A convenience wrapper around [panel_background()] with defaults suited to
-#' subtle overlays: a neutral grey fill at 25% opacity with no border. Should
+#' A convenience wrapper around `panel_background()` with defaults suited to
+#' subtle overlays: a blue shade at 25% opacity with no border. Should
 #' be placed before geom layers.
 #'
 #' @inheritParams panel_background
@@ -1316,14 +1304,13 @@ panel_background <- function(
 #' @param linetype Border linetype. Defaults to `1`. May be a vector.
 #'
 #' @return A list containing annotation layers.
-#' @seealso [panel_background()], [axis_line()], [reference_line()]
 #' @export
 panel_shade <- function(
   xmin = -Inf,
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = "#878580",
+  fill = flexoki::flexoki$blue["blue200"],
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,

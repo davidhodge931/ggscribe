@@ -1,4 +1,4 @@
-# ggscribe (development)
+# ggscribe 0.2.0
 
 * Improved ticks and bracket linewidth.
 * Made bracket corners join neatly.

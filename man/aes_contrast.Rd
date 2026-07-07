@@ -26,6 +26,3 @@ the fill (or colour) aesthetic.
 
 Function can be spliced into \link[ggplot2:aes]{ggplot2::aes} with \link[rlang:!!!]{rlang::!!!}.
 }
-\seealso{
-\code{\link[rlang]{splice}}
-}

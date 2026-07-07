@@ -29,7 +29,7 @@ and may be numeric.
 derive the name from the primary axis, or \code{NULL} (default) for no name.}
 
 \item{guide}{A guide object used to render the axis. Defaults to
-\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, which makes transparent ticks and lines.}
+\code{guide_sec_axis_text()}, which makes transparent ticks and lines.}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:dup_axis]{ggplot2::dup_axis()}}.}
 }
@@ -39,7 +39,4 @@ A \code{AxisSecondary} object for use in the \code{sec.axis} argument of
 }
 \description{
 Secondary axis for text annotations
-}
-\seealso{
-\code{\link[=guide_sec_axis_text]{guide_sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}
 }

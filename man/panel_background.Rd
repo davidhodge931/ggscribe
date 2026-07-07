@@ -54,6 +54,3 @@ Draws filled rectangles over the panel. Defaults to the \code{panel.background}
 fill from the set theme at full opacity, making it useful for layering a
 solid background over existing content. Should be placed before geom layers.
 }
-\seealso{
-\code{\link[=panel_background]{panel_background()}}, \code{\link[=axis_line]{axis_line()}}, \code{\link[=reference_line]{reference_line()}}
-}

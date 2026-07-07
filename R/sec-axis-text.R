@@ -13,13 +13,12 @@
 #' @param name The name of the secondary axis. Use [ggplot2::waiver()] to
 #'   derive the name from the primary axis, or `NULL` (default) for no name.
 #' @param guide A guide object used to render the axis. Defaults to
-#'   [guide_sec_axis_text()], which makes transparent ticks and lines.
+#'   `guide_sec_axis_text()`, which makes transparent ticks and lines.
 #' @param ... Additional arguments passed to [ggplot2::dup_axis()].
 #'
 #' @returns A `AxisSecondary` object for use in the `sec.axis` argument of
 #'   `scale_x_continuous()` or `scale_y_continuous()`.
 #'
-#' @seealso [guide_sec_axis_text()], [axis_text()], [axis_ticks()], [axis_bracket()]
 #' @export
 sec_axis_text <- function(
   breaks = \(x) mean(x),
@@ -49,9 +48,8 @@ sec_axis_text <- function(
 #'   `title`, `check.overlap`, or `angle`.
 #'
 #' @returns A `guide` object to be used in a scale's `guide` argument or within
-#'   [sec_axis_text()].
+#'   `sec_axis_text()`.
 #'
-#' @seealso [sec_axis_text()], [axis_text()], [axis_ticks()], [axis_bracket()]
 #' @export
 #'
 #' @inherit sec_axis_text examples
@@ -77,9 +75,6 @@ guide_sec_axis_text <- function(..., theme = NULL) {
 #'
 #' @returns A ggplot2 theme object.
 #' @noRd
-#'
-#' @seealso [sec_axis_text()], [guide_sec_axis_text()], [axis_ticks()],
-#'   [axis_line()], [axis_text()], [reference_line()]
 #'
 theme_sec_axis_text <- function() {
   ggplot2::theme(

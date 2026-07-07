@@ -14,12 +14,9 @@ guide_sec_axis_text(..., theme = NULL)
 }
 \value{
 A \code{guide} object to be used in a scale's \code{guide} argument or within
-\code{\link[=sec_axis_text]{sec_axis_text()}}.
+\code{sec_axis_text()}.
 }
 \description{
 A wrapper around \code{\link[ggplot2:guide_axis]{ggplot2::guide_axis()}} that defaults to making transparent
 ticks and lines while preserving text, making it ideal for annotation labels.
-}
-\seealso{
-\code{\link[=sec_axis_text]{sec_axis_text()}}, \code{\link[=axis_text]{axis_text()}}, \code{\link[=axis_ticks]{axis_ticks()}}, \code{\link[=axis_bracket]{axis_bracket()}}
 }

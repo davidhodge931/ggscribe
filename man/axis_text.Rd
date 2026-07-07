@@ -78,7 +78,3 @@ Text always sits on the positive side of the axis by default (right of
 \code{xintercept} lines, above \code{yintercept} lines). Use a negative \code{length}
 to place text on the opposite side (e.g. \code{length = -rel(1)}).
 }
-\seealso{
-\code{\link[=axis_line]{axis_line()}}, \code{\link[=axis_ticks]{axis_ticks()}},
-\code{\link[=axis_bracket]{axis_bracket()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_background]{panel_background()}}
-}

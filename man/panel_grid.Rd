@@ -63,6 +63,3 @@ Draws gridlines at specified positions, with style defaults taken from the
 \code{ymin}, \code{ymax}) both filter which lines are drawn and control how far they
 run across the panel.
 }
-\seealso{
-\code{\link[=axis_line]{axis_line()}}, \code{\link[=reference_line]{reference_line()}}, \code{\link[=panel_background]{panel_background()}}
-}

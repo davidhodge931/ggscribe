@@ -42,15 +42,17 @@ library(ggplot2)
 library(dplyr)
 
 set_theme(
-  ggrefine::theme_grey(
-    panel_heights = rep(unit(50, "mm"), 100),
-    panel_widths = rep(unit(75, "mm"), 100),
-  )
+  ggrefine::theme_light() +
+    theme(
+      panel.heights = rep(unit(50, "mm"), 100),
+      panel.widths = rep(unit(75, "mm"), 100),
+    )
 )
 
 mtcars |>
   ggplot(aes(x = wt, y = mpg, colour = as.factor(gear), fill = as.factor(gear))) +
-  scale_colour_discrete(palette = blends::multiply(get_theme()$palette.colour.discrete)) +
+  scale_fill_discrete(palette = jumble::jumble) +
+  scale_colour_discrete(palette = blends::multiply(jumble::jumble)) +
   #clip = "off" is required for axis_text, axis_ticks and axis_bracket
   coord_cartesian(clip = "off") +
   #reference lines and background
@@ -131,7 +133,10 @@ mtcars |>
     vjust = 1.33,
     show.legend = FALSE,
   ) +
-  scale_y_continuous(expand = expansion(c(0, 0.05))) 
+  scale_y_continuous(expand = expansion(c(0, 0.05))) +
+  theme(panel.grid.major.x = element_blank()) +
+  theme(axis.line.y = element_blank()) +
+  theme(axis.ticks.y = element_blank())
 ```
 
 ## Other packages
