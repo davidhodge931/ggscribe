@@ -15,7 +15,7 @@ panel_shade(
   ymin = -Inf,
   ymax = Inf,
   fill = NULL,
-  alpha = 0.25,
+  alpha = 0.2,
   colour = "transparent",
   linewidth = NULL,
   linetype = 1,
@@ -45,7 +45,7 @@ panel_shade(
 
 - alpha:
 
-  Opacity. Defaults to `0.25`. May be a vector.
+  Opacity. Defaults to `0.2`. May be a vector.
 
 - colour:
 
