@@ -2,8 +2,9 @@
 
 A convenience wrapper around
 [`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)
-with defaults suited to subtle overlays: a blue shade at 25% opacity
-with no border. Should be placed before geom layers.
+with a smart shade default which blends the panel background fill with
+[`jumble::slate`](https://davidhodge931.github.io/jumble/reference/slate.html)
+at 25% opacity with no border. Should be placed before geom layers.
 
 ## Usage
 
@@ -13,7 +14,7 @@ panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = flexoki::flexoki$blue["blue200"],
+  fill = NULL,
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -40,8 +41,7 @@ panel_shade(
 
 - fill:
 
-  Fill colour. Defaults to a neutral grey. May be a vector the same
-  length as the bounds.
+  Fill colour.
 
 - alpha:
 
