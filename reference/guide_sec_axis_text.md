@@ -27,10 +27,3 @@ guide_sec_axis_text(..., theme = NULL)
 
 A `guide` object to be used in a scale's `guide` argument or within
 [`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md).
-
-## See also
-
-[`sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_text.md),
-[`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
-[`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
-[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)

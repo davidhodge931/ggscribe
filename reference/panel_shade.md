@@ -2,8 +2,8 @@
 
 A convenience wrapper around
 [`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)
-with defaults suited to subtle overlays: a neutral grey fill at 25%
-opacity with no border. Should be placed before geom layers.
+with defaults suited to subtle overlays: a blue shade at 25% opacity
+with no border. Should be placed before geom layers.
 
 ## Usage
 
@@ -13,7 +13,7 @@ panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = "#878580",
+  fill = flexoki::flexoki$blue["blue200"],
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -72,9 +72,3 @@ panel_shade(
 ## Value
 
 A list containing annotation layers.
-
-## See also
-
-[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md),
-[`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md),
-[`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md)

@@ -74,9 +74,3 @@ panel_background(
 ## Value
 
 A list containing annotation layers.
-
-## See also
-
-`panel_background()`,
-[`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md),
-[`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md)

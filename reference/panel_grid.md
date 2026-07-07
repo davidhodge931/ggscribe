@@ -82,9 +82,3 @@ panel_grid(
 ## Value
 
 A list of ggplot2 annotation layers.
-
-## See also
-
-[`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md),
-[`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)

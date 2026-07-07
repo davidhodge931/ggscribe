@@ -108,11 +108,3 @@ A list of ggplot2 annotation layers.
 Text always sits on the positive side of the axis by default (right of
 `xintercept` lines, above `yintercept` lines). Use a negative `length`
 to place text on the opposite side (e.g. `length = -rel(1)`).
-
-## See also
-
-[`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md),
-[`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
-[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
-[`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)

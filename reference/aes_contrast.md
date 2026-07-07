@@ -37,7 +37,3 @@ aes_contrast(..., dark = NULL, light = NULL, aesthetic = "colour")
 A ggplot2 mapping object suitable for use in
 [`ggplot2::aes()`](https://ggplot2.tidyverse.org/reference/aes.html) or
 as a `mapping =` argument in a layer.
-
-## See also
-
-[`splice`](https://rlang.r-lib.org/reference/splice.html)

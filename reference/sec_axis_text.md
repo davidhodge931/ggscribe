@@ -57,10 +57,3 @@ A `AxisSecondary` object for use in the `sec.axis` argument of
 [`scale_x_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html)
 or
 [`scale_y_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html).
-
-## See also
-
-[`guide_sec_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/guide_sec_axis_text.md),
-[`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
-[`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
-[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)

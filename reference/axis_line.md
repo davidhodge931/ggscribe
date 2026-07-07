@@ -75,11 +75,3 @@ A list of ggplot2 annotation layers.
 
 The arrow (if any) points in the positive direction by default —
 rightward for `xintercept` lines, upward for `yintercept` lines.
-
-## See also
-
-[`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md),
-[`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md),
-[`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md),
-[`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md),
-[`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)
