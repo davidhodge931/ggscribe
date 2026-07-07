@@ -1292,13 +1292,12 @@ panel_background <- function(
 
 #' Annotate a shaded panel region
 #'
-#' A convenience wrapper around `panel_background()` with defaults suited to
-#' subtle overlays: a blue shade at 25% opacity with no border. Should
-#' be placed before geom layers.
+#' A convenience wrapper around `panel_background()` with a smart shade default
+#' which blends the panel background fill with `jumble::slate` at 25% opacity
+#' with no border. Should be placed before geom layers.
 #'
 #' @inheritParams panel_background
-#' @param fill Fill colour. Defaults to a neutral grey. May be a vector the
-#'   same length as the bounds.
+#' @param fill Fill colour.
 #' @param alpha Opacity. Defaults to `0.25`. May be a vector.
 #' @param colour Border colour. Defaults to `"transparent"`. May be a vector.
 #' @param linetype Border linetype. Defaults to `1`. May be a vector.
@@ -1310,13 +1309,18 @@ panel_shade <- function(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = flexoki::flexoki$blue["blue200"],
+  fill = NULL,
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
   linetype = 1,
   layout = NULL
 ) {
+
+  if (is.null(fill)) {
+    fill <- .shade_fill()
+  }
+
   panel_background(
     xmin = xmin,
     xmax = xmax,
@@ -1330,6 +1334,7 @@ panel_shade <- function(
     layout = layout
   )
 }
+
 
 # axis-helpers.R ---------------------------------------------------------------
 
@@ -1766,3 +1771,14 @@ panel_shade <- function(
     c("panel.grid.major.y", "panel.grid.major", "panel.grid")
   }
 }
+
+.shade_fill <- function() {
+  panel_background <- ggplot2::get_theme()$panel.background@fill
+  if (.is_col_dark(panel_background)) {
+    blends::screen(panel_background, jumble::slate)
+  }
+  else {
+    blends::multiply(panel_background, jumble::slate)
+  }
+}
+

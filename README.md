@@ -37,11 +37,10 @@ library(ggplot2)
 library(dplyr)
 
 set_theme(
-  ggrefine::theme_light() +
-    theme(
-      panel.heights = rep(unit(50, "mm"), 100),
-      panel.widths = rep(unit(75, "mm"), 100),
-    )
+  ggrefine::theme_light(
+      panel_heights = rep(unit(50, "mm"), 100),
+      panel_widths = rep(unit(75, "mm"), 100),
+  ) 
 )
 
 mtcars |>

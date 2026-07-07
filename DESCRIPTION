@@ -16,6 +16,7 @@ BugReports: https://github.com/davidhodge931/ggscribe/issues
 Depends: 
     R (>= 4.1.0)
 Imports: 
+    blends,
     farver,
     ggplot2 (>= 4.0.0),
     grid,
@@ -26,7 +27,6 @@ Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
 Suggests: 
-    blends,
     dplyr,
     flexoki,
     ggrefine,

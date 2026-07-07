@@ -9,6 +9,7 @@
 * Added `layout` argument to support panel annotations on facet plots.
 * Added smart `hjust` and `vjust` defaults to `axis_text`.
 * Removed `theme_sec_axis_text`.
+* Improved `panel_shade` fill default. 
 * Refactored code.
 
 # ggscribe 0.1.1

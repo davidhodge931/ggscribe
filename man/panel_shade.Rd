@@ -9,7 +9,7 @@ panel_shade(
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
-  fill = flexoki::flexoki$blue["blue200"],
+  fill = NULL,
   alpha = 0.25,
   colour = "transparent",
   linewidth = NULL,
@@ -27,8 +27,7 @@ e.g. \verb{xmin = I(0.5), xmax = Inf} fills from 50\% to the right panel edge.}
 Defaults to \code{-Inf} and \code{Inf}. Use \code{\link[=I]{I()}} for normalised coordinates (0-1).
 May be a vector for multiple rectangles.}
 
-\item{fill}{Fill colour. Defaults to a neutral grey. May be a vector the
-same length as the bounds.}
+\item{fill}{Fill colour.}
 
 \item{alpha}{Opacity. Defaults to \code{0.25}. May be a vector.}
 
@@ -48,7 +47,7 @@ same length as the bounds.}
 A list containing annotation layers.
 }
 \description{
-A convenience wrapper around \code{panel_background()} with defaults suited to
-subtle overlays: a blue shade at 25\% opacity with no border. Should
-be placed before geom layers.
+A convenience wrapper around \code{panel_background()} with a smart shade default
+which blends the panel background fill with \code{jumble::slate} at 25\% opacity
+with no border. Should be placed before geom layers.
 }
