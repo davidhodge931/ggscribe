@@ -54,6 +54,4 @@ sec_axis_text(
 ## Value
 
 A `AxisSecondary` object for use in the `sec.axis` argument of
-[`scale_x_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html)
-or
-[`scale_y_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html).
+`scale_x_continuous()` or `scale_y_continuous()`.

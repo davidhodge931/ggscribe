@@ -1,110 +1,83 @@
-# Annotate panel grid lines
+# Annotate panel gridlines
 
-Draws grid lines at specified break positions with style defaults taken
-from the `panel.grid` element of the set theme. Specify `x` for vertical
-lines or `y` for horizontal lines.
+Draws gridlines at specified positions, with style defaults taken from
+the `panel.grid.major` element of the set theme. Crop bounds (`xmin`,
+`xmax`, `ymin`, `ymax`) both filter which lines are drawn and control
+how far they run across the panel.
 
 ## Usage
 
 ``` r
 annotate_panel_grid(
-  ...,
-  x = NULL,
-  y = NULL,
-  xmin = NULL,
-  xmax = NULL,
-  ymin = NULL,
-  ymax = NULL,
-  minor = FALSE,
+  xintercept = NULL,
+  yintercept = NULL,
+  xmin = -Inf,
+  xmax = Inf,
+  ymin = -Inf,
+  ymax = Inf,
   colour = NULL,
   linewidth = NULL,
   linetype = NULL,
-  element_to = "keep"
+  layout = NULL
 )
 ```
 
 ## Arguments
 
-- ...:
+- xintercept:
 
-  Not used. Allows trailing commas and named-argument style calls.
+  One or more x positions for vertical gridlines, in data coordinates or
+  wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector.
 
-- x:
+- yintercept:
 
-  A vector of x-axis breaks for vertical grid lines. Cannot be used
-  together with `y`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) for
-  normalized coordinates (0-1).
-
-- y:
-
-  A vector of y-axis breaks for horizontal grid lines. Cannot be used
-  together with `x`. Use [`I()`](https://rdrr.io/r/base/AsIs.html) for
-  normalized coordinates (0-1).
+  One or more y positions for horizontal gridlines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector.
 
 - xmin, xmax:
 
-  Start and end x positions for horizontal grid lines. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
-  (0-1). Defaults to `-Inf` and `Inf`.
+  Left and right crop bounds. Vertical gridlines outside `[xmin, xmax]`
+  are not drawn; horizontal gridlines run only from `xmin` to `xmax`.
+  Defaults to `-Inf` and `Inf` (full panel). Use
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised coordinates
+  (npc). Note: filtering (removing lines outside the range) only works
+  when both the crop bound and the intercept are in data coordinates.
+  npc bounds affect extent only.
 
 - ymin, ymax:
 
-  Start and end y positions for vertical grid lines. Use
-  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalized coordinates
-  (0-1). Defaults to `-Inf` and `Inf`.
-
-- minor:
-
-  Logical. If `TRUE`, uses minor grid theme defaults. Defaults to
-  `FALSE`.
+  Bottom and top crop bounds. Horizontal gridlines outside
+  `[ymin, ymax]` are not drawn; vertical gridlines run only from `ymin`
+  to `ymax`. Defaults to `-Inf` and `Inf` (full panel). Use
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised coordinates
+  (npc). Note: filtering only works when both the crop bound and the
+  intercept are in data coordinates. npc bounds affect extent only.
 
 - colour:
 
-  Inherits from `panel.grid.major` or `panel.grid.minor` in the set
-  theme.
+  Inherits from `panel.grid.major` in the set theme. May be a vector the
+  same length as the total number of lines.
 
 - linewidth:
 
-  Inherits from `panel.grid.major` or `panel.grid.minor` in the set
-  theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  Inherits from `panel.grid.major` in the set theme. Supports `rel()`.
+  May be a vector the same length as the total number of lines.
 
 - linetype:
 
-  Inherits from `panel.grid.major` or `panel.grid.minor` in the set
-  theme.
+  Inherits from `panel.grid.major` in the set theme. May be a vector the
+  same length as the total number of lines.
 
-- element_to:
+- layout:
 
-  One of `"keep"`, `"transparent"`, or `"blank"`. Controls whether
-  native theme grid lines are suppressed. Defaults to `"keep"`.
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 ## Value
 
-A list of ggplot2 annotation layers and theme elements.
-
-## Examples
-
-``` r
-library(ggplot2)
-
-set_theme(theme_minimal())
-
-p <- ggplot(mtcars, aes(wt, mpg)) +
-  geom_point()
-
-# Vertical grid lines at specific x breaks
-p + annotate_panel_grid(x = c(2, 3, 4, 5))
-
-
-# Horizontal grid lines at specific y breaks, native lines suppressed
-p + annotate_panel_grid(y = c(10, 20, 30), element_to = "transparent")
-
-
-# Minor vertical grid lines
-p + annotate_panel_grid(x = seq(2, 5, by = 0.5), minor = TRUE)
-
-
-# Partial horizontal lines that don't span the full panel width
-p + annotate_panel_grid(y = c(15, 25), xmax = I(0.5), element_to = "transparent")
-```
+A list of ggplot2 annotation layers.

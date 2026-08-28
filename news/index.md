@@ -2,6 +2,8 @@
 
 ## ggscribe 0.2.0
 
+CRAN release: 2026-07-07
+
 - Improved ticks and bracket linewidth.
 - Made bracket corners join neatly.
 - Supported As Is normalised coordinates (e.g. `xintercept = I(0.5)`).

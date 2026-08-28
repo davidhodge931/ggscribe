@@ -1,24 +1,23 @@
-# Annotate a shaded panel region
+# Annotate a panel background region
 
-A convenience wrapper around
-[`annotate_panel_background()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_background.md)
-with a smart shade default which blends the panel background fill with
-[`jumble::slate`](https://davidhodge931.github.io/jumble/reference/slate.html)
-at 25% opacity with no border. Should be placed before geom layers.
+Draws filled rectangles over the panel. Defaults to the
+`panel.background` fill from the set theme at full opacity, making it
+useful for layering a solid background over existing content. Should be
+placed before geom layers.
 
 ## Usage
 
 ``` r
-annotate_panel_shade(
+annotate_panel_background(
   xmin = -Inf,
   xmax = Inf,
   ymin = -Inf,
   ymax = Inf,
   fill = NULL,
-  alpha = 0.2,
-  colour = "transparent",
+  alpha = 1,
+  colour = NULL,
   linewidth = NULL,
-  linetype = 1,
+  linetype = 0,
   layout = NULL
 )
 ```
@@ -41,15 +40,18 @@ annotate_panel_shade(
 
 - fill:
 
-  Fill colour.
+  Fill colour. Defaults to the `panel.background` fill from the set
+  theme, falling back to `"white"`. May be a vector the same length as
+  the bounds to style each rectangle individually.
 
 - alpha:
 
-  Opacity. Defaults to `0.2`. May be a vector.
+  Opacity. Defaults to `1` (fully opaque). May be a vector.
 
 - colour:
 
-  Border colour. Defaults to `"transparent"`. May be a vector.
+  Border colour. Defaults to the resolved `fill` value, giving a
+  seamless border. May be a vector.
 
 - linewidth:
 
@@ -58,7 +60,7 @@ annotate_panel_shade(
 
 - linetype:
 
-  Border linetype. Defaults to `1`. May be a vector.
+  Border linetype. Defaults to `0` (none). May be a vector.
 
 - layout:
 

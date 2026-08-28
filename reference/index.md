@@ -9,24 +9,19 @@
 
 ## Annotation
 
-- [`axis_line()`](https://davidhodge931.github.io/ggscribe/reference/axis_line.md)
+- [`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md)
   : Annotate an axis line
-- [`axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/axis_ticks.md)
+- [`annotate_axis_ticks()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_ticks.md)
   : Annotate axis ticks
-- [`axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/axis_bracket.md)
+- [`annotate_axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_bracket.md)
   : Annotate an axis bracket
-- [`axis_text()`](https://davidhodge931.github.io/ggscribe/reference/axis_text.md)
+- [`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md)
   : Annotate axis text
-- [`panel_background()`](https://davidhodge931.github.io/ggscribe/reference/panel_background.md)
+- [`annotate_panel_background()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_background.md)
   : Annotate a panel background region
-- [`panel_grid()`](https://davidhodge931.github.io/ggscribe/reference/panel_grid.md)
+- [`annotate_panel_grid()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_grid.md)
   : Annotate panel gridlines
-- [`panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/panel_shade.md)
+- [`annotate_panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_shade.md)
   : Annotate a shaded panel region
-- [`reference_line()`](https://davidhodge931.github.io/ggscribe/reference/reference_line.md)
+- [`annotate_reference_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_reference_line.md)
   : Annotate a reference line
-
-## Aesthetic
-
-- [`aes_contrast()`](https://davidhodge931.github.io/ggscribe/reference/aes_contrast.md)
-  : A mapped aesthetic for text colour on fill

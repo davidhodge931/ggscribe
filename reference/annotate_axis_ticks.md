@@ -1,80 +1,91 @@
 # Annotate axis ticks
 
-Draws axis ticks at specified break positions, with style defaults taken
-from the `axis.ticks` element of the set theme. Requires
-`coord_cartesian(clip = "off")`.
+Draws axis ticks at specified break positions along a floating axis
+line. Requires `coord_cartesian(clip = "off")`.
 
 ## Usage
 
 ``` r
 annotate_axis_ticks(
-  ...,
-  position = NULL,
   xintercept = NULL,
   yintercept = NULL,
   breaks,
-  minor = FALSE,
+  length = ggplot2::rel(1),
   colour = NULL,
   linewidth = NULL,
-  ticks_length = ggplot2::rel(1)
+  linetype = NULL,
+  arrow = NULL,
+  layout = NULL
 )
 ```
 
 ## Arguments
 
-- ...:
-
-  Not used. Forces named arguments.
-
-- position:
-
-  One of `"top"`, `"bottom"`, `"left"`, or `"right"`. Inferred from
-  `xintercept` or `yintercept` if not provided.
-
 - xintercept:
 
-  For `"left"`/`"right"` axes: float the axis to this x position in data
-  coordinates instead of the panel edge.
+  One or more x positions for vertical axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate axis.
 
 - yintercept:
 
-  For `"top"`/`"bottom"` axes: float the axis to this y position in data
-  coordinates instead of the panel edge.
+  One or more y positions for horizontal axis lines, in data coordinates
+  or wrapped in [`I()`](https://rdrr.io/r/base/AsIs.html) for normalised
+  panel coordinates (npc). May be a vector; each value produces a
+  separate axis.
 
 - breaks:
 
-  A numeric vector of break positions.
+  A numeric vector of break positions in data coordinates, or wrapped in
+  [`I()`](https://rdrr.io/r/base/AsIs.html) for npc. Pass a list the
+  same length as the total number of axes to use different breaks per
+  axis.
 
-- minor:
+- length:
 
-  Logical. If `TRUE`, uses minor tick theme defaults. Defaults to
-  `FALSE`.
+  Total tick length. Supports `rel()`. Negative values flip the tick
+  direction. Defaults to `rel(1)`. May be a vector recycled across all
+  breaks in order.
 
 - colour:
 
-  Inherits from `axis.ticks` in the set theme.
+  Inherits from `axis.ticks` in the set theme. May be a vector recycled
+  across all breaks in order.
 
 - linewidth:
 
-  Inherits from `axis.ticks` in the set theme. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
+  Inherits from `axis.ticks` in the set theme. Supports `rel()`. May be
+  a vector recycled across all breaks in order.
 
-- ticks_length:
+- linetype:
 
-  Total tick length as a grid unit. Supports
-  [`rel()`](https://ggplot2.tidyverse.org/reference/element.html).
-  Negative values flip the tick direction (inward). Defaults to `rel(1)`
-  (outward at theme tick length).
+  Inherits from `axis.ticks` in the set theme. May be a vector recycled
+  across all breaks in order.
+
+- arrow:
+
+  A [`grid::arrow()`](https://rdrr.io/r/grid/arrow.html) specification,
+  or a list recycled across all breaks. The arrowhead points toward the
+  axis line. Must use [`list()`](https://rdrr.io/r/base/list.html) not
+  [`c()`](https://rdrr.io/r/base/c.html) when supplying multiple values.
+  E.g.
+  `grid::arrow(angle = 15, length = unit(1.5, "mm"), type = "closed")`.
+
+- layout:
+
+  Controls which panels the annotation appears in. `NULL` (default)
+  repeats in all panels. An integer targets a specific panel. `"fixed"`
+  repeats in all panels ignoring faceting variables. See
+  [`ggplot2::layer()`](https://ggplot2.tidyverse.org/reference/layer.html)
+  for full details.
 
 ## Value
 
 A list of ggplot2 annotation layers.
 
-## See also
+## Details
 
-[`annotate_axis_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_line.md),
-[`annotate_axis_text()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_text.md),
-[`annotate_axis_bracket()`](https://davidhodge931.github.io/ggscribe/reference/annotate_axis_bracket.md),
-[`annotate_reference_line()`](https://davidhodge931.github.io/ggscribe/reference/annotate_reference_line.md),
-[`annotate_panel_shade()`](https://davidhodge931.github.io/ggscribe/reference/annotate_panel_shade.md),
-[`sec_axis_annotate()`](https://davidhodge931.github.io/ggscribe/reference/sec_axis_annotate.md)
+Ticks always point in the positive direction by default (right for
+`xintercept`, up for `yintercept`). Use a negative `length` to flip them
+(e.g. `length = -rel(1)`).
