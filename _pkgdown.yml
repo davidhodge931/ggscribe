@@ -9,14 +9,11 @@ reference:
   - guide_sec_axis_text
 - title: Annotation
 - contents:
-  - axis_line
-  - axis_ticks
-  - axis_bracket
-  - axis_text
-  - panel_background
-  - panel_grid
-  - panel_shade
-  - reference_line
-- title: Aesthetic
-- contents:
-  - aes_contrast
+  - annotate_axis_line
+  - annotate_axis_ticks
+  - annotate_axis_bracket
+  - annotate_axis_text
+  - annotate_panel_background
+  - annotate_panel_grid
+  - annotate_panel_shade
+  - annotate_reference_line

@@ -1,4 +1,4 @@
-# axis_text ------------------------------------------------------------------
+# annotate_axis_text ------------------------------------------------------------------
 
 #' Annotate axis text
 #'
@@ -45,7 +45,7 @@
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
-axis_text <- function(
+annotate_axis_text <- function(
   xintercept = NULL,
   yintercept = NULL,
   breaks,
@@ -75,14 +75,14 @@ axis_text <- function(
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     text_el <- .default(
       .calc_theme_element(
-        .axis_text_hierarchy(axis_spec$int_axis),
+        .annotate_axis_text_hierarchy(axis_spec$int_axis),
         current_theme
       ),
       ggplot2::element_text(colour = "black", size = 11, family = "")
     )
 
     ticks_length_el <- .calc_theme_element(
-      .axis_ticks_length_hierarchy(axis_spec$int_axis),
+      .annotate_axis_ticks_length_hierarchy(axis_spec$int_axis),
       current_theme
     )
 
@@ -230,7 +230,7 @@ axis_text <- function(
   )
 }
 
-# axis_ticks ------------------------------------------------------------------
+# annotate_axis_ticks ------------------------------------------------------------------
 
 #' Annotate axis ticks
 #'
@@ -270,7 +270,7 @@ axis_text <- function(
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
-axis_ticks <- function(
+annotate_axis_ticks <- function(
   xintercept = NULL,
   yintercept = NULL,
   breaks,
@@ -297,14 +297,14 @@ axis_ticks <- function(
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     ticks_el <- .default(
       .calc_theme_element(
-        .axis_ticks_hierarchy(axis_spec$int_axis),
+        .annotate_axis_ticks_hierarchy(axis_spec$int_axis),
         current_theme
       ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
     )
 
     ticks_length_el <- .calc_theme_element(
-      .axis_ticks_length_hierarchy(axis_spec$int_axis),
+      .annotate_axis_ticks_length_hierarchy(axis_spec$int_axis),
       current_theme
     )
 
@@ -414,7 +414,7 @@ axis_ticks <- function(
   )
 }
 
-# axis_bracket ----------------------------------------------------------------
+# annotate_axis_bracket ----------------------------------------------------------------
 
 #' Annotate an axis bracket
 #'
@@ -453,7 +453,7 @@ axis_ticks <- function(
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
-axis_bracket <- function(
+annotate_axis_bracket <- function(
   xintercept = NULL,
   yintercept = NULL,
   breaks,
@@ -487,14 +487,14 @@ axis_bracket <- function(
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     line_el <- .default(
       .calc_theme_element(
-        .axis_bracket_hierarchy(axis_spec$int_axis),
+        .annotate_axis_bracket_hierarchy(axis_spec$int_axis),
         current_theme
       ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
     )
 
     ticks_length_el <- .calc_theme_element(
-      .axis_ticks_length_hierarchy(axis_spec$int_axis),
+      .annotate_axis_ticks_length_hierarchy(axis_spec$int_axis),
       current_theme
     )
 
@@ -679,7 +679,7 @@ axis_bracket <- function(
   )
 }
 
-# axis_line -------------------------------------------------------------------
+# annotate_axis_line -------------------------------------------------------------------
 
 #' Annotate an axis line
 #'
@@ -713,7 +713,7 @@ axis_bracket <- function(
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
-axis_line <- function(
+annotate_axis_line <- function(
   xintercept = NULL,
   yintercept = NULL,
   colour = NULL,
@@ -729,7 +729,7 @@ axis_line <- function(
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     line_el <- .default(
       .calc_theme_element(
-        .axis_line_hierarchy(axis_spec$int_axis),
+        .annotate_axis_line_hierarchy(axis_spec$int_axis),
         current_theme
       ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
@@ -820,7 +820,7 @@ axis_line <- function(
   })
 }
 
-# reference_line --------------------------------------------------------------
+# annotate_reference_line --------------------------------------------------------------
 
 #' Annotate a reference line
 #'
@@ -853,7 +853,7 @@ axis_line <- function(
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
-reference_line <- function(
+annotate_reference_line <- function(
   xintercept = NULL,
   yintercept = NULL,
   colour = NULL,
@@ -869,7 +869,7 @@ reference_line <- function(
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     line_el <- .default(
       .calc_theme_element(
-        .axis_line_hierarchy(axis_spec$int_axis),
+        .annotate_axis_line_hierarchy(axis_spec$int_axis),
         current_theme
       ),
       ggplot2::element_line(colour = "black", linewidth = 0.5, linetype = 1)
@@ -954,7 +954,7 @@ reference_line <- function(
   })
 }
 
-# panel_grid ------------------------------------------------------------------
+# annotate_panel_grid ------------------------------------------------------------------
 
 #' Annotate panel gridlines
 #'
@@ -994,7 +994,7 @@ reference_line <- function(
 #'
 #' @return A list of ggplot2 annotation layers.
 #' @export
-panel_grid <- function(
+annotate_panel_grid <- function(
   xintercept = NULL,
   yintercept = NULL,
   xmin = -Inf,
@@ -1023,7 +1023,7 @@ panel_grid <- function(
   axis_defaults <- lapply(axis_specs, function(axis_spec) {
     grid_el <- .default(
       .calc_theme_element(
-        .panel_grid_hierarchy(axis_spec$int_axis),
+        .annotate_panel_grid_hierarchy(axis_spec$int_axis),
         current_theme
       ),
       ggplot2::element_line(colour = "grey92", linewidth = 1, linetype = 1)
@@ -1148,7 +1148,7 @@ panel_grid <- function(
   Filter(Negate(is.null), layers)
 }
 
-# panel_background ------------------------------------------------------------
+# annotate_panel_background ------------------------------------------------------------
 
 #' Annotate a panel background region
 #'
@@ -1179,7 +1179,7 @@ panel_grid <- function(
 #'
 #' @return A list containing annotation layers.
 #' @export
-panel_background <- function(
+annotate_panel_background <- function(
   xmin = -Inf,
   xmax = Inf,
   ymin = -Inf,
@@ -1288,15 +1288,15 @@ panel_background <- function(
   })
 }
 
-# panel_shade -----------------------------------------------------------------
+# annotate_panel_shade -----------------------------------------------------------------
 
 #' Annotate a shaded panel region
 #'
-#' A convenience wrapper around `panel_background()` with a smart shade default
+#' A convenience wrapper around `annotate_panel_background()` with a smart shade default
 #' which blends the panel background fill with `jumble::slate` at 25% opacity
 #' with no border. Should be placed before geom layers.
 #'
-#' @inheritParams panel_background
+#' @inheritParams annotate_panel_background
 #' @param fill Fill colour.
 #' @param alpha Opacity. Defaults to `0.2`. May be a vector.
 #' @param colour Border colour. Defaults to `"transparent"`. May be a vector.
@@ -1304,7 +1304,7 @@ panel_background <- function(
 #'
 #' @return A list containing annotation layers.
 #' @export
-panel_shade <- function(
+annotate_panel_shade <- function(
   xmin = -Inf,
   xmax = Inf,
   ymin = -Inf,
@@ -1321,7 +1321,7 @@ panel_shade <- function(
     fill <- .shade_fill()
   }
 
-  panel_background(
+  annotate_panel_background(
     xmin = xmin,
     xmax = xmax,
     ymin = ymin,
@@ -1724,7 +1724,7 @@ panel_shade <- function(
 
 # Theme hierarchies by axis direction
 # int_axis == "x" means xintercept -> vertical line -> y-axis styling
-.axis_text_hierarchy <- function(int_axis) {
+.annotate_axis_text_hierarchy <- function(int_axis) {
   if (int_axis == "x") {
     c("axis.text.y", "axis.text")
   } else {
@@ -1732,7 +1732,7 @@ panel_shade <- function(
   }
 }
 
-.axis_ticks_hierarchy <- function(int_axis) {
+.annotate_axis_ticks_hierarchy <- function(int_axis) {
   if (int_axis == "x") {
     c("axis.ticks.y", "axis.ticks")
   } else {
@@ -1740,7 +1740,7 @@ panel_shade <- function(
   }
 }
 
-.axis_ticks_length_hierarchy <- function(int_axis) {
+.annotate_axis_ticks_length_hierarchy <- function(int_axis) {
   if (int_axis == "x") {
     c("axis.ticks.length.y", "axis.ticks.length")
   } else {
@@ -1748,7 +1748,7 @@ panel_shade <- function(
   }
 }
 
-.axis_line_hierarchy <- function(int_axis) {
+.annotate_axis_line_hierarchy <- function(int_axis) {
   if (int_axis == "x") {
     c("axis.line.y", "axis.line")
   } else {
@@ -1756,7 +1756,7 @@ panel_shade <- function(
   }
 }
 
-.axis_bracket_hierarchy <- function(int_axis) {
+.annotate_axis_bracket_hierarchy <- function(int_axis) {
   if (int_axis == "x") {
     c("axis.ticks.y", "axis.ticks", "axis.line.y", "axis.line", "line")
   } else {
@@ -1764,7 +1764,7 @@ panel_shade <- function(
   }
 }
 
-.panel_grid_hierarchy <- function(int_axis) {
+.annotate_panel_grid_hierarchy <- function(int_axis) {
   if (int_axis == "x") {
     c("panel.grid.major.x", "panel.grid.major", "panel.grid")
   } else {
@@ -1773,12 +1773,20 @@ panel_shade <- function(
 }
 
 .shade_fill <- function() {
-  panel_background <- ggplot2::get_theme()$panel.background@fill
-  if (.is_col_dark(panel_background)) {
-    blends::screen(panel_background, jumble::slate)
+  annotate_panel_background <- ggplot2::get_theme()$panel.background@fill
+  if (.is_col_dark(annotate_panel_background)) {
+    blends::screen(annotate_panel_background, jumble::slate)
   }
   else {
-    blends::multiply(panel_background, jumble::slate)
+    blends::multiply(annotate_panel_background, jumble::slate)
   }
 }
+
+.is_col_dark <- function(col) {
+  if (rlang::is_null(col) || length(col) == 0) return(FALSE)
+
+  col_luminance <- farver::get_channel(colour = col, channel = "l", space = "hcl")
+  col_luminance <= 50
+}
+
 

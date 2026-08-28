@@ -52,8 +52,6 @@ sec_axis_text <- function(
 #'
 #' @export
 #'
-#' @inherit sec_axis_text examples
-#'
 guide_sec_axis_text <- function(..., theme = NULL) {
   base_theme <- theme_sec_axis_text()
 

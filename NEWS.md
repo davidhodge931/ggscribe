@@ -1,3 +1,8 @@
+# ggscribe (development)
+
+* Removed aes_contrast. 
+* Added annotate prefix.
+
 # ggscribe 0.2.0
 
 * Improved ticks and bracket linewidth.

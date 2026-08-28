@@ -1,6 +1,6 @@
 Package: ggscribe
 Title: Publication-Quality 'ggplot2' Annotation
-Version: 0.2.0
+Version: 0.2.0900
 Authors@R: 
     person(given = "David", family = "Hodge", 
            email = "davidhodge931@gmail.com", 
@@ -17,8 +17,8 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     blends,
-    farver,
     ggplot2 (>= 4.0.0),
+    farver,
     grid,
     rlang,
     scales,
@@ -37,4 +37,4 @@ Suggests:
     spelling,
     stringr
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
