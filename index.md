@@ -6,8 +6,8 @@ publication-quality ‘ggplot2’ visualisation.
 Note:
 
 - Use the secondary axis, subtitle, or axis titles to adjust space.
-- `axis_*` functions placed outside the panel require `clip = "off"` in
-  the coord space.
+- `annotate_axis_*` functions placed outside the panel require
+  `clip = "off"` in the coord space.
 
 ## Installation
 
