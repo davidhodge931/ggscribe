@@ -1,4 +1,4 @@
-# ggscribe (development)
+# ggscribe 1.0.0
 
 * Removed aes_contrast. 
 * Added annotate prefix.
