@@ -2,6 +2,8 @@
 
 ## ggscribe 1.0.0
 
+CRAN release: 2026-09-11
+
 - Removed aes_contrast.
 - Added annotate prefix.
 
